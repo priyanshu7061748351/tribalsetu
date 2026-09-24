@@ -22,6 +22,17 @@
 
 ---
 
+## 🌐 Live Demonstrations & Cloud Deployment
+
+| Service | Link | Description |
+| :--- | :--- | :--- |
+| 🚀 **Live Web App (GitHub Pages)** | **[https://priyanshu7061748351.github.io/tribalsetu/](https://priyanshu7061748351.github.io/tribalsetu/)** | Instant live interactive portal with 4-in-1 AI verification, Student Portal, Officer Queue, and SIH Specs. |
+| 📜 **4-in-1 Trial Demo** | [https://priyanshu7061748351.github.io/tribalsetu/static/trial.html](https://priyanshu7061748351.github.io/tribalsetu/static/trial.html) | Direct document verification trial (Aadhaar, Caste, Income, Residence). |
+| 📑 **SIH Master Plan** | [https://priyanshu7061748351.github.io/tribalsetu/static/TribalSetu_SIH2026_Master_Plan.html](https://priyanshu7061748351.github.io/tribalsetu/static/TribalSetu_SIH2026_Master_Plan.html) | Complete SIH 2026 Problem Statement and Execution Dossier. |
+| 📊 **System Flowchart** | [https://priyanshu7061748351.github.io/tribalsetu/static/TribalSetu_Master_Flowchart_and_Deep_Dive.html](https://priyanshu7061748351.github.io/tribalsetu/static/TribalSetu_Master_Flowchart_and_Deep_Dive.html) | End-to-end interactive architecture flowchart. |
+
+---
+
 ## 🛠️ Quick Start Guide
 
 ### 1. Prerequisites
@@ -30,14 +41,14 @@
 
 ### 2. Clone & Install Dependencies
 ```bash
-git clone <YOUR_REPO_URL>
-cd tribalsetu_app
+git clone https://github.com/priyanshu7061748351/tribalsetu.git
+cd tribalsetu
 
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-### 3. Start Server
+### 3. Start Local Server
 ```bash
 python server.py
 ```
