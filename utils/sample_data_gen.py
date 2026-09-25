@@ -32,10 +32,11 @@ def create_sample_certificates():
     }
 
     # Generate real scannable QR Code
+    # Generate real scannable QR Code
     qr = qrcode.QRCode(
         version=None,
         error_correction=qrcode.constants.ERROR_CORRECT_M,
-        box_size=6,
+        box_size=5,
         border=3,
     )
     qr.add_data(json.dumps(qr_payload))
@@ -71,11 +72,11 @@ def create_sample_certificates():
     
     # Signature & Seal Area
     draw.text((50, 850), "Seal of the Issuing Authority", fill=(120, 130, 140))
-    draw.text((550, 850), "Sub-Divisional Officer (SDO)", fill=(10, 37, 64))
-    draw.text((550, 875), "Digital Signature Verified [OK]", fill=(16, 185, 129))
+    draw.text((500, 885), "Sub-Divisional Officer (SDO)", fill=(10, 37, 64))
+    draw.text((500, 910), "Digital Signature Verified [OK]", fill=(16, 185, 129))
     
     # Paste actual real scannable QR Code
-    img_genuine.paste(qr_img, (540, 600))
+    img_genuine.paste(qr_img, (490, 600))
     
     genuine_path = DATA_DIR / "sample_genuine_st.jpg"
     img_genuine.save(genuine_path, "JPEG", quality=95)
@@ -89,8 +90,8 @@ def create_sample_certificates():
     draw_fake.text((225, 425), "Rs. 15,000 (Fifteen Thousand)", fill=(0, 0, 0))
     
     # Scratch/tamper across the QR area
-    draw_fake.line([(540, 600), (740, 800)], fill=(255, 0, 0), width=10)
-    draw_fake.line([(540, 800), (740, 600)], fill=(255, 0, 0), width=10)
+    draw_fake.line([(490, 600), (750, 860)], fill=(255, 0, 0), width=16)
+    draw_fake.line([(490, 860), (750, 600)], fill=(255, 0, 0), width=16)
     
     fake_path = DATA_DIR / "sample_tampered_fake.jpg"
     img_fake.save(fake_path, "JPEG", quality=95)
@@ -103,7 +104,7 @@ def create_sample_certificates():
         "category": "OBC",
         "digital_signature": "mock_sig_obc"
     }
-    qr_non = qrcode.QRCode(box_size=6, border=3)
+    qr_non = qrcode.QRCode(box_size=5, border=3)
     qr_non.add_data(json.dumps(non_st_qr_payload))
     qr_non.make(fit=True)
     qr_non_img = qr_non.make_image(fill_color="black", back_color="white").convert('RGB')
@@ -119,8 +120,8 @@ def create_sample_certificates():
         "Other Backward Class (OBC) and NOT a Scheduled Tribe."
     )
     draw_non.multiline_text((50, 290), non_st_text, fill=(30, 30, 30), spacing=12)
-    draw_non.rectangle([(540, 600), (750, 810)], fill=(252, 252, 250))
-    img_non_st.paste(qr_non_img, (540, 600))
+    draw_non.rectangle([(490, 600), (760, 870)], fill=(252, 252, 250))
+    img_non_st.paste(qr_non_img, (490, 600))
     
     non_st_path = DATA_DIR / "sample_non_st.jpg"
     img_non_st.save(non_st_path, "JPEG", quality=95)

@@ -3,34 +3,57 @@
     {
       "id": "pms_st",
       "name": "Post-Matric Scholarship for ST Students (PMS-ST)",
-      "ministry": "Ministry of Tribal Affairs (MoTA)",
+      "ministry": "Ministry of Tribal Affairs (MoTA) & State Govt",
+      "level": "National / All States",
       "category": "Higher Secondary / College / University",
       "income_limit": 250000,
-      "award_amount": "Tuition Fees + Up to ₹13,500/yr Maintenance Allowance",
+      "award_amount": "Full Tuition Fees + Up to ₹13,500/yr Maintenance Allowance",
       "deadline": "31 October 2026",
+      "state_scope": "ALL",
       "required_documents": [
-        "ST Caste Certificate (Digital Signed)",
-        "Income Certificate (< ₹2,50,000/yr)",
-        "Residential / Domicile Certificate",
-        "Previous Year Academic Marksheet (Min 50%)",
-        "College Admission Receipt / Bonafide",
+        "ST Caste Certificate (Officially Digital Signed)",
+        "Annual Income Certificate (< ₹2,50,000/yr)",
+        "State Residential / Domicile Certificate",
+        "Previous Academic Year Marksheet (Min 50%)",
+        "College Admission Fee Receipt / Bonafide",
         "Aadhaar Card (NPCI DBT Linked Bank Account)"
       ],
-      "eligible_courses": ["Intermediate (11th/12th)", "Diploma", "UG Degrees (BA/BSc/BTech)", "PG Degrees (MA/MSc/MTech)"]
+      "eligible_courses": ["Intermediate (11th/12th)", "Polytechnic / Diploma", "UG Degrees (BA/BSc/BCom/BTech)", "PG Degrees (MA/MSc/MTech)"]
+    },
+    {
+      "id": "pre_matric_st",
+      "name": "Pre-Matric Scholarship for ST Students (Classes IX & X)",
+      "ministry": "Ministry of Tribal Affairs (MoTA)",
+      "level": "National / All States",
+      "category": "Secondary School (Class 9 & 10)",
+      "income_limit": 250000,
+      "award_amount": "₹3,500/yr (Day Scholars) to ₹7,000/yr (Hostellers) + Book Grant",
+      "deadline": "30 November 2026",
+      "state_scope": "ALL",
+      "required_documents": [
+        "ST Caste Certificate",
+        "Parental Income Certificate (< ₹2,50,000/yr)",
+        "School Bonafide / Headmaster Certificate",
+        "Class 8th Passing Marksheet",
+        "Student Aadhaar Card (DBT Active)"
+      ],
+      "eligible_courses": ["Class IX", "Class X"]
     },
     {
       "id": "nfst",
       "name": "National Fellowship for Higher Education of ST Students (NFST)",
       "ministry": "Ministry of Tribal Affairs (MoTA)",
+      "level": "National / All States",
       "category": "M.Phil / Ph.D. Research Fellowship",
       "income_limit": 600000,
-      "award_amount": "₹31,000 - ₹35,000 per month + Contingency Grant",
+      "award_amount": "₹31,000 - ₹35,000 per month + ₹10,000/yr Contingency Grant",
       "deadline": "15 November 2026",
+      "state_scope": "ALL",
       "required_documents": [
-        "ST Caste Certificate",
-        "Post-Graduation Degree & Consolidated Marksheet (Min 55%)",
+        "ST Caste Certificate (Govt Gazette Verified)",
+        "Post-Graduation Consolidated Marksheet (Min 55%)",
         "Ph.D. / M.Phil. University Registration Slip",
-        "Research Synopsis / Guide Recommendation Letter",
+        "Research Synopsis & Guide Recommendation Letter",
         "Family Income Certificate (< ₹6,00,000/yr)",
         "Aadhaar Card (DBT Active)"
       ],
@@ -40,10 +63,12 @@
       "id": "nos_st",
       "name": "National Overseas Scholarship for ST Candidates (NOS-ST)",
       "ministry": "Ministry of Tribal Affairs (MoTA)",
+      "level": "National / All States",
       "category": "Overseas Masters / Ph.D. Abroad",
       "income_limit": 800000,
-      "award_amount": "100% Tuition Fees + Living Allowance ($15,400 / £9,900/yr) + Airfare",
+      "award_amount": "100% Tuition Fees + Living Allowance ($15,400 / £9,900/yr) + Return Airfare",
       "deadline": "30 September 2026",
+      "state_scope": "ALL",
       "required_documents": [
         "ST Caste Certificate",
         "Unconditional Offer Letter from Top 500 QS World Ranked University",
@@ -52,25 +77,125 @@
         "Income Tax Return (ITR) / Income Certificate (< ₹8,00,000/yr)",
         "Aadhaar Card"
       ],
-      "eligible_courses": ["Masters Abroad", "Ph.D. Abroad"]
+      "eligible_courses": ["Masters Abroad (STEM/Humanities)", "Ph.D. Abroad"]
     },
     {
       "id": "top_class_st",
       "name": "National Scholarship for Higher Education in Top Class Institutions",
       "ministry": "Ministry of Tribal Affairs (MoTA)",
-      "category": "IITs, NITs, IIMs, AIIMS, NLUs",
+      "level": "National / All States",
+      "category": "IITs, NITs, IIMs, AIIMS, NLUs, Premier Institutes",
       "income_limit": 600000,
-      "award_amount": "Full Tuition Fees + ₹86,000/yr Living & Books Allowance",
+      "award_amount": "Full Tuition Fees + ₹86,000/yr Living, Books & Computer Allowance",
       "deadline": "31 October 2026",
+      "state_scope": "ALL",
       "required_documents": [
         "ST Caste Certificate",
         "Admission Allotment Letter from Notified Institute (IIT/NIT/IIM/AIIMS)",
         "12th / Graduation Passing Certificate",
         "Family Income Certificate (< ₹6,00,000/yr)",
-        "Fee Receipt of Premier Institute",
+        "Institute Fee Receipt",
         "Aadhaar Card (DBT Linked)"
       ],
       "eligible_courses": ["B.Tech (IIT/NIT)", "MBBS (AIIMS)", "MBA (IIM)", "LLB (NLU)"]
+    },
+    {
+      "id": "emrs_stipend",
+      "name": "Eklavya Model Residential Schools (EMRS) Special Higher Study Stipend",
+      "ministry": "National Education Society for Tribal Students (NESTS / MoTA)",
+      "level": "National / All States",
+      "category": "EMRS Tribal Alumni Transition Support",
+      "income_limit": 300000,
+      "award_amount": "₹20,000 one-time transition grant + ₹5,000/semester stipend",
+      "deadline": "15 December 2026",
+      "state_scope": "ALL",
+      "required_documents": [
+        "ST Caste Certificate",
+        "EMRS School Passing Certificate (12th)",
+        "Higher Education Admission Letter",
+        "Income Certificate (< ₹3,00,000/yr)",
+        "Aadhaar Card (DBT Seeded)"
+      ],
+      "eligible_courses": ["Undergraduate First Year (All Streams)"]
+    },
+    {
+      "id": "jharkhand_ekalyan_st",
+      "name": "Jharkhand e-Kalyan Post-Matric ST Scholarship (State-Specific)",
+      "ministry": "Jharkhand Tribal Welfare & Development Department",
+      "level": "State Specific: Jharkhand",
+      "category": "Inter / Graduation / Professional",
+      "income_limit": 250000,
+      "award_amount": "Up to ₹19,000/yr Maintenance + Full Course Reimbursement",
+      "deadline": "20 November 2026",
+      "state_scope": "JHARKHAND",
+      "required_documents": [
+        "Jharkhand ST Caste Certificate (CO/SDO Signed)",
+        "Jharkhand Residential / Domicile Certificate",
+        "Valid Current Year Income Certificate (< ₹2,50,000)",
+        "Previous Exam Marksheet",
+        "College Bonafide Certificate with Fee Structure",
+        "Aadhaar Card Linked Bank Account Passbook"
+      ],
+      "eligible_courses": ["Intermediate", "UG Degrees", "B.Tech/MBBS", "B.Ed/D.El.Ed"]
+    },
+    {
+      "id": "odisha_prerana_st",
+      "name": "Odisha PRERANA Scheduled Tribe Post-Matric Scholarship",
+      "ministry": "ST & SC Development Department, Govt of Odisha",
+      "level": "State Specific: Odisha",
+      "category": "Post-Matric Technical & General",
+      "income_limit": 250000,
+      "award_amount": "Direct Tuition Reimbursement + Up to ₹15,000/yr Maintenance",
+      "deadline": "10 November 2026",
+      "state_scope": "ODISHA",
+      "required_documents": [
+        "Odisha ST Caste Certificate (e-District Digitally Signed)",
+        "Resident / Nativity Certificate",
+        "Income Certificate issued by Tahasildar",
+        "HSC / +2 Marksheet",
+        "Institute Verification Certificate",
+        "Aadhaar Card (DBT Active)"
+      ],
+      "eligible_courses": ["+2 Science/Arts/Commerce", "Degree Colleges", "Diploma/Engineering"]
+    },
+    {
+      "id": "mp_mptaas_st",
+      "name": "Madhya Pradesh MPTAAS Tribal Higher Education Scheme",
+      "ministry": "Tribal Affairs & Scheduled Caste Welfare Dept, MP",
+      "level": "State Specific: Madhya Pradesh",
+      "category": "Post-Matric Higher Education",
+      "income_limit": 600000,
+      "award_amount": "Full Fee Reimbursement + Awas Sahayata Housing Allowance (₹1,500/mo)",
+      "deadline": "25 November 2026",
+      "state_scope": "MADHYA PRADESH",
+      "required_documents": [
+        "MP Digital ST Caste Certificate (MP-eDistrict)",
+        "Samagra ID & Aadhaar Card E-KYC",
+        "Current Year Income Declaration",
+        "MP Domicile Certificate",
+        "College Admission & Fee Challan"
+      ],
+      "eligible_courses": ["BA, BSc, BCom", "B.Tech, MBBS, MBA", "Polytechnic"]
+    },
+    {
+      "id": "cg_tribal_scholarship",
+      "name": "Chhattisgarh Post-Matric Scholarship for Scheduled Tribes",
+      "ministry": "Tribal Welfare Department, Govt of Chhattisgarh",
+      "level": "State Specific: Chhattisgarh",
+      "category": "Higher Education & Technical",
+      "income_limit": 250000,
+      "award_amount": "Tuition Fees + Up to ₹14,000/yr Maintenance Allowance",
+      "deadline": "30 November 2026",
+      "state_scope": "CHHATTISGARH",
+      "required_documents": [
+        "Chhattisgarh ST Caste Certificate (Online Verified)",
+        "Niwas Praman Patra (Domicile)",
+        "Income Certificate from Tehsildar",
+        "Last Qualifying Exam Marksheet",
+        "College Fee Receipt",
+        "Aadhaar Card Linked Bank Account"
+      ],
+      "eligible_courses": ["11th/12th", "Graduation", "Post Graduation", "Technical Courses"]
     }
   ]
 }

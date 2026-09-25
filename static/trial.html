@@ -3,135 +3,462 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TribalSetu — 4-in-1 Document Verification Trial</title>
+<title>TribalSetu — Document Screening Trial | SIH 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#090d16;color:#f1f5f9;min-height:100vh;padding:20px}
-.container{max-width:900px;margin:0 auto}
-.hero{background:linear-gradient(135deg,rgba(30,41,59,.8),rgba(15,23,42,.95));border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:32px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#6366f1,#f59e0b,#10b981,#06b6d4)}
-.hero h1{font-size:1.8rem;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#fff 40%,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{color:#94a3b8;font-size:.95rem}
-.doc-selector{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
-.doc-btn{background:rgba(30,41,59,.6);border:2px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 8px;text-align:center;cursor:pointer;transition:all .2s;font-size:.85rem;color:#94a3b8;font-weight:600}
-.doc-btn:hover{border-color:rgba(99,102,241,.4);color:#e2e8f0}
-.doc-btn.active{border-color:#6366f1;background:rgba(99,102,241,.15);color:#a5b4fc;box-shadow:0 0 15px rgba(99,102,241,.3)}
-.doc-btn .icon{font-size:1.8rem;margin-bottom:6px}
-.upload-zone{background:rgba(15,23,42,.7);border:2px dashed rgba(255,255,255,.12);border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .3s;margin-bottom:20px;position:relative}
-.upload-zone:hover,.upload-zone.dragover{border-color:#6366f1;background:rgba(99,102,241,.08)}
-.upload-zone .icon{font-size:3rem;margin-bottom:10px}
-.upload-zone p{color:#94a3b8;font-size:.95rem}
-.upload-zone .filename{color:#10b981;font-weight:600;margin-top:8px;font-size:1rem}
-#fileInput{display:none}
-.verify-btn{width:100%;padding:16px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;border:none;border-radius:14px;font-size:1.15rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px}
-.verify-btn:hover{box-shadow:0 0 25px rgba(99,102,241,.5);transform:translateY(-1px)}
-.verify-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
-/* Scanner Animation */
-.scanner{display:none;position:relative;margin:24px 0;padding:20px;background:rgba(15,23,42,.8);border-radius:16px;border:1px solid rgba(99,102,241,.3);overflow:hidden}
-.scanner.active{display:block}
-.scanner-line{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#10b981,transparent);animation:scanMove 1.5s ease-in-out infinite}
-@keyframes scanMove{0%{top:0}50%{top:100%}100%{top:0}}
-.scanner-text{text-align:center;color:#10b981;font-weight:600;font-size:1rem;padding:30px 0}
-.scanner-text .dots::after{content:'...';animation:dots 1s steps(4) infinite}
-@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
-/* Results */
-.results{display:none;margin-top:24px}
-.results.show{display:block}
-.verdict-banner{padding:28px;border-radius:16px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
-.verdict-banner.genuine{background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(16,185,129,.08));border:2px solid rgba(16,185,129,.4)}
-.verdict-banner.tampered{background:linear-gradient(135deg,rgba(239,68,68,.15),rgba(239,68,68,.08));border:2px solid rgba(239,68,68,.4)}
-.verdict-banner h2{font-size:1.6rem;margin-bottom:6px}
-.verdict-banner.genuine h2{color:#34d399}
-.verdict-banner.tampered h2{color:#f87171}
-.verdict-banner .score{font-size:2.4rem;font-weight:800}
-.verdict-banner.genuine .score{color:#10b981}
-.verdict-banner.tampered .score{color:#ef4444}
-.verdict-banner p{color:#cbd5e1;font-size:.9rem;margin-top:6px}
-.check-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:20px}
-.check-card{background:rgba(15,23,42,.7);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px;transition:all .2s}
-.check-card:hover{border-color:rgba(99,102,241,.3)}
-.check-card h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.check-card .status{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.75rem;font-weight:700}
-.pass{background:rgba(16,185,129,.2);color:#34d399}
-.fail{background:rgba(239,68,68,.2);color:#f87171}
-.info{background:rgba(6,182,212,.2);color:#67e8f9}
-.warn{background:rgba(245,158,11,.2);color:#fbbf24}
-.check-card p{font-size:.88rem;color:#cbd5e1;margin-top:6px;line-height:1.5}
-.heatmap-section{margin-top:20px;text-align:center}
-.heatmap-section img{max-width:100%;border-radius:12px;border:1px solid rgba(255,255,255,.1)}
-.heatmap-section h4{color:#f59e0b;margin-bottom:10px;font-size:1rem}
-.fields-table{width:100%;border-collapse:collapse;margin-top:16px;background:rgba(15,23,42,.5);border-radius:12px;overflow:hidden}
-.fields-table th,.fields-table td{padding:10px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem}
-.fields-table th{color:#94a3b8;font-weight:600;text-transform:uppercase;font-size:.78rem;letter-spacing:.04em}
-.fields-table td{color:#e2e8f0}
-.reset-btn{margin-top:20px;width:100%;padding:14px;background:rgba(30,41,59,.6);color:#94a3b8;border:1px solid rgba(255,255,255,.1);border-radius:12px;font-size:1rem;font-weight:600;cursor:pointer}
-.reset-btn:hover{color:#e2e8f0;border-color:rgba(255,255,255,.2)}
-@media(max-width:600px){.doc-selector{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:1.4rem}}
+:root {
+  --bg-base: #0B1020;
+  --bg-card: rgba(15, 23, 42, 0.85);
+  --border-subtle: rgba(226, 232, 240, 0.12);
+  --primary: #2563EB;
+  --primary-hover: #1D4ED8;
+  --primary-glow: rgba(37, 99, 235, 0.35);
+  --electric-purple: #6D28D9;
+  --electric-violet: #7C3AED;
+  --vibrant-pink: #EC4899;
+  --cyan: #06B6D4;
+  --emerald: #10B981;
+  --emerald-bg: rgba(16, 185, 129, 0.14);
+  --emerald-border: rgba(16, 185, 129, 0.35);
+  --emerald-text: #34D399;
+  --amber: #F59E0B;
+  --amber-bg: rgba(245, 158, 11, 0.14);
+  --amber-border: rgba(245, 158, 11, 0.35);
+  --amber-text: #FBBF24;
+  --rose: #EF4444;
+  --rose-bg: rgba(239, 68, 68, 0.14);
+  --rose-border: rgba(239, 68, 68, 0.35);
+  --rose-text: #F87171;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-main);
+  min-height: 100vh;
+  padding: 24px 20px;
+  background-image: 
+    radial-gradient(circle at 20% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 80% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 45%);
+}
+
+.icon-svg {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.85;
+  stroke: currentColor;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.icon-lg { width: 24px; height: 24px; }
+.icon-xl { width: 32px; height: 32px; }
+
+.container { max-width: 960px; margin: 0 auto; }
+
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #38bdf8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.back-link:hover { color: #7dd3fc; }
+
+.hero {
+  background: linear-gradient(135deg, rgba(22, 34, 60, 0.7), rgba(13, 21, 39, 0.95));
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2563EB 0%, #7C3AED 50%, #EC4899 100%);
+}
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a5b4fc;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+.hero h1 {
+  font-family: var(--font-heading);
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #ffffff 40%, #c7d2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero p { color: var(--text-muted); font-size: 0.94rem; max-width: 680px; margin: 0 auto; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 26px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+  margin-bottom: 24px;
+}
+
+.doc-selector {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+@media (max-width: 640px) {
+  .doc-selector { grid-template-columns: repeat(2, 1fr); }
+}
+
+.doc-btn {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 16px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.doc-btn:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+  transform: translateY(-2px);
+}
+.doc-btn.active {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.25);
+}
+
+.upload-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: rgba(15, 23, 42, 0.4);
+  margin-bottom: 20px;
+}
+.upload-zone:hover, .upload-zone.dragover {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.08);
+}
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+}
+.upload-zone p { font-size: 0.9rem; color: #cbd5e1; }
+.upload-zone small { color: var(--text-muted); font-size: 0.78rem; }
+.upload-zone .filename { color: var(--emerald-text); font-weight: 700; margin-top: 10px; font-size: 0.88rem; }
+
+.verify-btn {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(109, 40, 217, 0.38);
+}
+.verify-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(109, 40, 217, 0.55); background: linear-gradient(135deg, #1D4ED8 0%, #6D28D9 100%);
+}
+.verify-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.scanner {
+  display: none;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 24px 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.scanner.active { display: block; }
+.scanner-line {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #06B6D4, #7C3AED, #EC4899, transparent);
+  box-shadow: 0 0 14px #06B6D4, 0 0 8px #EC4899;
+  animation: scanLaser 1.6s ease-in-out infinite;
+}
+@keyframes scanLaser {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+.scanner-text {
+  color: var(--emerald-text);
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 20px 0;
+}
+
+.results { display: none; }
+.results.show { display: block; animation: fadeIn 0.25s ease-in-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.verdict-banner {
+  padding: 22px;
+  border-radius: 14px;
+  text-align: center;
+  margin-bottom: 22px;
+  border: 1px solid transparent;
+}
+.verdict-banner.genuine {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+  border-color: var(--emerald-border);
+}
+.verdict-banner.tampered {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+  border-color: var(--rose-border);
+}
+.verdict-banner.review {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
+  border-color: var(--amber-border);
+}
+.verdict-banner.review .verdict-title,
+.verdict-banner.review .verdict-score { color: var(--amber-text); }
+.verdict-title {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.verdict-banner.genuine .verdict-title { color: #34d399; }
+.verdict-banner.tampered .verdict-title { color: #f87171; }
+.verdict-score {
+  font-size: 2.1rem;
+  font-weight: 800;
+  font-family: var(--font-heading);
+}
+.verdict-banner.genuine .verdict-score { color: #10b981; }
+.verdict-banner.tampered .verdict-score { color: #ef4444; }
+
+.check-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.check-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px;
+}
+.check-card h4 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #cbd5e1;
+}
+.badge-status {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+.pass { background: var(--emerald-bg); color: var(--emerald-text); border: 1px solid var(--emerald-border); }
+.fail { background: var(--rose-bg); color: var(--rose-text); border: 1px solid var(--rose-border); }
+.warn { background: var(--amber-bg); color: var(--amber-text); border: 1px solid var(--amber-border); }
+
+.reset-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 13px;
+  background: rgba(30, 41, 59, 0.6);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.reset-btn:hover {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(30, 41, 59, 0.9);
+}
 </style>
 </head>
 <body>
+
 <div class="container">
-    <div class="hero">
-        <h1>🛡️ TribalSetu: 4-in-1 Document Verification Trial</h1>
-        <p>Upload any Aadhaar, Caste, Income, or Residence Certificate — Get instant AI forensic verification in 3 seconds!</p>
-    </div>
+  <div class="top-nav">
+    <a href="../index.html" class="back-link">
+      <svg class="icon-svg" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Return to Main Portal Dashboard
+    </a>
+    <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
+      SIH 2026 #26239 • MoTA
+    </span>
+  </div>
 
-    <!-- Step 1: Document Type -->
+  <div class="hero">
+    <div class="hero-tag">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Local screening signals • Human review
+    </div>
+    <h1>Document Screening Trial</h1>
+    <p>Upload a document for provisional OCR and limited image signals. This demo does not prove authenticity or decide eligibility; an officer must review the original.</p>
+  </div>
+
+  <div class="card">
     <div class="doc-selector" id="docSelector">
-        <div class="doc-btn active" data-type="aadhaar" onclick="selectDoc(this)">
-            <div class="icon">🪪</div>Aadhaar Card
-        </div>
-        <div class="doc-btn" data-type="caste" onclick="selectDoc(this)">
-            <div class="icon">📜</div>Caste Certificate
-        </div>
-        <div class="doc-btn" data-type="income" onclick="selectDoc(this)">
-            <div class="icon">💰</div>Income Certificate
-        </div>
-        <div class="doc-btn" data-type="residence" onclick="selectDoc(this)">
-            <div class="icon">🏠</div>Residence Certificate
-        </div>
+      <div class="doc-btn active" data-type="aadhaar" onclick="selectDoc(this)">
+        <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2.5"/><line x1="15" y1="9" x2="18" y2="9"/><line x1="15" y1="13" x2="18" y2="13"/><line x1="7" y1="16" x2="11" y2="16"/></svg>
+        Aadhaar Card
+      </div>
+      <div class="doc-btn" data-type="caste" onclick="selectDoc(this)">
+        <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Caste Certificate
+      </div>
+      <div class="doc-btn" data-type="income" onclick="selectDoc(this)">
+        <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M6 3h12M6 8h12M6 13l7.5 8M6 13h4a4 4 0 0 0 0-8"/></svg>
+        Income Certificate
+      </div>
+      <div class="doc-btn" data-type="residence" onclick="selectDoc(this)">
+        <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Residence Certificate
+      </div>
     </div>
 
-    <!-- Step 2: File Upload -->
     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-        <div class="icon">📁</div>
-        <p>Drag & Drop document photo here<br>ya Click karke file select karo<br><small style="color:#64748b">(JPG, PNG, PDF supported)</small></p>
-        <div class="filename" id="fileName"></div>
+      <div class="upload-icon">
+        <svg class="icon-svg icon-lg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <p>Drag and drop certificate document here or click to browse</p>
+      <small>Supports High-Res JPG, PNG, and PDF</small>
+      <div class="filename" id="fileName"></div>
     </div>
-    <input type="file" id="fileInput" accept="image/*,.pdf">
+    <input type="file" id="fileInput" accept="image/*,.pdf" style="display:none">
 
-    <!-- Step 3: Verify Button -->
     <button class="verify-btn" id="verifyBtn" disabled onclick="verifyDocument()">
-        🚀 VERIFY DOCUMENT NOW
+      <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+      EXECUTE FORENSIC AUDIT
     </button>
 
-    <!-- Scanner Animation -->
     <div class="scanner" id="scanner">
-        <div class="scanner-line"></div>
-        <div class="scanner-text">🔬 AI Forensic Engine Scanning<span class="dots"></span></div>
+      <div class="scanner-line"></div>
+      <div class="scanner-text">Reading the document and collecting limited screening signals...</div>
     </div>
 
-    <!-- Results Section -->
     <div class="results" id="results">
-        <div class="verdict-banner" id="verdictBanner">
-            <h2 id="verdictTitle"></h2>
-            <div class="score" id="verdictScore"></div>
-            <p id="verdictSub"></p>
-        </div>
+      <div class="verdict-banner" id="verdictBanner">
+        <div class="verdict-title" id="verdictTitle"></div>
+        <div class="verdict-score" id="verdictScore"></div>
+        <p id="verdictSub" style="color:#cbd5e1; font-size:0.86rem;"></p>
+      </div>
 
-        <div class="check-grid" id="checkGrid"></div>
+      <div class="check-grid" id="checkGrid"></div>
 
-        <div class="heatmap-section" id="heatmapSection" style="display:none">
-            <h4>🧪 ELA Forensic Heatmap (Photoshop Detection X-Ray)</h4>
-            <p style="color:#94a3b8;font-size:.85rem;margin-bottom:10px">Dark = Original | Bright White Glow = Edited/Tampered Region</p>
-            <img id="heatmapImg" src="" alt="ELA Heatmap">
-        </div>
+      <div id="heatmapSection" style="display:none; text-align:center; background:rgba(0,0,0,0.5); padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06); margin-top:20px;">
+        <h4 style="color:#f59e0b; margin-bottom:6px; font-size:0.86rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/></svg>
+          JPEG ELA diagnostic image (not proof)
+        </h4>
+        <p style="color:var(--text-muted); font-size:0.76rem; margin-bottom:12px;">JPEG compression visualization only; it cannot establish authenticity or prove tampering.</p>
+        <img id="heatmapImg" src="" alt="ELA Heatmap" style="max-width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.1);">
+      </div>
 
-        <div id="fieldsSection" style="margin-top:20px"></div>
-        <div id="docSpecificSection" style="margin-top:16px"></div>
-
-        <button class="reset-btn" onclick="resetAll()">🔄 Naya Document Verify Karo</button>
+      <button class="reset-btn" onclick="resetAll()">
+        <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        Reset & Verify Another Certificate
+      </button>
     </div>
+  </div>
 </div>
 
 <script>
@@ -139,343 +466,153 @@ let selectedDocType = 'aadhaar';
 let selectedFile = null;
 
 function selectDoc(el) {
-    document.querySelectorAll('.doc-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    selectedDocType = el.dataset.type;
+  document.querySelectorAll('.doc-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedDocType = el.dataset.type;
 }
 
-// File Input & Drag-Drop
 const uploadZone = document.getElementById('uploadZone');
 const fileInput = document.getElementById('fileInput');
 const fileName = document.getElementById('fileName');
 const verifyBtn = document.getElementById('verifyBtn');
 
 fileInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) {
-        selectedFile = e.target.files[0];
-        fileName.textContent = '✅ ' + selectedFile.name;
-        verifyBtn.disabled = false;
-    }
+  if (e.target.files.length > 0) {
+    selectedFile = e.target.files[0];
+    fileName.textContent = 'Selected: ' + selectedFile.name;
+    verifyBtn.disabled = false;
+  }
 });
 
 uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragover'); });
 uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
 uploadZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadZone.classList.remove('dragover');
-    if (e.dataTransfer.files.length > 0) {
-        selectedFile = e.dataTransfer.files[0];
-        fileName.textContent = '✅ ' + selectedFile.name;
-        verifyBtn.disabled = false;
-    }
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length > 0) {
+    selectedFile = e.dataTransfer.files[0];
+    fileName.textContent = 'Selected: ' + selectedFile.name;
+    verifyBtn.disabled = false;
+  }
 });
 
 async function verifyDocument() {
-    if (!selectedFile) return;
+  if (!selectedFile) return;
 
-    // Show scanner
-    document.getElementById('scanner').classList.add('active');
-    document.getElementById('results').classList.remove('show');
-    verifyBtn.disabled = true;
+  document.getElementById('scanner').classList.add('active');
+  document.getElementById('results').classList.remove('show');
+  verifyBtn.disabled = true;
 
-    const formData = new FormData();
-    formData.append('document', selectedFile);
-    formData.append('doc_type', selectedDocType);
+  const formData = new FormData();
+  formData.append('document', selectedFile);
+  formData.append('doc_type', selectedDocType);
 
-    try {
-        const res = await fetch('/api/trial-verify', { method: 'POST', body: formData });
-        if (!res.ok) throw new Error("API not reachable");
-        const data = await res.json();
-        setTimeout(() => {
-            document.getElementById('scanner').classList.remove('active');
-            showResults(data);
-            verifyBtn.disabled = false;
-        }, 1500);
-    } catch (err) {
-        // Zero-Failure Client-Side AI Forensics Engine Fallback
-        setTimeout(() => {
-            document.getElementById('scanner').classList.remove('active');
-            const clientResult = runClientSideTrialAnalysis(selectedFile, selectedDocType);
-            showResults(clientResult);
-            verifyBtn.disabled = false;
-        }, 1500);
-    }
-}
-
-function runClientSideTrialAnalysis(file, docType) {
-    const fileName = (file.name || '').toLowerCase();
-    const isFake = fileName.includes('fake') || fileName.includes('tampered');
-    const isNonSt = fileName.includes('non_st') || fileName.includes('obc');
-
-    const c = document.createElement('canvas');
-    c.width = 400; c.height = 200;
-    const ctx = c.getContext('2d');
-    ctx.fillStyle = '#060b18'; ctx.fillRect(0, 0, 400, 200);
-    ctx.strokeStyle = '#1e293b'; ctx.strokeRect(10, 10, 380, 180);
-
-    for (let i = 0; i < 300; i++) {
-        ctx.fillStyle = `rgba(99, 102, 241, ${Math.random() * 0.12})`;
-        ctx.fillRect(Math.random() * 380 + 10, Math.random() * 180 + 10, 2, 2);
-    }
-
-    let elaPoints = 40.0;
-    let qrPoints = 35.0;
-    let ocrPoints = 25.0;
-    let isGenuine = true;
-    let overallVerdict = "VERIFIED_GENUINE";
-    let tamperScore = 8.5;
-    let maxDiff = 12.0;
-    let elaExpl = "Uniform JPEG compression verified across all macroblocks. Authentic certificate.";
-    let qrFound = true;
-    let qrData = "https://serviceonline.bihar.gov.in/verify/CERT/2026/ST/987654321012";
-    let isGov = true;
-    let aadhaarStatus = docType === 'aadhaar' ? 'MASKED' : 'DPDP_COMPLIANT';
-    let aadhaarMasked = "XXXX-XXXX-1012";
-
-    if (isFake) {
-        isGenuine = false;
-        overallVerdict = "TAMPERED_DETECTED";
-        tamperScore = 78.4;
-        maxDiff = 84.0;
-        elaExpl = "Critical ELA variance (+48.2 delta) detected in numeric income & caste fields. Digital splicing confirmed.";
-        elaPoints = 8.0;
-        qrPoints = 0.0;
-        ocrPoints = 15.0;
-        qrFound = false;
-        qrData = null;
-        isGov = false;
-
-        const grad = ctx.createRadialGradient(220, 95, 5, 220, 95, 55);
-        grad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
-        grad.addColorStop(0.3, 'rgba(239, 68, 68, 0.85)');
-        grad.addColorStop(0.7, 'rgba(245, 158, 11, 0.4)');
-        grad.addColorStop(1, 'transparent');
-        ctx.fillStyle = grad;
-        ctx.beginPath(); ctx.arc(220, 95, 55, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2;
-        ctx.strokeRect(170, 75, 100, 40);
-        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif';
-        ctx.fillText('HOT SPLICED PIXELS', 174, 98);
+  let data;
+  try {
+    const response = await fetch('/api/trial-verify', { method: 'POST', body: formData });
+    const body = await response.json().catch(() => ({}));
+    if (response.ok && body && body.review_status) {
+      data = body;
     } else {
-        ctx.fillStyle = '#10b981'; ctx.font = 'bold 12px sans-serif';
-        ctx.fillText('AUTHENTIC DOCUMENT — UNIFORM COMPRESSION (NO TAMPERING)', 18, 105);
+      data = {
+        review_status: 'INCONCLUSIVE',
+        analysis_message: body.detail || 'The screening service returned no usable result. No authenticity or eligibility finding was made.',
+        extracted_fields: {},
+        checks: {}
+      };
     }
-
-    const integrityScore = Math.round(elaPoints + qrPoints + ocrPoints);
-
-    let extractedFields = {};
-    let docSpecific = {};
-    if (docType === 'caste') {
-        extractedFields = {
-            applicant_name: "Rahul Munda",
-            father_name: "Birsa Munda",
-            certificate_no: "JH/2026/ST/0987123",
-            category: isNonSt ? "Other Backward Class (OBC)" : "Scheduled Tribe (ST)",
-            issuing_authority: "Circle Officer, Hazaribagh",
-            detected_tribe: isNonSt ? "KUSHWAHA" : "MUNDA"
-        };
-        docSpecific = {
-            gazette_status: isNonSt ? "✗ NOT Recognized under MoTA Article 342" : "✓ Officially Verified under Article 342 Constitution (Jharkhand ST Schedule)",
-            validity: "Permanent Life-Time ST Certificate"
-        };
-    } else if (docType === 'aadhaar') {
-        extractedFields = {
-            applicant_name: "Rahul Munda",
-            aadhaar_masked: "XXXX-XXXX-1012",
-            dob: "15/08/2004",
-            gender: "Male",
-            state: "Jharkhand"
-        };
-        docSpecific = {
-            privacy_compliance: "DPDP Act 2023 Auto-Masking Applied (Only last 4 digits stored)",
-            verhoeff_checksum: "Mathematical Checksum Valid ✓"
-        };
-    } else if (docType === 'income') {
-        extractedFields = {
-            applicant_name: "Rahul Munda",
-            annual_income: isFake ? "₹95,000 (Spliced from ₹4,50,000)" : "₹1,20,000",
-            issue_date: "12/04/2026",
-            issuing_officer: "Sub-Divisional Officer (SDO)"
-        };
-        docSpecific = {
-            income_limit_check: isFake ? "FRAUD ALERT: Spliced Income figure" : "Within ₹2.5L ST Scholarship Limit ✓",
-            validity_period: "Valid for Financial Year 2026-27"
-        };
-    } else {
-        extractedFields = {
-            applicant_name: "Rahul Munda",
-            address: "Village Murhu, Khunti, Jharkhand - 835216",
-            domicile_state: "Jharkhand",
-            cert_no: "JH/DOM/2026/4412"
-        };
-        docSpecific = {
-            domicile_status: "Verified State Resident (Jharkhand) ✓",
-            cross_match: "Name & Parentage Cross-Matched with Aadhaar Vault (98% Levenshtein Match)"
-        };
-    }
-
-    return {
-        is_genuine: isGenuine,
-        overall_verdict: overallVerdict,
-        integrity_score: integrityScore,
-        doc_type: docType,
-        scoring_breakdown: {
-            ela_points: elaPoints,
-            qr_points: qrPoints,
-            ocr_points: ocrPoints
-        },
-        audit_trail: isFake ? [
-            "✗ ELA Forensics: Localized Photoshop compression variance detected (+48.2)",
-            "✗ Digital QR Code is missing or corrupted cryptographic token",
-            "✗ Fraudulent manipulation detected in critical certificate numbers"
-        ] : [
-            "✓ ELA Forensics: Zero Photoshop tampering detected (Uniform compression 94%)",
-            "✓ Digital QR Code: Decoded State ServicePlus RSA-2048 token",
-            "✓ DPDP Act 2023: Full in-memory Aadhaar masking verified"
-        ],
-        checks: {
-            ela_forensics: {
-                status: isFake ? 'FAIL' : 'PASS',
-                tamper_score: tamperScore,
-                max_pixel_difference: maxDiff,
-                explanation: elaExpl,
-                heatmap: c.toDataURL('image/png')
-            },
-            qr_code: {
-                status: qrFound ? 'FOUND' : 'NOT_FOUND',
-                data: qrData,
-                is_gov_domain: isGov
-            },
-            aadhaar_masking: {
-                status: aadhaarStatus,
-                masked_number: aadhaarMasked,
-                dpdp_compliant: true
-            },
-            preprocessing: {
-                deskew: "Applied (Perspective Corrected)",
-                deglare: "Sauvola Adaptive Thresholding Applied",
-                status: "DONE"
-            }
-        },
-        extracted_fields: extractedFields,
-        doc_specific_checks: docSpecific
+  } catch (error) {
+    data = {
+      review_status: 'INCONCLUSIVE',
+      analysis_message: 'Could not reach the local screening service. No authenticity or eligibility finding was made.',
+      extracted_fields: {},
+      checks: {}
     };
+  }
+
+  setTimeout(() => {
+    document.getElementById('scanner').classList.remove('active');
+    showResults(data);
+    verifyBtn.disabled = false;
+  }, 500);
 }
 
 function showResults(data) {
-    const results = document.getElementById('results');
-    const banner = document.getElementById('verdictBanner');
-    const title = document.getElementById('verdictTitle');
-    const score = document.getElementById('verdictScore');
-    const sub = document.getElementById('verdictSub');
+  const banner = document.getElementById('verdictBanner');
+  banner.className = 'verdict-banner review';
 
-    const isGenuine = data.is_genuine;
-    const v = data.overall_verdict;
-    banner.className = 'verdict-banner ' + (isGenuine ? 'genuine' : 'tampered');
-    
-    const verdictLabels = {
-        'VERIFIED_GENUINE': '✅ VERIFIED GENUINE DOCUMENT',
-        'SUSPICIOUS_REVIEW_NEEDED': '⚠️ SUSPICIOUS — MANUAL REVIEW NEEDED',
-        'LIKELY_FAKE_OR_TAMPERED': '❌ LIKELY FAKE OR TAMPERED DOCUMENT',
-        'TAMPERED_DETECTED': '❌ PHOTOSHOP TAMPERING DETECTED'
-    };
-    title.textContent = verdictLabels[v] || (isGenuine ? '✅ VERIFIED' : '❌ SUSPICIOUS');
-    score.textContent = data.integrity_score + '/100 Trust Score';
-    
-    // Build scoring breakdown HTML
-    const sb = data.scoring_breakdown || {};
-    const scoreBarHTML = `
-        <div style="margin-top:12px;text-align:left;max-width:400px;margin-left:auto;margin-right:auto">
-            <div style="margin-bottom:6px;font-size:.82rem;color:#94a3b8">
-                🧪 ELA Forensics: <strong style="color:${sb.ela_points >= 30 ? '#34d399' : '#f87171'}">${sb.ela_points || 0}/40</strong>
-                <div style="background:rgba(255,255,255,.08);border-radius:4px;height:6px;margin-top:2px"><div style="width:${(sb.ela_points||0)/40*100}%;height:6px;border-radius:4px;background:${sb.ela_points >= 30 ? '#10b981' : '#ef4444'}"></div></div>
-            </div>
-            <div style="margin-bottom:6px;font-size:.82rem;color:#94a3b8">
-                📱 QR Code: <strong style="color:${sb.qr_points >= 20 ? '#34d399' : '#f87171'}">${sb.qr_points || 0}/35</strong>
-                <div style="background:rgba(255,255,255,.08);border-radius:4px;height:6px;margin-top:2px"><div style="width:${(sb.qr_points||0)/35*100}%;height:6px;border-radius:4px;background:${sb.qr_points >= 20 ? '#10b981' : '#ef4444'}"></div></div>
-            </div>
-            <div style="font-size:.82rem;color:#94a3b8">
-                📋 OCR Fields: <strong style="color:${sb.ocr_points >= 10 ? '#34d399' : '#fbbf24'}">${sb.ocr_points || 0}/25</strong>
-                <div style="background:rgba(255,255,255,.08);border-radius:4px;height:6px;margin-top:2px"><div style="width:${(sb.ocr_points||0)/25*100}%;height:6px;border-radius:4px;background:${sb.ocr_points >= 10 ? '#10b981' : '#f59e0b'}"></div></div>
-            </div>
-        </div>
-    `;
-    sub.innerHTML = scoreBarHTML;
-    
-    // Audit Trail
-    const auditHTML = (data.audit_trail || []).map(a => `<div style="font-size:.85rem;padding:4px 0;color:#cbd5e1">${a}</div>`).join('');
-    if (auditHTML) {
-        sub.innerHTML += `<div style="margin-top:12px;text-align:left;max-width:400px;margin-left:auto;margin-right:auto;border-top:1px solid rgba(255,255,255,.1);padding-top:8px">${auditHTML}</div>`; 
-    }
+  const title = document.getElementById('verdictTitle');
+  const inconclusive = data.review_status === 'INCONCLUSIVE';
+  title.textContent = inconclusive ? 'ANALYSIS INCONCLUSIVE' : 'OFFICER REVIEW REQUIRED';
+  document.getElementById('verdictScore').textContent = inconclusive
+    ? 'No result'
+    : 'No authenticity score generated';
+  document.getElementById('verdictSub').textContent = data.analysis_message ||
+    'This screening provides limited signals only. It does not determine whether a certificate is genuine, fake, or eligible.';
 
-    // Check Cards
-    const grid = document.getElementById('checkGrid');
-    const c = data.checks;
-    grid.innerHTML = `
-        <div class="check-card">
-            <h4>🧪 ELA Forensic Check <span class="status ${c.ela_forensics.status === 'PASS' ? 'pass' : 'fail'}">${c.ela_forensics.status}</span></h4>
-            <p>Tamper Score: <strong>${c.ela_forensics.tamper_score}%</strong><br>Peak Pixel Diff: ${c.ela_forensics.max_pixel_difference}<br>${c.ela_forensics.explanation}</p>
-        </div>
-        <div class="check-card">
-            <h4>📱 QR Code Scan <span class="status ${c.qr_code.status === 'FOUND' ? 'pass' : 'warn'}">${c.qr_code.status}</span></h4>
-            <p>${c.qr_code.status === 'FOUND' ? 
-                '<span class="status pass" style="margin-bottom:6px;display:inline-block">✅ Verified Government QR Token</span><br>' +
-                (c.qr_code.is_gov_domain ? '<span class="status pass">Official .gov.in Domain ✓</span><br>' : '') +
-                'Payload: <code style="word-break:break-all;font-size:.78rem;background:rgba(0,0,0,0.4);padding:4px 6px;border-radius:4px;display:block;max-height:80px;overflow-y:auto;margin-top:4px">' + (c.qr_code.data || '') + '</code>'
-                : '<span class="status fail" style="margin-bottom:6px;display:inline-block">❌ QR CODE MISSING</span><br>Government certificates (Bihar/RTPS/ServicePlus) ALWAYS have a digitally signed QR code. Missing QR is a major red flag for fake documents.'}</p>
-        </div>
-        <div class="check-card">
-            <h4>🛡️ Aadhaar DPDP Masking <span class="status ${c.aadhaar_masking.status === 'MASKED' ? 'pass' : 'info'}">${c.aadhaar_masking.status}</span></h4>
-            <p>${c.aadhaar_masking.status === 'MASKED' ? 'Masked Number: <strong style="color:#10b981;font-size:1.1rem">' + c.aadhaar_masking.masked_number + '</strong><br>DPDP Act 2023 Compliant ✓' : 'No 12-digit Aadhaar number pattern detected in text.'}</p>
-        </div>
-        <div class="check-card">
-            <h4>🔧 CV Preprocessing <span class="status ${c.preprocessing.status === 'DONE' ? 'pass' : 'info'}">${c.preprocessing.status}</span></h4>
-            <p>Deskew: ${c.preprocessing.deskew}<br>${c.preprocessing.deglare}</p>
-        </div>
-    `;
+  const grid = document.getElementById('checkGrid');
+  grid.replaceChildren();
+  const checks = data.checks || {};
+  const ela = checks.ela_forensics || {};
+  const qr = checks.qr_code || {};
+  const aadhaar = checks.aadhaar_masking || {};
 
-    // ELA Heatmap
-    const heatmapSection = document.getElementById('heatmapSection');
-    if (c.ela_forensics.heatmap) {
-        heatmapSection.style.display = 'block';
-        document.getElementById('heatmapImg').src = c.ela_forensics.heatmap;
-    } else {
-        heatmapSection.style.display = 'none';
-    }
+  function addCheck(titleText, badgeText, description) {
+    const card = document.createElement('div');
+    card.className = 'check-card';
+    const heading = document.createElement('h4');
+    const label = document.createElement('span');
+    label.textContent = titleText;
+    const badge = document.createElement('span');
+    badge.className = 'badge-status warn';
+    badge.textContent = badgeText;
+    heading.append(label, badge);
+    const paragraph = document.createElement('p');
+    paragraph.style.fontSize = '0.84rem';
+    paragraph.style.color = 'var(--text-muted)';
+    paragraph.textContent = description;
+    card.append(heading, paragraph);
+    grid.appendChild(card);
+  }
 
-    // Extracted Fields
-    const fieldsDiv = document.getElementById('fieldsSection');
-    const fields = data.extracted_fields;
-    const fieldKeys = Object.keys(fields);
-    if (fieldKeys.length > 0) {
-        let rows = fieldKeys.map(k => `<tr><td style="color:#94a3b8">${k.replace(/_/g,' ').toUpperCase()}</td><td><strong>${fields[k]}</strong></td></tr>`).join('');
-        fieldsDiv.innerHTML = `<h4 style="color:#06b6d4;margin-bottom:10px">📋 OCR Extracted Fields</h4><table class="fields-table"><thead><tr><th>Field</th><th>Extracted Value</th></tr></thead><tbody>${rows}</tbody></table>`;
-    } else {
-        fieldsDiv.innerHTML = '<p style="color:#64748b;text-align:center;margin-top:10px"><em>OCR could not extract text fields (Tesseract not installed or image unclear). ELA forensic check still works independently!</em></p>';
-    }
+  addCheck(
+    'ELA image signal',
+    ela.status === 'SIGNAL_ONLY' ? 'SIGNAL ONLY' : 'NOT RUN',
+    ela.explanation || 'ELA is limited to JPEG compression signals and cannot establish authenticity.'
+  );
+  addCheck(
+    'QR presence',
+    (qr.status || 'NOT CHECKED').replaceAll('_', ' '),
+    qr.status === 'FOUND_UNVERIFIED'
+      ? 'A QR was detected, but the issuing authority signature was not verified.'
+      : 'QR absence or presence does not prove whether a document is genuine.'
+  );
+  addCheck(
+    'Aadhaar display',
+    aadhaar.status === 'MASKED' ? 'MASKED' : 'NOT DETECTED',
+    aadhaar.masked_number
+      ? 'OCR candidate: ' + aadhaar.masked_number + '. Check it against the original.'
+      : 'No Aadhaar number was extracted. No privacy or identity conclusion was made.'
+  );
 
-    // Doc-Specific Checks
-    const docSpecDiv = document.getElementById('docSpecificSection');
-    const docSpec = data.doc_specific_checks;
-    const specKeys = Object.keys(docSpec);
-    if (specKeys.length > 0) {
-        let specRows = specKeys.map(k => `<tr><td style="color:#94a3b8">${k.replace(/_/g,' ').toUpperCase()}</td><td><strong>${typeof docSpec[k] === 'object' ? JSON.stringify(docSpec[k]) : docSpec[k]}</strong></td></tr>`).join('');
-        const docLabels = {aadhaar:'Aadhaar', caste:'Caste', income:'Income', residence:'Residence'};
-        docSpecDiv.innerHTML = `<h4 style="color:#f59e0b;margin-bottom:10px">📑 ${docLabels[data.doc_type] || ''} Certificate Specific Checks</h4><table class="fields-table"><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody>${specRows}</tbody></table>`;
-    }
-
-    results.classList.add('show');
-    results.scrollIntoView({ behavior: 'smooth' });
+  const heatmapSection = document.getElementById('heatmapSection');
+  const heatmapImage = document.getElementById('heatmapImg');
+  const heatmap = ela.heatmap;
+  if (heatmap && heatmapImage) {
+    heatmapImage.src = heatmap;
+    heatmapSection.style.display = 'block';
+  } else {
+    if (heatmapImage) heatmapImage.removeAttribute('src');
+    heatmapSection.style.display = 'none';
+  }
+  document.getElementById('results').classList.add('show');
 }
-
 function resetAll() {
-    selectedFile = null;
-    fileInput.value = '';
-    fileName.textContent = '';
-    verifyBtn.disabled = true;
-    document.getElementById('results').classList.remove('show');
-    document.getElementById('heatmapSection').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  selectedFile = null;
+  fileInput.value = '';
+  fileName.textContent = '';
+  verifyBtn.disabled = true;
+  document.getElementById('results').classList.remove('show');
 }
 </script>
 </body>

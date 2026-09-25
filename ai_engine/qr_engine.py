@@ -1,14 +1,13 @@
 """
-Cryptographic QR Code Verification Module
+QR Code Payload Reader
 Function 3: scan_and_verify_qr()
-Scans 2D barcodes/QR codes from certificates, verifies state cryptographic signature,
-and extracts verified digital attributes.
+Scans and decodes certificate QR payloads. It does not authenticate an issuer
+signature without a configured trusted public key.
 """
 
 import cv2
 import numpy as np
 import json
-import hashlib
 
 def scan_and_verify_qr(image_cv2: np.ndarray) -> dict:
     """
@@ -39,9 +38,10 @@ def scan_and_verify_qr(image_cv2: np.ndarray) -> dict:
             "message": "No QR code found on the document (Old/Handwritten or crop issue)."
         }
 
-    # Parse payload (JSON, key-value string, or state portal URL)
+    # Decode payload fields. Signature validation requires a trusted issuer key;
+    # this prototype does not have one configured, so it never claims a signature is valid.
     parsed_data = {}
-    is_valid_signature = False
+    signature_present = False
 
     try:
         # Check if JSON payload
@@ -49,9 +49,7 @@ def scan_and_verify_qr(image_cv2: np.ndarray) -> dict:
         if raw.startswith("{") and raw.endswith("}"):
             parsed_data = json.loads(raw)
             sig = parsed_data.get("digital_signature") or parsed_data.get("sig", "")
-            cert_no = parsed_data.get("cert_no") or parsed_data.get("cert", "")
-            expected_sig = hashlib.sha256(f"GOVT_MOCK_SALT_{cert_no}".encode()).hexdigest()[:16]
-            is_valid_signature = bool(sig and (sig == expected_sig or len(str(sig)) >= 8))
+            signature_present = bool(sig)
         else:
             # Key-Value format e.g. "CERT:JH/2024/ST/1029|NAME:Rahul Munda"
             parts = raw.split("|")
@@ -59,16 +57,17 @@ def scan_and_verify_qr(image_cv2: np.ndarray) -> dict:
                 if ":" in p:
                     k, v = p.split(":", 1)
                     parsed_data[k.strip().lower()] = v.strip()
-            is_valid_signature = "cert" in parsed_data or "certificate_no" in parsed_data or len(raw) > 15
+            signature_present = bool(parsed_data.get("digital_signature") or parsed_data.get("sig"))
 
     except Exception:
         parsed_data = {"raw_payload": data}
-        is_valid_signature = True
+        signature_present = False
 
     return {
         "qr_present": True,
-        "is_digitally_signed": is_valid_signature,
+        "is_digitally_signed": False,
+        "signature_present": signature_present,
         "official_data": parsed_data,
-        "verification_status": "VERIFIED_GENUINE" if is_valid_signature else "SIGNATURE_MISMATCH",
-        "message": "Government cryptographic digital signature successfully verified." if is_valid_signature else "QR signature does not match state public registry."
+        "verification_status": "SIGNATURE_UNVERIFIED",
+        "message": "QR payload decoded, but its signature was not verified against a trusted issuer key."
     }

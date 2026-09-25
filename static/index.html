@@ -1579,6 +1579,16 @@
 
     <!-- 1. STUDENT SCHOLARSHIP VIEW -->
     <div id="view-student" class="view-panel active">
+      <div class="content-card" style="margin-bottom:18px;">
+        <div class="card-head"><h3>Track an application</h3></div>
+        <div class="card-body">
+          <div style="display:flex; gap:10px; flex-wrap:wrap; max-width:700px;">
+            <input id="applicationTrackingId" class="form-input" style="flex:1; min-width:240px;" placeholder="Enter your application tracking ID" autocomplete="off">
+            <button type="button" class="btn-primary" onclick="checkApplicationStatus()">Check status</button>
+          </div>
+          <p id="applicationStatusResult" role="status" style="margin:12px 0 0;"></p>
+        </div>
+      </div>
       <div class="portal-grid">
         
         <!-- Left Column: Step 1 Details Form -->
@@ -1745,7 +1755,7 @@
               </div>
 
               <div class="score-badge-box">
-                <div class="score-title" id="lblIntegrityScore">Composite Integrity & Eligibility Score</div>
+                <div class="score-title" id="lblIntegrityScore">AI verification signal (not an eligibility decision)</div>
                 <div class="score-number" id="portalScoreDisplay">88.4 / 100</div>
                 <div id="portalDbtNotice" style="font-size:0.8rem; color:var(--royal-blue); font-weight:700; margin-top:6px;">
                   NPCI DBT Bank Account: Active & Seeded (Punjab National Bank ****4484)
@@ -1757,9 +1767,9 @@
                 <!-- Checkpoints injected dynamically -->
               </div>
 
-              <button class="btn-primary" id="btnPortalSubmit" onclick="submitPortalApplication()" style="margin-top:16px;">
+              <button class="btn-primary" id="btnPortalSubmit" onclick="submitPortalApplication()" style="margin-top:16px;" disabled>
                 <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                <span id="txtBtnSubmitDbt">SUBMIT APPLICATION FOR IMMEDIATE DBT CREDIT</span>
+                <span id="txtBtnSubmitDbt">SUBMIT APPLICATION FOR OFFICER REVIEW</span>
               </button>
 
             </div>
@@ -1942,22 +1952,54 @@
 
     <!-- 3. DTO OFFICER QUEUE & DBT VIEW -->
     <div id="view-officer" class="view-panel">
+      <div class="content-card" id="officerAuthCard">
+        <div class="card-head">
+          <h3>Officer access</h3>
+          <span class="tag-badge tag-indigo">Protected review</span>
+        </div>
+        <div class="card-body">
+          <p id="officerAuthMessage" role="status" style="margin:0 0 16px;">Checking officer access…</p>
+          <form id="officerLoginForm" style="display:none; max-width:520px;">
+            <div class="input-field"><label for="officerLoginEmail">Officer email</label><input id="officerLoginEmail" class="form-input" type="email" autocomplete="username" required></div>
+            <div class="input-field"><label for="officerLoginPassword">Password</label><input id="officerLoginPassword" class="form-input" type="password" autocomplete="current-password" required></div>
+            <button class="btn-primary" type="submit">Sign in to review queue</button>
+          </form>
+          <form id="officerBootstrapForm" style="display:none; max-width:520px;">
+            <h4 style="margin:18px 0 8px;">First-time officer setup</h4>
+            <p style="font-size:0.86rem;">The server operator must configure a private setup token before the first officer can be created.</p>
+            <div class="input-field"><label for="officerBootstrapName">Officer name</label><input id="officerBootstrapName" class="form-input" autocomplete="name" required></div>
+            <div class="input-field"><label for="officerBootstrapEmail">Officer email</label><input id="officerBootstrapEmail" class="form-input" type="email" autocomplete="username" required></div>
+            <div class="input-field"><label for="officerBootstrapPassword">Password (12 characters minimum)</label><input id="officerBootstrapPassword" class="form-input" type="password" minlength="12" autocomplete="new-password" required></div>
+            <div class="input-field"><label for="officerBootstrapToken">One-time server setup token</label><input id="officerBootstrapToken" class="form-input" type="password" autocomplete="off" required></div>
+            <button class="btn-primary" type="submit">Create first officer account</button>
+          </form>
+          <div id="officerSessionPanel" style="display:none; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <span id="officerSessionText"></span>
+            <button id="officerLogoutButton" class="chip-btn" type="button">Sign out</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="officerQueueContent" style="display:none;">
+      <p role="note" style="padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-subtle);">
+        Prototype limitation: source documents are analyzed and then discarded; this queue shows applicant metadata and AI review signals only. Do not use these prototype actions as official eligibility, selection, or funding decisions.
+      </p>
       <div class="kpi-row">
         <div class="kpi-tile">
           <p>Total Submitted</p>
-          <h4 id="kpiTotal">3</h4>
+          <h4 id="kpiTotal">0</h4>
         </div>
         <div class="kpi-tile green">
-          <p>Green (Auto-Approved / DBT Ready)</p>
-          <h4 id="kpiGreen">1</h4>
+          <p>Awaiting Officer Review</p>
+          <h4 id="kpiGreen">0</h4>
         </div>
         <div class="kpi-tile amber">
-          <p>Yellow (Manual Officer Inspection)</p>
-          <h4 id="kpiYellow">1</h4>
+          <p>Approved for Next Stage</p>
+          <h4 id="kpiYellow">0</h4>
         </div>
         <div class="kpi-tile red">
-          <p>Red (Fraud / Tampered Flagged)</p>
-          <h4 id="kpiRed">1</h4>
+          <p>Correction / Rejection</p>
+          <h4 id="kpiRed">0</h4>
         </div>
       </div>
 
@@ -1965,9 +2007,9 @@
         <div class="card-head">
           <h3>
             <svg class="svg-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            <span>District Tribal Officer (DTO) Triaging & DBT Queue</span>
+            <span>Officer Application Review Queue</span>
           </h3>
-          <span class="tag-badge tag-indigo">Live Triage</span>
+          <span class="tag-badge tag-indigo">Awaiting officer review</span>
         </div>
         <div class="card-body" style="padding:0;">
           <div class="table-container">
@@ -1977,9 +2019,9 @@
                   <th>Application ID</th>
                   <th>Student Name</th>
                   <th>Tribe & State</th>
-                  <th>Trust Score</th>
-                  <th>Decision Flag</th>
-                  <th>DBT Status</th>
+                  <th>AI review signal</th>
+                  <th>Application status</th>
+                  <th>Payment status</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -1989,6 +2031,7 @@
             </table>
           </div>
         </div>
+      </div>
       </div>
     </div>
 
@@ -2378,11 +2421,7 @@
       }
     ];
 
-    let officerApps = [
-      { id: "APP-2026-001", name: "Rahul Munda", tribe: "Munda", state: "Jharkhand", score: 87.6, decision: "GREEN", label: "AUTO_APPROVE", status: "APPROVED", dbt: "Paid via DBT" },
-      { id: "APP-2026-002", name: "Suresh Oraon", tribe: "Oraon", state: "Jharkhand", score: 67.0, decision: "YELLOW", label: "MANUAL_REVIEW", status: "PENDING", dbt: "Pending Review" },
-      { id: "APP-2026-003", name: "Vikas Singh", tribe: "Rajput", state: "Jharkhand", score: 38.5, decision: "RED", label: "FRAUD_FLAGGED", status: "REJECTED_FRAUD", dbt: "Blocked" }
-    ];
+    let officerApps = [];
 
     let currentPortalResult = null;
     let currentLanguage = 'en';
@@ -2418,9 +2457,9 @@
         step2: "Step 2: Instant AI Forensic Result",
         emptyHead: "No Verification Executed",
         emptyDesc: "Fill in your application details or select a 1-click test scenario on the left to trigger the AI verification pipeline.",
-        integrityScore: "Composite Integrity & Eligibility Score",
+        integrityScore: "AI verification signal (not an eligibility decision)",
         checkpoints: "Forensic Verification Checkpoints:",
-        btnSubmitDbt: "SUBMIT APPLICATION FOR IMMEDIATE DBT CREDIT",
+        btnSubmitDbt: "SUBMIT APPLICATION FOR OFFICER REVIEW",
         autoFillTitle: "AI Document Auto-Fill (स्मार्ट फॉर्म भराव)",
         autoFillDesc: "Upload your certificate & AI will auto-extract Name, Father, Tribe & Aadhaar into the form!",
         btnScanAutoFill: "Auto-Fill from Doc"
@@ -2454,9 +2493,9 @@
         step2: "चरण 2: त्वरित AI सत्यापन परिणाम",
         emptyHead: "अभी कोई सत्यापन नहीं हुआ है",
         emptyDesc: "बाईं ओर अपना विवरण भरें या किसी 1-क्लिक टेस्ट विकल्प को चुनकर AI सत्यापन जांच शुरू करें।",
-        integrityScore: "समग्र पात्रता एवं प्रामाणिकता स्कोर",
+        integrityScore: "AI जांच संकेत (पात्रता का अंतिम निर्णय नहीं)",
         checkpoints: "फोरेंसिक जांच बिंदु (Checkpoints):",
-        btnSubmitDbt: "सीधे DBT खाते में भुगतान हेतु आवेदन जमा करें",
+        btnSubmitDbt: "अधिकारी की जांच हेतु आवेदन जमा करें",
         autoFillTitle: "AI दस्तावेज़ ऑटो-फिल (स्मार्ट भराव)",
         autoFillDesc: "अपना प्रमाण पत्र अपलोड करें, AI स्वचालित रूप से नाम, पिता का नाम, जाति व आधार फॉर्म में भर देगा!",
         btnScanAutoFill: "दस्तावेज़ से स्वतः भरें"
@@ -2528,7 +2567,7 @@
       });
 
       populateSchemeSelect("Jharkhand");
-      renderOfficerTable();
+      initOfficerAuth();
       renderGazetteList();
     }
 
@@ -2675,6 +2714,9 @@
     }
 
     async function runPortalVerification() {
+      currentPortalResult = null;
+      const submitButton = document.getElementById('btnPortalSubmit');
+      if (submitButton) submitButton.disabled = true;
       const name = document.getElementById('portalApplicantName').value.trim() || 'Rahul Munda';
       const father = document.getElementById('portalFatherName').value.trim() || 'Birsa Munda';
       const caste = document.getElementById('portalCasteName').value.trim() || 'Munda';
@@ -2696,55 +2738,48 @@
 
       let apiData = null;
 
-      if (docInput && docInput.files && docInput.files[0]) {
-        try {
-          const fd = new FormData();
-          fd.append('caste_doc', docInput.files[0]);
-          fd.append('applicant_name', name);
-          fd.append('father_name', father);
-          fd.append('aadhaar_no', aadhaar);
-          fd.append('caste_name', caste);
-          fd.append('state', state.toLowerCase());
-
-          const res = await fetch('/api/verify', { method: 'POST', body: fd });
-          if (res.ok) {
-            apiData = await res.json();
-          }
-        } catch (e) {
-          console.warn("Portal API verify fallback:", e);
-        }
+      if (!docInput || !docInput.files || !docInput.files[0]) {
+        trail.textContent = 'Upload a document before running server verification.';
+        alert('Please upload the applicant document before verification.');
+        return;
       }
 
-      const stTribes = ["munda", "santhal", "oraon", "ho", "kharia", "bhil", "gond", "bodo", "meena", "baiga", "kondh", "kawar", "kisan", "asur", "birhor"];
-      const isST = stTribes.includes(caste.toLowerCase());
-      const isTampered = name.toLowerCase().includes('altered') || caste.toLowerCase().includes('fake') || name.toLowerCase().includes('tampered');
-
-      let score = apiData ? apiData.trust_score : (isST ? 88.4 : 42.0);
-      let decision = apiData ? apiData.decision : (isST ? "GREEN" : "RED");
-      let label = apiData ? apiData.decision_label : (isST ? "AUTO_APPROVE" : "INELIGIBLE_CASTE");
-      let alertClass = decision === "GREEN" ? "success" : (decision === "YELLOW" ? "warning" : "danger");
-      let summary = apiData ? apiData.summary : (isST 
-        ? "Verified Scheduled Tribe Certificate under Article 342. Eligible for Instant Direct Benefit Transfer (DBT)." 
-        : `Caste '${caste}' is not recognized under Article 342 Scheduled Tribe Gazette for ${state}.`);
-
-      if (!apiData && isTampered) {
-        score = 54.0;
-        decision = "YELLOW";
-        label = "MANUAL_REVIEW";
-        alertClass = "warning";
-        summary = "Pixel tampering / Spliced number detected in income figure via Error Level Analysis (ELA). Flagged for Officer Inspection.";
+      try {
+        const fd = new FormData();
+        fd.append('caste_doc', docInput.files[0]);
+        fd.append('applicant_name', name);
+        fd.append('father_name', father);
+        fd.append('aadhaar_no', aadhaar);
+        fd.append('caste_name', caste);
+        fd.append('state', state.toLowerCase());
+        const res = await fetch('/api/verify', { method: 'POST', body: fd });
+        if (res.ok) apiData = await res.json();
+        else throw new Error((await res.json()).detail || 'Document verification failed.');
+      } catch (error) {
+        currentPortalResult = null;
+        trail.textContent = 'Server verification did not complete. No eligibility decision was made.';
+        document.getElementById('portalSummaryTitle').textContent = 'Verification unavailable';
+        document.getElementById('portalSummaryText').textContent = error.message || 'Please retry after the server is available.';
+        alert(error.message || 'Server verification failed. Please retry.');
+        return;
       }
 
-      const checkpoints = [
-        { title: "Stage 1: Vision Preprocessor", status: "pass", text: "OpenCV Canny contour detection & 4-point perspective warp deskewing (0.04s)" },
-        { title: "Stage 2: ELA Tamper Analysis", status: isTampered ? "fail" : "pass", text: isTampered ? "Pixel variance spike detected in numerical area (ELA Tampered)" : "0% Photoshop tampering, uniform pixel compression verified" },
-        { title: "Stage 3: Dual-Engine QR Scan", status: "pass", text: "zxing-cpp validated official e-District digital signature token" },
-        { title: "Stage 4: Multilingual OCR", status: "pass", text: `Entities extracted: ${name} (Father: ${father}) & DPDP Masked XXXX-XXXX-${aadhaar.slice(-4)}` },
-        { title: "Stage 5: Article 342 Gazette", status: isST ? "pass" : "fail", text: isST ? `'${caste.toUpperCase()}' officially recognized in ${state} ST Gazette (15/15 pts)` : `'${caste}' NOT recognized in ${state} ST Schedule` },
-        { title: "Stage 6: Identity Cross-Match", status: isST ? "pass" : "warn", text: "100% Levenshtein ratio matched across Aadhaar & Marksheet records" },
-        { title: "Stage 7: NPCI DBT Seeding", status: "pass", text: "Aadhaar seeded with Punjab National Bank (Active APB Direct Payout)" },
-        { title: "Stage 8: Composite Trust Score", status: decision === "GREEN" ? "pass" : (decision === "YELLOW" ? "warn" : "fail"), text: `Composite Score: ${score}/100 • Routing: ${decision} (${label})` }
-      ];
+      if (!apiData || !apiData.verification_token) {
+        trail.textContent = 'Server response did not include a valid verification ticket. No application can be submitted.';
+        alert('Server verification did not issue a submission ticket. Please retry.');
+        return;
+      }
+
+      const score = apiData.trust_score;
+      const decision = 'YELLOW';
+      const label = 'HUMAN_REVIEW_REQUIRED';
+      const alertClass = 'warning';
+      const summary = 'Automated checks are review signals only. An authorized officer must verify scheme eligibility and documents; no approval or payment has been made.';
+      const checkpoints = (apiData.audit_trail || []).map(item => ({
+        title: 'Automated check',
+        status: item.startsWith('✓') ? 'pass' : (item.startsWith('✗') ? 'fail' : 'warn'),
+        text: item
+      }));
 
       currentPortalResult = {
         name: name,
@@ -2755,7 +2790,9 @@
         decision: decision,
         label: label,
         summary: summary,
-        audit: checkpoints
+        audit: checkpoints,
+        aiSignalDecision: apiData.decision,
+        verificationToken: apiData.verification_token
       };
 
       // Sequential animated ticks
@@ -2775,7 +2812,7 @@
           // Finalize UI
           const banner = document.getElementById('portalAlertBanner');
           banner.className = 'result-alert ' + alertClass;
-          document.getElementById('portalSummaryTitle').textContent = decision === 'GREEN' ? 'Verified — Eligible for Scholarship' : (decision === 'YELLOW' ? 'Flagged for Review' : 'Ineligible Category');
+          document.getElementById('portalSummaryTitle').textContent = 'Officer review required';
           document.getElementById('portalSummaryText').textContent = summary;
 
           const badge = document.getElementById('portalResultBadge');
@@ -2783,85 +2820,241 @@
           badge.textContent = `${decision} — ${label}`;
 
           document.getElementById('portalScoreDisplay').textContent = score + ' / 100';
+          if (submitButton) submitButton.disabled = !currentPortalResult.verificationToken;
         }
       }
       tickCheckpoint();
     }
 
-    function submitPortalApplication() {
+    async function submitPortalApplication() {
       if (!currentPortalResult) return;
       const r = currentPortalResult;
-      const newId = `APP-2026-00${officerApps.length + 1}`;
-      const scheme = document.getElementById('portalSchemeSelect').selectedOptions[0].text;
+      if (!r.verificationToken) {
+        alert('Server document verification is required before submission. The local preview cannot submit an application.');
+        return;
+      }
 
-      const newApp = {
-        id: newId,
-        name: r.name,
-        tribe: r.caste,
-        state: r.state,
-        score: r.score,
-        decision: r.decision,
-        label: r.label,
-        status: r.decision === 'GREEN' ? 'APPROVED' : (r.decision === 'YELLOW' ? 'PENDING' : 'REJECTED_FRAUD'),
-        dbt: r.decision === 'GREEN' ? 'Paid via DBT' : 'Pending Review'
-      };
+      const schemeSelect = document.getElementById('portalSchemeSelect');
+      const scheme = schemeSelect.selectedOptions[0].text;
+      const formData = new FormData();
+      formData.append('verification_token', r.verificationToken);
+      formData.append('scheme_name', scheme);
 
-      officerApps.unshift(newApp);
-      alert(`Application Successfully Submitted!\nTracking ID: ${newId}\nScheme: ${scheme}\nStatus: ${newApp.status}`);
+      let payload;
+      try {
+        const response = await fetch('/api/apply', { method: 'POST', body: formData });
+        payload = await response.json();
+        if (!response.ok) throw new Error(payload.detail || 'Application submission failed.');
+      } catch (error) {
+        alert(error.message || 'Could not submit the application. Please verify the document again.');
+        return;
+      }
+
+      const application = payload.application;
+      document.getElementById('applicationTrackingId').value = application.id;
+      await checkApplicationStatus();
+      alert(`Application saved for officer review.\nTracking ID: ${application.id}\nScheme: ${scheme}\nStatus: ${application.status}\nNo payment has been initiated. The tracking ID is ready in the status checker.`);
       document.getElementById('btnPortalSubmit').style.display = 'none';
-      renderOfficerTable();
     }
 
-    function renderOfficerTable() {
+    async function checkApplicationStatus() {
+      const trackingId = document.getElementById('applicationTrackingId').value.trim();
+      const result = document.getElementById('applicationStatusResult');
+      if (!trackingId) {
+        result.textContent = 'Enter the tracking ID shown after submission.';
+        return;
+      }
+      result.textContent = 'Looking up application…';
+      try {
+        const response = await fetch(`/api/applications/${encodeURIComponent(trackingId)}/status`);
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.detail || 'Could not find this application.');
+        const note = payload.officer_note ? ` Officer note: ${payload.officer_note}` : '';
+        result.textContent = `${payload.application_id} · ${payload.scheme_name} · ${payload.status} · Payment: ${payload.dbt_status}.${note}`;
+      } catch (error) {
+        result.textContent = error.message || 'Status lookup failed.';
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[character]);
+    }
+
+    async function initOfficerAuth() {
+      const message = document.getElementById('officerAuthMessage');
+      const loginForm = document.getElementById('officerLoginForm');
+      const bootstrapForm = document.getElementById('officerBootstrapForm');
+      const sessionPanel = document.getElementById('officerSessionPanel');
+      const queue = document.getElementById('officerQueueContent');
+      const showSignedOut = (status) => {
+        officerApps = [];
+        queue.style.display = 'none';
+        sessionPanel.style.display = 'none';
+        loginForm.style.display = status.setup_required ? 'none' : 'block';
+        bootstrapForm.style.display = status.setup_required && status.bootstrap_enabled ? 'block' : 'none';
+        if (status.setup_required && !status.bootstrap_enabled) {
+          message.textContent = 'No officer account exists. The server operator must set TRIBALSETU_BOOTSTRAP_TOKEN (at least 32 characters) before first-time setup.';
+        } else if (status.setup_required) {
+          message.textContent = 'No officer account exists yet. Create the first account using the one-time server setup token.';
+        } else {
+          message.textContent = 'Sign in with an authorized officer account to view applicant records.';
+        }
+        if (status.session_secret_ephemeral) {
+          message.textContent += ' For stable sessions across server restarts, configure TRIBALSETU_SESSION_SECRET.';
+        }
+      };
+
+      const showSignedIn = async (officer) => {
+        message.textContent = 'Officer session is active. All decisions are recorded with the reviewer name and reason.';
+        loginForm.style.display = 'none';
+        bootstrapForm.style.display = 'none';
+        sessionPanel.style.display = 'flex';
+        document.getElementById('officerSessionText').textContent = `${officer.full_name} · ${officer.role}`;
+        queue.style.display = 'block';
+        await renderOfficerTable();
+      };
+
+      try {
+        const response = await fetch('/api/auth/status', { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('Officer sign-in service is unavailable.');
+        const status = await response.json();
+        if (status.authenticated && status.officer) await showSignedIn(status.officer);
+        else showSignedOut(status);
+      } catch (error) {
+        message.textContent = error.message || 'Could not check officer login status.';
+        loginForm.style.display = 'none';
+        bootstrapForm.style.display = 'none';
+        queue.style.display = 'none';
+      }
+
+      loginForm.onsubmit = async (event) => {
+        event.preventDefault();
+        message.textContent = 'Signing in…';
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: document.getElementById('officerLoginEmail').value,
+              password: document.getElementById('officerLoginPassword').value
+            })
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.detail || 'Sign in failed.');
+          loginForm.reset();
+          await showSignedIn(result.officer);
+        } catch (error) {
+          message.textContent = error.message || 'Sign in failed.';
+        }
+      };
+
+      bootstrapForm.onsubmit = async (event) => {
+        event.preventDefault();
+        message.textContent = 'Creating first officer account…';
+        try {
+          const response = await fetch('/api/auth/bootstrap', {
+            method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              full_name: document.getElementById('officerBootstrapName').value,
+              email: document.getElementById('officerBootstrapEmail').value,
+              password: document.getElementById('officerBootstrapPassword').value,
+              setup_token: document.getElementById('officerBootstrapToken').value
+            })
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.detail || 'First account setup failed.');
+          bootstrapForm.reset();
+          await showSignedIn(result.officer);
+        } catch (error) {
+          message.textContent = error.message || 'First account setup failed.';
+        }
+      };
+
+      document.getElementById('officerLogoutButton').onclick = async () => {
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+        const response = await fetch('/api/auth/status', { credentials: 'same-origin' });
+        showSignedOut(await response.json());
+      };
+    }
+
+    async function renderOfficerTable() {
       const tbody = document.getElementById('officerTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
-
+      let response;
+      try {
+        response = await fetch('/api/applications', { credentials: 'same-origin' });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.detail || 'Could not load officer queue.');
+        officerApps = payload.applications || [];
+      } catch (error) {
+        document.getElementById('officerAuthMessage').textContent = error.message || 'Could not load officer queue.';
+        return;
+      }
       const total = officerApps.length;
-      const green = officerApps.filter(a => a.decision === 'GREEN').length;
-      const yellow = officerApps.filter(a => a.decision === 'YELLOW').length;
-      const red = officerApps.filter(a => a.decision === 'RED').length;
+      const pending = officerApps.filter(a => a.status === 'PENDING_OFFICER_REVIEW').length;
+      const approved = officerApps.filter(a => a.status === 'APPROVED_PENDING_POST_SELECTION').length;
+      const needsAction = officerApps.filter(a => ['DEFICIENCY_NOTICE_ISSUED', 'REJECTED_BY_OFFICER'].includes(a.status)).length;
 
       document.getElementById('kpiTotal').textContent = total;
-      document.getElementById('kpiGreen').textContent = green;
-      document.getElementById('kpiYellow').textContent = yellow;
-      document.getElementById('kpiRed').textContent = red;
+      document.getElementById('kpiGreen').textContent = pending;
+      document.getElementById('kpiYellow').textContent = approved;
+      document.getElementById('kpiRed').textContent = needsAction;
+
+      if (officerApps.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px;">No applications have been submitted yet.</td></tr>';
+        return;
+      }
 
       officerApps.forEach(app => {
         const tr = document.createElement('tr');
-        const badgeClass = app.decision === 'GREEN' ? 'tag-green' : (app.decision === 'YELLOW' ? 'tag-amber' : 'tag-red');
+        const pendingReview = app.status === 'PENDING_OFFICER_REVIEW';
+        const signal = app.ai_signal_decision || 'NOT_AVAILABLE';
+        const signalClass = signal === 'GREEN' ? 'tag-green' : (signal === 'RED' ? 'tag-red' : 'tag-amber');
+        const evidenceItems = (Array.isArray(app.audit_trail) ? app.audit_trail : []).map(item => `<li>${escapeHtml(item)}</li>`).join('');
+        const evidence = `<details><summary>AI review evidence</summary><p>${escapeHtml(app.ela_tampering || 'No document signal available')}</p><ul>${evidenceItems}</ul></details>`;
+        const actionButtons = pendingReview ? `
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-approve-dbt" onclick="recordOfficerDecision('${escapeHtml(app.id)}','APPROVE')">Approve for next stage</button>
+            <button type="button" class="chip-btn" onclick="recordOfficerDecision('${escapeHtml(app.id)}','REQUEST_CORRECTION')">Request correction</button>
+            <button type="button" class="chip-btn" onclick="recordOfficerDecision('${escapeHtml(app.id)}','REJECT')">Reject</button>
+          </div>` : `<span>${escapeHtml(app.officer_decision || app.status)}</span><br><small>${escapeHtml(app.officer_decision_reason || '')}</small>`;
         tr.innerHTML = `
-          <td><strong style="font-family:var(--font-mono); color:var(--deep-indigo);">${app.id}</strong></td>
-          <td>${app.name}</td>
-          <td>${app.tribe} (${app.state})</td>
-          <td><span class="tag-badge ${badgeClass}">${app.score}%</span></td>
-          <td><span class="tag-badge ${badgeClass}">${app.label}</span></td>
+          <td><strong style="font-family:var(--font-mono); color:var(--deep-indigo);">${escapeHtml(app.id)}</strong></td>
+          <td>${escapeHtml(app.applicant_name)}${evidence}</td>
+          <td>${escapeHtml(app.caste)} (${escapeHtml(app.state)})</td>
+          <td><span class="tag-badge ${signalClass}">${escapeHtml(signal)}${app.ai_signal_score == null ? '' : ` · ${escapeHtml(Number(app.ai_signal_score).toFixed(1))}`}</span></td>
+          <td><span class="tag-badge ${pendingReview ? 'tag-amber' : 'tag-indigo'}">${escapeHtml(app.status)}</span></td>
           <td>
-            <span style="font-weight:600; color:${app.decision==='GREEN'?'var(--status-success)':(app.decision==='RED'?'var(--status-error)':'var(--status-warning)')};">
-              ${app.dbt}
-            </span>
+            <span style="font-weight:600;">${escapeHtml(app.dbt_status || 'NOT_INITIATED')}</span>
           </td>
-          <td>
-            ${app.status !== 'APPROVED' && app.decision !== 'RED' 
-              ? `<button class="btn-approve-dbt" onclick="approveOfficerApp('${app.id}')">
-                   <svg class="svg-icon" style="width:14px; height:14px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                   Approve & DBT
-                 </button>` 
-              : `<span style="font-size:0.78rem; color:var(--text-secondary);">Processed</span>`}
-          </td>
+          <td>${actionButtons}</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function approveOfficerApp(appId) {
-      const found = officerApps.find(a => a.id === appId);
-      if (found) {
-        found.status = 'APPROVED';
-        found.dbt = 'Paid via DBT';
+    async function recordOfficerDecision(appId, action) {
+      const actionLabel = action === 'APPROVE' ? 'approve this application for the next stage' : action === 'REJECT' ? 'reject this application' : 'request a correction';
+      const reason = prompt(`Please enter the reason to ${actionLabel} (minimum 5 characters):`);
+      if (reason === null) return;
+      if (reason.trim().length < 5) {
+        alert('Enter a review reason of at least 5 characters.');
+        return;
       }
-      alert(`Application ${appId} Approved!\nSimulated PFMS Direct Benefit Transfer of ₹13,500 credited to student bank account.`);
-      renderOfficerTable();
+      try {
+        const response = await fetch(`/api/applications/${encodeURIComponent(appId)}/decision`, {
+          method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action, reason: reason.trim() })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.detail || 'Could not record officer decision.');
+        alert(`Decision recorded: ${action}. No payment was initiated.`);
+        await renderOfficerTable();
+      } catch (error) {
+        alert(error.message || 'Could not record officer decision.');
+      }
     }
 
     // State tracking for Trial Verifier
@@ -2973,14 +3166,17 @@
 
       renderInitialPipelineStepper();
 
+      // Resolve the actual file (passed argument or stored from upload zone)
+      const targetFile = (fileOrSample instanceof File) ? fileOrSample : currentTrialFile;
+
       // Show preview if file object available
-      if (fileOrSample instanceof File) {
+      if (targetFile instanceof File) {
         const reader = new FileReader();
         reader.onload = function(e) {
           const orig = document.getElementById('trialOriginalImg');
           if (orig) orig.src = e.target.result;
         };
-        reader.readAsDataURL(fileOrSample);
+        reader.readAsDataURL(targetFile);
       }
 
       let backendData = null;
@@ -2989,8 +3185,8 @@
       // 1. Send to server backend if real File or sample
       try {
         let formData = new FormData();
-        if (fileOrSample instanceof File) {
-          formData.append('document', fileOrSample);
+        if (targetFile instanceof File) {
+          formData.append('document', targetFile);
         } else {
           // Create a mock canvas file if string sample
           const c = document.createElement('canvas');
@@ -3017,21 +3213,17 @@
       }
 
       // 2. Fallback generator if backend not reachable
-      const isTampered = (typeof fileOrSample === 'string' && fileOrSample.includes('tampered')) || 
-                         (fileOrSample && fileOrSample.name && fileOrSample.name.toLowerCase().includes('tampered')) ||
-                         (fileOrSample && fileOrSample.name && fileOrSample.name.toLowerCase().includes('fack')) ||
-                         (fileOrSample && fileOrSample.name && fileOrSample.name.toLowerCase().includes('fake'));
-      
-      const isNonSt = (typeof fileOrSample === 'string' && fileOrSample.includes('non_st')) ||
-                      (fileOrSample && fileOrSample.name && fileOrSample.name.toLowerCase().includes('non_st'));
+      const checkFileName = targetFile ? (targetFile.name || '') : (typeof fileOrSample === 'string' ? fileOrSample : '');
+      const isTampered = /tamper|fake|fack|splic|fraud|alter/i.test(checkFileName);
+      const isNonSt = /non_st|kushwaha|rajput|general/i.test(checkFileName);
 
       if (!backendData) {
-        const score = isTampered ? 48.2 : (isNonSt ? 56.4 : 92.4);
+        const score = isTampered ? (docType === 'aadhaar' ? 32.0 : 38.4) : (isNonSt ? 46.5 : 92.4);
         const dec = isTampered ? "RED" : (isNonSt ? "YELLOW" : "GREEN");
-        const decLabel = isTampered ? "FRAUD_FLAGGED" : (isNonSt ? "MANUAL_REVIEW" : "AUTO_APPROVE");
+        const decLabel = isTampered ? "FRAUD_FLAGGED" : (isNonSt ? "INELIGIBLE_NON_ST" : "AUTO_APPROVE");
         
         backendData = {
-          overall_verdict: isTampered ? "TAMPERED_DETECTED" : (isNonSt ? "NON_ST_CASTE" : "VERIFIED_GENUINE"),
+          overall_verdict: isTampered ? (docType === 'aadhaar' ? "FAKE_AADHAAR_DETECTED" : "TAMPERED_OR_FAKE_DOCUMENT") : (isNonSt ? "NON_ST_CASTE_REJECTED" : "VERIFIED_GENUINE"),
           integrity_score: score,
           decision: dec,
           decision_label: decLabel,
@@ -3039,39 +3231,38 @@
           is_genuine: dec === "GREEN",
           doc_type: docType,
           extracted_fields: {
-            name: isNonSt ? "Vikas Singh" : (isTampered ? "Rahul Munda (Altered)" : "Rahul Munda"),
-            father_name: isNonSt ? "Rajesh Singh" : "Birsa Munda",
-            certificate_no: isTampered ? "JH/2026/ST/9981-SPLICED" : "JH/2026/ST/9981",
-            annual_income: isTampered ? "₹45,000 (Spliced from ₹1.8L)" : "₹1,20,000",
-            category: isNonSt ? "General / Rajput" : "Scheduled Tribe (ST)",
-            detected_tribe: isNonSt ? "RAJPUT (NON-ST)" : "MUNDA",
+            name: isNonSt ? "Vikas Singh" : (isTampered ? "Altered / Fake Beneficiary" : "Rahul Munda"),
+            father_name: isNonSt ? "Rajesh Singh" : (isTampered ? "Unknown / Fake" : "Birsa Munda"),
+            certificate_no: isTampered ? "JH/2026/TAMPERED/001" : "JH/2026/ST/9981",
+            annual_income: isTampered ? "₹45,000 (Spliced Amount)" : "₹1,20,000",
+            category: isNonSt ? "General / Rajput" : (isTampered ? "Tampered Fake" : "Scheduled Tribe (ST)"),
+            detected_tribe: isNonSt ? "RAJPUT (NON-ST)" : (isTampered ? "UNVERIFIED" : "MUNDA"),
             issue_date: "14/02/2026",
-            masked_aadhaar: "XXXX-XXXX-1012"
-          },
-          stages: [
-            { stage: 1, id: "stage-1", status: "PASS", badge: "Deskewed & De-glared", detail: "OpenCV Canny contour detection & 4-point perspective warp applied.", latency_ms: 38 },
-            { stage: 2, id: "stage-2", status: isTampered ? "FAIL" : "PASS", badge: isTampered ? "Tamper Score: 94.2% (Spliced)" : "Tamper Score: 8.4% (Clean)", detail: isTampered ? "High pixel variance spike (>2.8 anomaly ratio) in numerical area." : "Uniform compression signature verified. Zero Photoshop tampering.", latency_ms: 112 },
-            { stage: 3, id: "stage-3", status: isTampered ? "WARN" : "PASS", badge: isTampered ? "QR Mismatch" : "e-District Token Verified", detail: isTampered ? "QR payload signature differs from spliced text values." : "Industrial zxing-cpp decoded valid e-District RSA-2048 token.", latency_ms: 45 },
-            { stage: 4, id: "stage-4", status: "PASS", badge: "Aadhaar: XXXX-XXXX-1012", detail: "Multilingual OCR extracted applicant entity fields. DPDP Act masking applied.", latency_ms: 165 },
-            { stage: 5, id: "stage-5", status: isNonSt ? "FAIL" : "PASS", badge: isNonSt ? "Non-ST Caste (Rajput)" : "Recognized ST (Munda)", detail: isNonSt ? "Caste 'Rajput' is NOT recognized under MoTA Article 342 ST Schedule for Jharkhand." : "Recognized as an official Scheduled Tribe under Article 342 in Jharkhand.", latency_ms: 14 },
-            { stage: 6, id: "stage-6", status: isNonSt ? "WARN" : "PASS", badge: isNonSt ? "68% Cross-Match" : "100% Levenshtein Match", detail: "Cross-matched identity across Aadhaar, Caste Certificate & Marksheet records.", latency_ms: 22 },
-            { stage: 7, id: "stage-7", status: "PASS", badge: "Active APB Account", detail: "Aadhaar seeded with Punjab National Bank (Acc: ****4484). Direct DBT ready.", latency_ms: 28 },
-            { stage: 8, id: "stage-8", status: dec === "GREEN" ? "PASS" : (dec === "YELLOW" ? "WARN" : "FAIL"), badge: `${score} / 100 • ${dec}`, detail: `Multi-criteria score computed. Triage: ${dec} (${decLabel}).`, latency_ms: 6 }
-          ]
+            masked_aadhaar: isTampered ? "INVALID_AADHAAR" : "XXXX-XXXX-1012"
+          }
         };
       }
 
       currentTrialResult = backendData;
 
-      // 3. Sequential Step-by-Step Live Animation with real Tick Marks
-      const stages = backendData.stages || PIPELINE_STAGE_TEMPLATES.map((t, idx) => ({
-        stage: idx + 1,
-        id: `stage-${idx + 1}`,
-        status: "PASS",
-        badge: "Verified",
-        detail: t.desc,
-        latency_ms: 40
-      }));
+      // 3. Sequential Step-by-Step Live Animation with real Dynamic Pass/Fail Stages
+      const isGenuineDoc = backendData.is_genuine === true || backendData.overall_verdict === "VERIFIED_GENUINE";
+      const checks = backendData.checks || {};
+      const elaIsClean = checks.ela_forensics ? checks.ela_forensics.status === "PASS" : isGenuineDoc;
+      const qrIsFound = checks.qr_code ? checks.qr_code.status === "FOUND" : isGenuineDoc;
+      const tribeVal = String(backendData.extracted_fields?.detected_tribe || backendData.extracted_fields?.category || "").toUpperCase();
+      const isCasteNonSt = tribeVal.includes("NON-ST") || tribeVal.includes("RAJPUT") || tribeVal.includes("GENERAL") || tribeVal.includes("UNVERIFIED");
+
+      const stages = (backendData.stages && Array.isArray(backendData.stages) && backendData.stages.length > 0) ? backendData.stages : [
+        { stage: 1, id: "stage-1", status: "PASS", badge: "Deskewed & De-glared", detail: "OpenCV Canny contour detection & perspective warp applied.", latency_ms: 38 },
+        { stage: 2, id: "stage-2", status: elaIsClean ? "PASS" : "FAIL", badge: elaIsClean ? "Clean Compression" : "Tampering / Splicing Detected", detail: checks.ela_forensics?.explanation || (elaIsClean ? "Uniform pixel compression verified." : "High pixel variance anomaly in critical area."), latency_ms: 112 },
+        { stage: 3, id: "stage-3", status: qrIsFound ? "PASS" : "FAIL", badge: qrIsFound ? "e-District Token Verified" : "Missing / Fake QR", detail: qrIsFound ? "Industrial zxing-cpp decoded valid e-District RSA-2048 token." : "Missing cryptographic e-District RSA-2048 token signature.", latency_ms: 45 },
+        { stage: 4, id: "stage-4", status: isGenuineDoc ? "PASS" : "WARN", badge: isGenuineDoc ? "Aadhaar: XXXX-XXXX-1012" : "Low Entity Confidence", detail: "Multilingual OCR extracted entity fields. DPDP Act masking applied.", latency_ms: 165 },
+        { stage: 5, id: "stage-5", status: isCasteNonSt ? "FAIL" : "PASS", badge: isCasteNonSt ? "Non-ST Caste Rejected" : "Recognized ST Tribe", detail: isCasteNonSt ? "Caste is NOT recognized under MoTA Article 342 ST Schedule." : "Recognized as an official Scheduled Tribe under Article 342 in Jharkhand.", latency_ms: 14 },
+        { stage: 6, id: "stage-6", status: isGenuineDoc ? "PASS" : "WARN", badge: isGenuineDoc ? "100% Levenshtein Match" : "Identity Review Flagged", detail: "Cross-matched identity across Aadhaar, Caste Certificate & Marksheet records.", latency_ms: 22 },
+        { stage: 7, id: "stage-7", status: isGenuineDoc ? "PASS" : "FAIL", badge: isGenuineDoc ? "Active APB Account" : "DBT Payout Blocked", detail: isGenuineDoc ? "Aadhaar seeded on APB mapper. Direct DBT ready." : "Direct Benefit Transfer payout blocked due to forensic ineligibility/fraud.", latency_ms: 28 },
+        { stage: 8, id: "stage-8", status: isGenuineDoc ? "PASS" : "FAIL", badge: `${backendData.integrity_score || 40} / 100 • ${isGenuineDoc ? 'GREEN' : 'RED'}`, detail: `Multi-criteria score computed: ${backendData.overall_verdict || 'EVALUATED'}.`, latency_ms: 6 }
+      ];
 
       let currentStepIdx = 0;
 
@@ -3232,14 +3423,15 @@
         tribe: ef.detected_tribe || "Munda",
         state: "Jharkhand",
         score: r.integrity_score,
-        decision: r.decision,
-        label: r.decision_label,
-        status: r.decision === 'GREEN' ? 'APPROVED' : (r.decision === 'YELLOW' ? 'PENDING' : 'REJECTED_FRAUD'),
-        dbt: r.decision === 'GREEN' ? 'Paid via DBT' : 'Pending Review'
+        decision: 'YELLOW',
+        aiSignal: r.decision,
+        label: 'HUMAN_REVIEW_REQUIRED',
+        status: 'PENDING_OFFICER_REVIEW',
+        dbt: 'Not initiated — officer review required'
       };
 
       officerApps.unshift(newApp);
-      alert(`Application ${newId} for ${newApp.name} successfully submitted to District Tribal Officer (DTO) Queue!\nStatus: ${newApp.status}`);
+      alert(`Demo record ${newId} for ${newApp.name} added to this browser's sample queue. It is not a submitted application and no payment was made.`);
       renderOfficerTable();
       
       // Auto-switch to Officer Tab
@@ -3253,10 +3445,10 @@
         return;
       }
       if (currentTrialResult.decision === 'RED') {
-        alert("Direct Benefit Transfer (DBT) BLOCKED: Application is flagged as fraudulent / tampered!");
+        alert("Automated screening raised a possible issue. An officer must review it; this is not a fraud finding and no payment was attempted.");
         return;
       }
-      alert(`Direct Benefit Transfer (DBT) Triggered via NPCI Aadhaar Payment Bridge (APB)!\nAmount: ₹13,500\nBeneficiary: ${currentTrialResult.extracted_fields?.name || 'Rahul Munda'}\nBank: Punjab National Bank (Acc: ****4484)\nPFMS Transaction ID: PFMS-DBT-2026-98124\nStatus: FUNDS CREDITED INSTANTLY`);
+      alert('Demo only: no DBT payment was sent. Real disbursement requires an authorized human decision and an official PFMS integration.');
     }
 
     // Article 342 Gazette Directory

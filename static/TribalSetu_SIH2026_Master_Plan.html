@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TribalSetu — SIH 2026 Master Project Plan (Official MoTA PS #26239)</title>
+<title>TribalSetu — SIH 2026 Multi-Scheme Prototype Plan</title>
 <style>
 /* Reset & Self-Contained Offline Fonts */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -291,14 +291,14 @@ a:hover {
 
 <div class="layout">
     <div class="content-card">
-        <pre># 🛡️ TRIBALSETU: COMPLETE ENTERPRISE TECHNICAL ARCHITECTURE &amp; IMPLEMENTATION SPECIFICATION
+        <pre># 🛡️ TRIBALSETU: SIH 2026 MULTI-SCHEME PROTOTYPE PLAN &amp; PRODUCTION ROADMAP
 ## Smart India Hackathon (SIH) 2026 | Problem Statement ID: 26239
 ### Ministry of Tribal Affairs (MoTA), Government of India | Theme: Smart Education
 
 ---
 
-&gt; **DOCUMENT PURPOSE (FOR DEVELOPERS, JURY &amp; AI SYSTEMS):**  
-&gt; This specification is an exhaustive, self-contained master engineering blueprint of the **TribalSetu AI Scholarship &amp; Fellowship Management Platform**. It contains complete architectural diagrams, mathematical formulations, security matrices, database schemas, API contracts, high-concurrency scaling designs, biometrics &amp; forensic pipelines, and implementation instructions. Any AI agent or engineer reading this document can reconstruct, audit, or extend the entire production-grade platform without prior context.
+&gt; **DOCUMENT PURPOSE:**  
+&gt; This is a build plan for a Smart India Hackathon prototype and a separate future production direction. It describes the intended multi-scheme platform and records what is implemented, simulated, proposed, or still unverified. Architecture diagrams, throughput figures, integrations, and security controls in this document are not evidence that those capabilities are already deployed or approved for government use.
 
 ---
 
@@ -306,18 +306,19 @@ a:hover {
 
 1. [Executive Summary &amp; Problem Statement Analysis](#1-executive-summary--problem-statement-analysis)
 2. [End-to-End System Architecture (C4 Model)](#2-end-to-end-system-architecture-c4-model)
-3. [The 8-Stage Core AI Forensic &amp; Verification Engine](#3-the-8-stage-core-ai-forensic--verification-engine)
+3. [Proposed Document-Assistance Pipeline](#3-proposed-document-assistance-pipeline)
 4. [Mathematical &amp; Algorithmic Foundations](#4-mathematical--algorithmic-foundations)
-5. [Security, Cryptography &amp; DPDP Act 2023 Compliance](#5-security-cryptography--dpdp-act-2023-compliance)
-6. [High-Concurrency Scalability Architecture (20+ Lakh Peak Load)](#6-high-concurrency-scalability-architecture-20-lakh-peak-load)
-7. [Latency &amp; Time-Reduction Engineering (45 Days to 3.2 Seconds)](#7-latency--time-reduction-engineering-45-days-to-32-seconds)
-8. [Multi-Tier Role-Based Access Control (5 Login Personas)](#8-multi-tier-role-based-access-control-5-login-personas)
-9. [Biometric Face Verification &amp; Passive Liveness Engine](#9-biometric-face-verification--passive-liveness-engine)
-10. [Relational Database Schema (PostgreSQL DDL &amp; ERD)](#10-relational-database-schema-postgresql-ddl--erd)
-11. [RESTful API Gateway &amp; Microservices Specification](#11-restful-api-gateway--microservices-specification)
-12. [Current Codebase Map &amp; Implementation Inventory](#12-current-codebase-map--implementation-inventory)
-13. [Unimplemented Modules &amp; Production Roadmap](#13-unimplemented-modules--production-roadmap)
-14. [SIH Jury Defense &amp; Trap-Question Matrix](#14-sih-jury-defense--trap-question-matrix)
+5. [Privacy &amp; Security Design Requirements](#5-privacy--security-design-requirements)
+6. [Proposed Scalability Design &amp; Benchmark Plan](#6-proposed-scalability-design--benchmark-plan)
+7. [Latency Targets &amp; Measurement Plan](#7-latency-targets--measurement-plan)
+8. [Proposed Role-Based Access Control](#8-proposed-role-based-access-control)
+9. [Optional Biometric Research: Not a Core SIH Dependency](#9-optional-biometric-research-not-a-core-sih-dependency)
+10. [Proposed Relational Database Schema](#10-proposed-relational-database-schema-not-yet-connected)
+11. [Proposed API Contract](#11-proposed-api-contract-not-currently-implemented)
+12. [Current Codebase Status: Implemented, Simulated &amp; Missing](#12-current-codebase-status-implemented-simulated--missing)
+13. [Phased Production Roadmap](#13-phased-production-roadmap)
+14. [Honest SIH Demonstration Claims](#14-honest-sih-demonstration-claims)
+15. [Fully Functional SIH Prototype Acceptance Plan](#15-fully-functional-sih-prototype-acceptance-plan)
 
 ---
 
@@ -326,30 +327,24 @@ a:hover {
 ### 1.1 Official Problem Statement (PS ID: 26239)
 &gt; *&quot;The implementation of these schemes involves multiple stages, including applicant registration, online application, document submission, eligibility verification, scrutiny, screening, selection, communication, and post-selection/fellowship management. At present, several stages involve manual scrutiny, repeated correspondence and multiple levels of verification, resulting in processing delays, repetitive administrative effort, limited real-time visibility and scope for errors in verification and workflow management.&quot;*
 
-### 1.2 Target Schemes &amp; Annual Impact Metrics
-1. **PMS-ST (Post-Matric Scholarship for ST Students):**  
-   - Beneficiaries: ~90 Lakh tribal students across 36 States/UTs.  
-   - Pain Point: Heavy delays (3 to 8 months), bogus certificates, manual revenue-stamp inspection.
-2. **NFST (National Fellowship for Higher Education of ST Students):**  
-   - Beneficiaries: 750 fresh M.Phil/Ph.D. research fellowships annually.  
-   - Pain Point: Post-selection monthly stipend release requires physical supervisor signatures, leading to scholarship disbursement delays of up to 6 months.
-3. **NOS (National Overseas Scholarship for ST Students):**  
-   - Beneficiaries: 20 international study slots annually.  
-   - Pain Point: Complex manual slot allocation, visa/offer-letter authentication, and strict merit-cum-means compliance.
-4. **NESTS (National Education Society for Tribal Students - EMRSs):**  
-   - Beneficiaries: Eklavya Model Residential School students transitioning to higher secondary education.
+### 1.2 Three Scheme Profiles in One Configurable Platform
+1. **PMS-ST (Post-Matric Scholarship for ST Students):** A centrally sponsored scheme with State/UT and portal-specific verification steps. Model its applicable state workflow and current academic-year guideline; do not assume a national competitive merit-slot process.
+2. **NFST (National Fellowship for Higher Education of ST Students):** The MoTA overview currently describes 750 fresh awards and merit selection based on Master's marks, with stated preferences for girls, Divyangjan, and PVTGs. Post-selection fellowship tracking is a distinct workflow.
+3. **NOS (National Overseas Scholarship for ST Students):** The MoTA overview currently describes 20 awards and interview-based merit selection by an expert committee. Overseas admission and award administration require their own documents and post-selection steps.
 
-### 1.3 Core Failure Modes of Existing Systems (NSP &amp; State Portals)
-- **Zero Pixel-Level Tampering Detection:** Scanned fake certificates with edited marks, spliced incomes, and Photoshop-modified names pass through traditional OCR systems because OCR only parses visible text, completely ignoring JPEG compression anomalies.
-- **Synchronous Server Bottlenecks:** When 15 Lakh students log in 48 hours before the application deadline, synchronous PHP/.NET application servers crash due to thread exhaustion, database connection pool starvation, and file I/O locks.
-- **Fragmented Identity Verification:** Applicant names differ slightly across documents (`Rahul Kumar Munda` on Aadhaar vs. `Rahul Munda` on 10th Marksheet vs. `R. K. Munda` on Caste Certificate), triggering manual rejection or endless re-scrutiny cycles.
-- **DBT Transaction Failures:** Scholarships are sanctioned on paper, but bank payouts bounce at the Public Financial Management System (PFMS) stage because the student&#x27;s bank account is not mapped to the NPCI Aadhaar Payment Bridge (APB).
+These details must be checked against the official guideline for each academic year before rules are published. See the [MoTA Scholarship page](https://tribal.nic.in/ScholarshiP.aspx) and the [DBT scheme directory](https://dbttribal.gov.in/AllScheme.aspx). Keep NESTS/EMRS out of the core build unless the team confirms it as an explicit extension to this problem statement.
+
+### 1.3 Problem Areas Addressed by the Prototype
+- Repeated manual scrutiny and correspondence can be reduced with visible workflow states, clear deficiency reasons, and applicant resubmission.
+- Different scheme rules and documents need a common system with independently configurable workflows.
+- OCR and cross-document matching can help officials find missing or inconsistent fields, but uncertainty must remain visible and reviewable.
+- Dashboards and audit history can improve status visibility and accountability; savings in time or error rates must be measured rather than assumed.
 
 ---
 
 ## 2. END-TO-END SYSTEM ARCHITECTURE (C4 MODEL)
 
-TribalSetu uses a **Sovereign, Edge-First, Asynchronous Micro-Service Architecture**. All AI algorithms run in-memory and locally without dependency on proprietary paid third-party APIs (such as OpenAI or Google Vision), guaranteeing zero operational cost per verification and absolute data sovereignty.
+The diagram below is a proposed production direction, not the current implementation. For the SIH build, start with a secure modular application and clearly labelled integration simulators; add queues, distributed workers, storage services, and scaling only when the working prototype and measured workload justify them. No architecture alone guarantees legal compliance, data sovereignty, or zero operating cost.
 
 ```
 ┌───────────────────────────────────────────────────────────────────────────────────────────┐
@@ -366,7 +361,7 @@ TribalSetu uses a **Sovereign, Edge-First, Asynchronous Micro-Service Architectu
 │                                EDGE &amp; SECURITY GATEWAY LAYER                              │
 │  - Cloudflare Edge / NGINX Ingress Controller: DDoS Shield, WAF, Rate Limiting (100 req/s)│
 │  - SSL/TLS 1.3 Termination, mTLS for Administrative APIs                                 │
-│  - DPDP Sanitizer: Client-Side In-Memory Aadhaar Redaction (XXXX-XXXX-1234)               │
+│  - Data minimization, protected transport, access control, and reviewed retention        │
 └──────────────────────────────────────────────┬────────────────────────────────────────────┘
                                                │
                                                ▼
@@ -374,7 +369,7 @@ TribalSetu uses a **Sovereign, Edge-First, Asynchronous Micro-Service Architectu
 │                       ASYCHRONOUS API &amp; ORCHESTRATION LAYER (FastAPI)                     │
 │  - Stateless REST Endpoints: Non-blocking async event loop (uvloop)                       │
 │  - JWT Authentication &amp; RBAC Policy Engine (OAuth2 Password Bearer)                       │
-│  - Application Intake: Generates instantaneous 202 Accepted + UUIDv4 Tracking Token        │
+│  - Application Intake: Durable submission and status tracking (target design)             │
 └───────────────┬────────────────────────────────────────────────────────────┬──────────────┘
                 │                                                            │
          (Push Job Payload)                                            (Query Cache)
@@ -397,8 +392,8 @@ TribalSetu uses a **Sovereign, Edge-First, Asynchronous Micro-Service Architectu
 │  │   ├── Stage 4: Tesseract OCR + Dual-Language Regex Key-Value Entity Parser              │
 │  │   ├── Stage 5: Article 342 Constitutional ST Gazette Cross-Referencer                  │
 │  │   ├── Stage 6: Levenshtein Fuzzy Cross-Document Identity Matcher (Token-Sort)          │
-│  │   ├── Stage 7: NPCI APB Simulated Direct Benefit Transfer (DBT) Seeding Auditor        │
-│  │   └── Stage 8: Weighted Composite Trust Scorer &amp; Auto-Triage Router                     │
+│  │   ├── Stage 7: DBT-readiness adapter (simulated in SIH; post-selection only)             │
+│  │   └── Stage 8: Explainable Review-Priority Signals (no automatic selection decision)      │
 └───────────────────────────────────────────────┬───────────────────────────────────────────┘
                                                 │
                                        (Write Verified State)
@@ -407,15 +402,15 @@ TribalSetu uses a **Sovereign, Edge-First, Asynchronous Micro-Service Architectu
 │                               PERSISTENT DATA &amp; STORAGE LAYER                             │
 │  ├── PostgreSQL 16 (Primary RDBMS): Acid-Compliant Relational Data + Read-Replicas        │
 │  ├── MinIO / Ceph (Object Storage): AES-256 Envelope-Encrypted Original &amp; Heatmap Blobs   │
-│  └── Immutable Audit Ledger: SHA-256 Forward-Chained Tamper-Proof Verification Log        │
+│  └── Protected Audit Events: actor, action, timestamp, reason, and integrity controls     │
 └───────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 3. THE 8-STAGE CORE AI FORENSIC &amp; VERIFICATION ENGINE
+## 3. PROPOSED DOCUMENT-ASSISTANCE PIPELINE
 
-The AI Pipeline executes an automated 8-stage sequence on every uploaded document:
+The prototype can run supported document checks and return evidence for applicant and officer review. Not every document or scheme requires every stage; a missing signal is not a fraud finding.
 
 ```
 [Raw Uploaded Document]
@@ -427,7 +422,7 @@ The AI Pipeline executes an automated 8-stage sequence on every uploaded documen
 [Stage 2: ELA Forensic Engine] ────────► Resave @ Q90, compute difference, 12x12 grid patch variance
        │
        ▼
-[Stage 3: Dual-Engine QR Scan] ────────► zxing-cpp industrial decode (RSA-2048 Gov Cryptographic Token)
+[Stage 3: QR Scan] ───────────────────► Decode when supported; verify a signature only with a trusted issuer key
        │
        ▼
 [Stage 4: OCR Entity Extractor] ───────► Tesseract + Regex entity parsing (Hindi/English certificate keys)
@@ -439,10 +434,10 @@ The AI Pipeline executes an automated 8-stage sequence on every uploaded documen
 [Stage 6: Identity Matcher] ───────────► Cross-document fuzzy matching (Levenshtein Token Sort Ratio)
        │
        ▼
-[Stage 7: NPCI DBT Verifier] ──────────► Aadhaar-bank account seeding status validation
+[Stage 7: DBT Readiness] ──────────────► Authorized adapter or labelled simulator; post-selection only
        │
        ▼
-[Stage 8: Composite Trust Scorer] ─────► Weighted aggregation → GREEN / YELLOW / RED Queue Triage
+[Stage 8: Review Support] ─────────────► Explainable signals and pending/manual-review routing
 ```
 
 ### Detailed Stage Breakdown:
@@ -450,20 +445,20 @@ The AI Pipeline executes an automated 8-stage sequence on every uploaded documen
 | Stage | Module Name | Primary Library | Function Signature | Description |
 |---|---|---|---|---|
 | **1** | `preprocessor.py` | `OpenCV`, `NumPy` | `preprocess_and_deskew(image_bytes: bytes) -&gt; (np.ndarray, bytes)` | Detects 4-point document contour via Canny edges (`50, 200`), applies perspective transform, median blur shadow extraction, and outputs normalized 300 DPI image. |
-| **2** | `ela_tamper.py` | `PIL`, `NumPy` | `detect_tampering_ela(image_bytes: bytes, quality=90) -&gt; dict` | Re-compresses image at 90% quality, computes `absdiff(original, resaved)`, measures standard deviation across 12×12 patches. Peak-to-mean variance ratio &gt; 2.8 flags Photoshop tampering. Generates base64 visual heatmap. |
-| **3** | `qr_engine.py` | `zxing-cpp`, `cv2` | `scan_and_verify_qr(image_cv: np.ndarray) -&gt; dict` | Industrial C++ QR decoder. Extracts digital signature payloads from Bihar RTPS, Jharkhand e-District, and Aadhaar Secure QRs. Validates `.gov.in` domain and RSA-2048 signature tokens. |
+| **2** | `ela_tamper.py` | `PIL`, `NumPy` | `detect_tampering_ela(image_bytes: bytes, quality=90) -&gt; dict` | Produces an image-anomaly signal and optional heatmap. It does not prove editing; thresholds require evaluation on representative samples. |
+| **3** | `qr_engine.py` | Available decoder(s) | `scan_and_verify_qr(image_cv: np.ndarray) -&gt; dict` | Decodes supported QR payloads. Cryptographic authenticity can be claimed only when the issuer, trusted public key, signature format, and verification path are confirmed and implemented. A `.gov.in` string alone is not signature verification. |
 | **4** | `ocr_engine.py` | `pytesseract`, `re` | `extract_document_fields(image_cv: np.ndarray, fallback_text: str) -&gt; dict` | Dual-language (Hindi + English) regex entity extractor. Parses certificate serial numbers, applicant names, father&#x27;s names, issue dates, and annual income figures. |
-| **5** | `st_gazette.py` | Native Python Hash | `st_validator.validate_tribe(tribe_name: str, state: str) -&gt; dict` | Validates claimed caste against the official Presidential Orders issued under Article 342 of the Constitution of India (Ministry of Tribal Affairs schedule). Rejects fraudulent ST claims (e.g. Rajput, Yadav). |
+| **5** | `st_gazette.py` | Reference-data lookup | `st_validator.validate_tribe(tribe_name: str, state: str) -&gt; dict` | Checks a claimed community against the configured state-wise reference data. Missing, ambiguous, or unmatched data requires review; it is not by itself a finding of fraud. |
 | **6** | `identity_matcher.py` | `thefuzz`, `Levenshtein` | `cross_match_identity(aadhaar_name, cert_name, marksheet_name, ...) -&gt; dict` | Token-Sort Levenshtein distance cross-matching. Handles middle-name drops, initials expansion, and Hindi-English transliteration phonetic discrepancies across multiple documents. |
 | **7** | `dbt_checker.py` | REST / Simulator | `check_dbt_seeding_status(aadhaar_no: str) -&gt; dict` | Queries NPCI Aadhaar Payment Bridge (APB) mapper simulator. Confirms if applicant&#x27;s bank account has active Direct Benefit Transfer seeding to eliminate PFMS failure rates. |
-| **8** | `trust_scorer.py` | Math / Statistics | `compute_composite_trust_score(qr, ela, id, gazette, dbt) -&gt; dict` | Weighted linear ensemble formula. Calculates composite Trust Score (0-100), builds visual audit trail, and triages application into Green, Yellow, or Red queues. |
+| **8** | `trust_scorer.py` | Prototype heuristics | `compute_composite_trust_score(...) -&gt; dict` | Existing demo logic only. Replace any final-decision use with separate eligibility, document-review, scheme-selection, and payment-readiness states before real use. |
 
 ---
 
 ## 4. MATHEMATICAL &amp; ALGORITHMIC FOUNDATIONS
 
-### 4.1 Error Level Analysis (ELA) Forensic Formulation
-When a JPEG image is saved, its discrete cosine transform (DCT) coefficients are quantized according to an 8×8 block frequency matrix. If an attacker opens a genuine certificate in Photoshop, alters the income figure from `₹1,80,000` to `₹45,000`, and re-saves the file, the newly modified pixels undergo their first generation of compression, while the unmodified surrounding pixels undergo their second generation of compression.
+### 4.1 ELA as a Document-Anomaly Signal
+ELA compares an image with a recompressed copy and can highlight regions whose compression behavior differs. This is a heuristic signal, not proof that a document was edited: normal scanning, resizing, messaging-app compression, or repeated saving can also create anomalies, and sophisticated edits may not be detected. Any ELA result must include its limitations and route uncertain cases to human review.
 
 1. **Compression Error Grid:**  
    Given original image $I_{\text{orig}}$ and standard recompressed baseline image $I_{\text{baseline}} = \mathcal{Q}_{90}(I_{\text{orig}})$:
@@ -473,30 +468,18 @@ When a JPEG image is saved, its discrete cosine transform (DCT) coefficients are
    $$\sigma_{i,j} = \sqrt{\frac{1}{w_p h_p} \sum_{x \in P_{i,j}} \sum_{y \in P_{i,j}} (\Delta_{\text{gray}}(x, y) - \mu_{i,j})^2}$$
 3. **Anomaly Ratio ($R_{\text{tamper}}$):**
    $$R_{\text{tamper}} = \frac{\max_{i,j}(\sigma_{i,j})}{\frac{1}{N M} \sum_{i,j} \sigma_{i,j} + \epsilon}$$
-   - **Decision Rule:** If $R_{\text{tamper}} &gt; 2.8$ and $\max(\Delta) &gt; 35$, the document is mathematically classified as **Digitally Tampered** ($\text{TamperScore} = \min(R_{\text{tamper}} \times 25.0, 96.0)$).
+   - A threshold may be used for a prototype experiment only after it is measured on representative genuine and altered documents. Report it as an anomaly score, never as a mathematical finding of fraud or the sole reason to reject an application.
 
-### 4.2 Composite Trust Score Algorithm
-The comprehensive multi-criteria trust engine uses a weighted sum model:
+### 4.2 Keep Eligibility, Authenticity, Selection, and Payment Separate
+Do not use one composite trust score to decide eligibility, fraud, merit selection, and payment readiness. These are different decisions with different evidence and accountable owners:
 
-$$\text{TrustScore} = w_{\text{QR}} S_{\text{QR}} + w_{\text{ELA}} S_{\text{ELA}} + w_{\text{ID}} S_{\text{ID}} + w_{\text{Gazette}} S_{\text{Gazette}} + w_{\text{DBT}} S_{\text{DBT}}$$
+1. **Scheme eligibility:** deterministic checks against the approved scheme rules for the selected academic year. Missing or unreadable evidence is `PENDING_VERIFICATION`, not an automatic pass or fail.
+2. **Document authenticity signals:** OCR confidence, QR signature result, cross-document mismatch, and ELA anomaly are separate evidence fields. They may prioritize review but do not prove fraud on their own.
+3. **Merit and selection:** use only the selected scheme's officially approved selection method. A generic academic/economic/gender/PVTG weighting must not be treated as an official selection formula.
+4. **Payment readiness:** DBT or bank-seeding status is a post-selection readiness check. An unseeded account must lead to a correction workflow, not reduce academic merit or imply fraud.
+5. **Human decision:** an authorized officer records approve, reject, or request-correction with a reason. AI signals never auto-approve, auto-reject, or trigger a real payment. Applicants need a correction and grievance/appeal path.
 
-#### Rigorous Weight Distribution:
-$$\begin{aligned}
-w_{\text{QR}} &amp;= 0.30 \quad (\text{Cryptographic digital signature verification}) \\
-w_{\text{ELA}} &amp;= 0.25 \quad (\text{Pixel-level compression forensics, } S_{\text{ELA}} = 100 - \text{TamperScore}) \\
-w_{\text{ID}} &amp;= 0.20 \quad (\text{Cross-document fuzzy token identity similarity}) \\
-w_{\text{Gazette}} &amp;= 0.15 \quad (\text{Constitution Article 342 statutory Scheduled Tribe verification}) \\
-w_{\text{DBT}} &amp;= 0.10 \quad (\text{NPCI Aadhaar Payment Bridge bank seeding status})
-\end{aligned}$$
-
-$$\sum_{i} w_i = 0.30 + 0.25 + 0.20 + 0.15 + 0.10 = 1.00$$
-
-#### Triage Classification Boundaries:
-$$\text{TriageDecision} = \begin{cases} 
-\mathbf{GREEN} \text{ (Auto-Approve / Instant PFMS Batch)}, &amp; \text{if } \text{TrustScore} \ge 85.0 \land S_{\text{ELA}} \ge 75.0 \land S_{\text{Gazette}} = 100 \\
-\mathbf{YELLOW} \text{ (Officer Manual Review / 10s Queue)}, &amp; \text{if } 60.0 \le \text{TrustScore} &lt; 85.0 \lor \text{Doc} = \text{Handwritten} \\
-\mathbf{RED} \text{ (Fraud Flagged / Rejection Audit)}, &amp; \text{if } \text{TrustScore} &lt; 60.0 \lor S_{\text{Gazette}} = 0 \lor S_{\text{ELA}} &lt; 50.0
-\end{cases}$$
+For the SIH demo, a non-binding review-priority indicator may be shown, with its inputs and limitations visible. Do not present arbitrary score weights or thresholds as MoTA policy.
 
 ### 4.3 Fuzzy Identity Matching Formulation (Token Sort Levenshtein)
 Given strings $S_1$ (e.g. Aadhaar name) and $S_2$ (e.g. Caste Certificate name):
@@ -505,15 +488,17 @@ Given strings $S_1$ (e.g. Aadhaar name) and $S_2$ (e.g. Caste Certificate name):
 3. Re-join into strings: $S_1^* = \text{join}(T_1^*)$, $S_2^* = \text{join}(T_2^*)$.
 4. Compute normalized Levenshtein ratio:
    $$\text{Ratio}(S_1^*, S_2^*) = \left( 1 - \frac{\text{LevenshteinDistance}(S_1^*, S_2^*)}{\max(|S_1^*|, |S_2^*|)} \right) \times 100$$
-   - A threshold of $\ge 75\%$ accounts for legitimate Indian naming variations (e.g. `Munda Birsa` vs `Birsa Munda`).
+   - Similarity is a review signal only. Any threshold must be evaluated against representative language and name-variation data; it cannot be a sole rejection rule.
 
 ---
 
-## 5. SECURITY, CRYPTOGRAPHY &amp; DPDP ACT 2023 COMPLIANCE
+## 5. PRIVACY &amp; SECURITY DESIGN REQUIREMENTS
+
+The controls below are requirements to implement and review, not a statement of current DPDP Act compliance. Masking or hashing Aadhaar alone does not establish compliance. Before processing real applicant data, define and review lawful purpose, clear notice, consent or other applicable legal basis, data minimization, retention/deletion, access and grievance handling, breach response, and security controls. See the [DPDP Act 2023](https://www.meity.gov.in/static/uploads/2024/02/Digital-Personal-Data-Protection-Act-2023.pdf) and applicable rules.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│               DPDP ACT 2023 ZERO-KNOWLEDGE AADHAAR VAULT                │
+│          PERSONAL DATA HANDLING DESIGN (NOT A COMPLIANCE CERTIFICATE)    │
 ├────────────────────────────────────────────────────────────────────────┤
 │                                                                        │
 │  [Uploaded Aadhaar Card / Camera Capture]                              │
@@ -527,37 +512,40 @@ Given strings $S_1$ (e.g. Aadhaar name) and $S_2$ (e.g. Caste Certificate name):
 │                      │    - Output: &quot;XXXX-XXXX-9012&quot;                   │
 │                      │    - Stored in Relational DB                    │
 │                      │                                                 │
-│                      └──► [Salted Cryptographic Hash]                  │
-│                           - SHA-256 (AadhaarNumber + MinistrySalt)     │
-│                           - Irreversible 64-char Hex String            │
-│                           - Used exclusively for deduplication checks  │
+│                      └──► [Optional Protected Deduplication Token]     │
+│                           - Keyed design only if formally approved     │
+│                           - Key stored outside application/database    │
+│                           - Pseudonymous data; access remains restricted│
 │                                                                        │
-│  * RAW 12-DIGIT AADHAAR NUMBER NEVER COMMITTED TO DISK STORAGE *       │
+│  * NO RAW AADHAAR PERSISTENCE IS A REQUIREMENT; CURRENT CODE MUST BE FIXED * │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-1. **Digital Personal Data Protection (DPDP) Act 2023 Conformance:**  
-   - Strict purpose limitation: No raw 12-digit Aadhaar number is stored in plaintext on disk, databases, or logs.
-   - Irreversible SHA-256 salted hashes allow exact 1:1 duplicate detection without exposing the underlying identity.
-2. **Data-at-Rest Encryption (DAR):**  
+1. **Privacy and data governance:**  
+   - Collect only data required for a stated purpose; provide clear notice, use an applicable legal basis, set retention/deletion rules, restrict access, and support grievances.
+   - Never describe a plain or fixed-salt SHA-256 hash of Aadhaar as anonymous or irreversible. If deduplication is approved, use a protected keyed design, strict access limits, and a documented threat review.
+   - The current prototype stores and returns raw Aadhaar values in its in-memory application records. Do not use real Aadhaar or other real applicant data in the demo until this is corrected.
+2. **Data-at-Rest Encryption (planned):**  
    - Uploaded binary documents stored in S3/MinIO are encrypted using **AES-256-GCM** with per-file envelope encryption. Master keys are managed via hardware security modules (HSM) or cloud KMS.
-3. **Data-in-Transit Encryption (DIT):**  
+3. **Data-in-Transit Encryption (planned):**  
    - All network calls enforce **TLS 1.3** cipher suites (`TLS_AES_256_GCM_SHA384`).
    - Administrative communication between State Nodal Officers and Ministry endpoints enforces mutual TLS (mTLS).
-4. **Tamper-Proof Audit Trail (Append-Only Ledger):**  
+4. **Audit trail (planned control):**  
    - Every officer decision, manual review, and AI verification output creates an immutable cryptographic log entry:
    $$\text{Hash}_n = \text{SHA256}(\text{Hash}_{n-1} + \text{Timestamp} + \text{OfficerID} + \text{Action} + \text{TrustScore})$$
-   - Prevents retroactive tampering with application approvals or fraud dismissals.
+   - Hash chaining can make edits detectable; it does not by itself make a system immutable. Protect keys, storage permissions, backups, and audit access, and record the human decision and its reason.
 
 ---
 
-## 6. HIGH-CONCURRENCY SCALABILITY ARCHITECTURE (20+ LAKH PEAK LOAD)
+## 6. PROPOSED SCALABILITY DESIGN &amp; BENCHMARK PLAN
+
+This section is a capacity-planning hypothesis only. Redis, Celery, object storage, autoscaling, and the stated 20-lakh workload are not implemented or benchmarked in the current repository. The figures below must not be presented as achieved capacity. Recalculate them from a documented workload model and repeatable load tests against the deployed build, including database, file storage, retries, and peak bursts. The current worker arithmetic also needs reconciliation before reuse.
 
 ### 6.1 The Deadline Day Challenge
-In national scholarship portals (NSP/PMS), 70% of total submissions arrive within the final 72 hours before the deadline. A volume of 20,00,000 applications over 72 hours yields an average of **27.7 submissions per second**, with peak burst traffic reaching **250 to 500 requests per second (RPS)**.
+Until an implementing agency provides real traffic data, use 20,00,000 applications over 72 hours and 250 to 500 requests per second only as hypothetical load-test scenarios, not as claims about NSP/PMS traffic.
 
 ### 6.2 Asynchronous De-Coupling via Task Queuing
-Traditional systems fail because they execute image pre-processing, OCR, and database updates synchronously within the HTTP request thread. TribalSetu implements strict decoupling:
+An eventual production design may decouple image processing from application intake. The current prototype does not implement this queue:
 
 ```
 [Student Browser]
@@ -566,7 +554,7 @@ Traditional systems fail because they execute image pre-processing, OCR, and dat
 [NGINX Load Balancer] (SSL Termination, Rate Limit, Fast GZIP)
        │
        ▼
-[FastAPI Gateway Instances] (4 Worker Processes per CPU Core)
+[FastAPI Gateway Instances] (worker count set by benchmark, not a fixed ratio)
        │
        ├──► 1. Save uploaded file buffer to S3 / Object Store (50ms)
        ├──► 2. Generate UUIDv4 Task ID (1ms)
@@ -586,48 +574,50 @@ Traditional systems fail because they execute image pre-processing, OCR, and dat
   $$\text{Required Worker Cores} = 300 \text{ RPS} \times 2.5 \text{s} = 750 \text{ Cores}$$
   - Distributed across **46 Kubernetes Pods** (each allocated 16 vCPUs, 32GB RAM).
   - Kubernetes Horizontal Pod Autoscaler (HPA) triggers scaling based on the **Redis Queue Length metric** (`redis_queue_unprocessed_jobs &gt; 500`).
-  - Total processing time for 20 Lakh applications across 750 worker cores: $\approx 4.6 \text{ hours}$.
+  - Do not claim a batch completion time from this simplified formula. Model storage, database, retries, queue bursts, and worker utilization, then measure the deployed system.
 
 ---
 
-## 7. LATENCY &amp; TIME-REDUCTION ENGINEERING (45 DAYS TO 3.2 SECONDS)
+## 7. LATENCY TARGETS &amp; MEASUREMENT PLAN
+
+The times below are illustrative targets, not measured results. A document-verification response time is not the same as end-to-end scheme processing, officer review, selection, or payment time. Publish a latency claim only with a benchmark method, sample size, hardware, document mix, and percentile results (including p50, p95, and failures).
 
 ### 7.1 Real-World Time Dissection (Before vs. After)
 
 ```
-LEGACY MANUAL SCRUTINY FLOW (TOTAL: 45 - 90 DAYS)
+ILLUSTRATIVE MANUAL WORKFLOW (MEASURE REAL BASELINES BY SCHEME)
 ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐
 │ Physical Visit   │───►│ Clerk Scrutiny   │───►│ District Officer │───►│ PFMS Bank Sync   │
 │ &amp; Form Fill      │    │ Manual Audit     │    │ Verification     │    │ &amp; Payout         │
-│ (7 - 14 Days)    │    │ (15 - 30 Days)   │    │ (15 - 30 Days)   │    │ (8 - 16 Days)    │
+│ (scheme-specific)│    │ (scheme-specific)│    │ (scheme-specific)│    │ (scheme-specific)│
 └──────────────────┘    └──────────────────┘    └──────────────────┘    └──────────────────┘
 
-TRIBALSETU AUTOMATED CASCADING PIPELINE (TOTAL: 3.2 SECONDS)
+TRIBALSETU PROPOSED DOCUMENT-VERIFICATION PIPELINE (ILLUSTRATIVE TARGETS; NOT BENCHMARKED)
 ┌──────────────────────────────────────────────────────────────────────────────────────────┐
 │ Stage 1: Fast Vision Preprocessing &amp; Contour Deskew            0.35s                    │
-│ Stage 2: Dual-Engine zxing-cpp Cryptographic QR Decode         0.02s                    │
+│ Stage 2: QR Decode; signature check only with trusted issuer   0.02s                    │
 │ Stage 3: Error Level Analysis (ELA) Pixel Splicing Forensics    0.28s                    │
 │ Stage 4: Tesseract Multilingual Regex Key-Value Extraction     1.85s                    │
 │ Stage 5: Article 342 Constitutional Gazette In-Memory Hash     0.002s                   │
 │ Stage 6: Levenshtein Fuzzy Token-Sort Identity Verification    0.04s                    │
 │ Stage 7: NPCI APB Direct Benefit Transfer Routing Check        0.05s                    │
-│ Stage 8: Composite Scoring &amp; Green/Yellow/Red Triage Queue     0.01s                    │
+│ Stage 8: Explainable review-priority signals                   0.01s                    │
 │ NET AI PIPELINE VERIFICATION RUNTIME:                         ~2.60s                    │
 │ Network I/O + Database Persistence:                           ~0.60s                    │
-│ TOTAL ROUND-TRIP LATENCY:                                      3.20 SECONDS             │
+│ UNVERIFIED END-TO-END TARGET ONLY:                             ~3.20 SECONDS             │
 └──────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 7.2 The Cascading Early-Exit Optimization
-To ensure maximum resource conservation, the pipeline does not execute all 8 stages if a fatal fraud indicator is discovered early:
-1. **Early Exit 1 (Non-ST Claim):** If OCR extracts a caste explicitly non-ST (e.g. `Brahmin`, `Rajput`), Stage 5 triggers immediate failure. Stages 6, 7, and 8 are bypassed, saving 70% compute.
-2. **Early Exit 2 (Photoshop Splicing):** If ELA tamper score exceeds 90%, the document is routed directly to the Red Fraud Queue without wasting cycles on fuzzy matching or bank validation.
+### 7.2 Safe Early-Exit Rules
+Early exit is appropriate for technical errors (unsupported file, unreadable image, or invalid upload) and should ask the applicant to correct the input. A missing QR is not proof of fraud; a possible name/tribe mismatch or ELA anomaly must be reviewed with the source document and scheme rules. Never convert an OCR guess or image heuristic directly into rejection.
 
 ---
 
-## 8. MULTI-TIER ROLE-BASED ACCESS CONTROL (5 LOGIN PERSONAS)
+## 8. PROPOSED ROLE-BASED ACCESS CONTROL
 
-The platform defines 5 distinct role personas to enforce separation of duties and statutory governance:
+These roles are a target design; authentication and authorization are not currently implemented. Enforce least privilege on every API, application, document, and action. An AI-generated queue label is not an approval. Final adverse decisions must be made by an authorized human, include a reason, and allow applicant correction or grievance review.
+
+These are candidate roles. Map the actual approval chain separately for each scheme and confirm it against the relevant current guidelines before implementation.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -635,42 +625,44 @@ The platform defines 5 distinct role personas to enforce separation of duties an
 ├────────────────────────────────────────────────────────────────────────┤
 │                                                                        │
 │   [Tier 1: Student / Applicant Portal]                                 │
-│   - Registration via Aadhaar OTP / DigiLocker OAuth2                   │
-│   - Document upload, real-time trust score visibility                  │
+│   - Registration using an approved identity method                    │
+│   - Document upload, application state, and review signals              │
 │   - Deficiency notification view &amp; single-click document re-upload     │
 │                                │                                       │
 │                                ▼                                       │
 │   [Tier 2: Institute Nodal Officer (INO) - School / College]           │
-│   - Authenticates student active enrollment, attendance, &amp; bonafide    │
-│   - Validates tuition fee structure &amp; hostel residency status          │
-│   - Signs verification via Digital Signature Certificate (DSC) / e-Sign│
+│   - Verifies enrollment and institute evidence where the scheme requires it│
+│   - Records a reasoned review; e-sign integration is future scope       │
 │                                │                                       │
 │                                ▼                                       │
 │   [Tier 3: District Welfare Officer (DWO) - District Administration]   │
-│   - Handles the YELLOW Triage Queue (Manual Review for 15% docs)       │
-│   - 10-second inspection interface with highlighted forensic heatmaps  │
-│   - Physical inquiry / field officer dispatch trigger                  │
+│   - Handles assigned manual-review and deficiency queues                │
+│   - Sees source documents, extracted fields, and AI signal limitations  │
+│   - Records decision, reason, correction request, or permitted inquiry  │
 │                                │                                       │
 │                                ▼                                       │
 │   [Tier 4: State / Ministry Nodal Officer (SNO / MoTA Central Admin)]  │
-│   - National Merit &amp; Slot Allocation Engine Execution                  │
-│   - Reservation category quotas &amp; dynamic scheme rule configuration    │
-│   - Bulk Batch Approval &amp; PFMS Direct Benefit Transfer trigger        │
+│   - Runs the approved selection method for the selected scheme          │
+│   - Publishes versioned rules after authorized approval                 │
+│   - Authorizes payment workflow; SIH payment adapter remains simulated  │
 │                                │                                       │
 │                                ▼ (Specific to NFST / Research Schemes) │
 │   [Tier 5: Research Supervisor / Mentor Portal]                        │
 │   - Assigned to verified Ph.D. / M.Phil. scholars                      │
 │   - Bi-annual research milestone verification &amp; progress report upload │
-│   - Automated monthly fellowship continuation stipend endorsement      │
+│   - Records progress review where the scheme requires it                │
+│   - Endorsement starts an authorized workflow; it does not pay automatically│
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 9. BIOMETRIC FACE VERIFICATION &amp; PASSIVE LIVENESS ENGINE
+## 9. OPTIONAL BIOMETRIC RESEARCH: NOT A CORE SIH DEPENDENCY
 
-To eliminate proxy applicants and identity theft (e.g., cyber cafe operators applying under legitimate students&#x27; Aadhaar credentials without their knowledge), TribalSetu incorporates a client-side biometric anti-spoofing layer.
+Do not make face matching a required eligibility step or use it to auto-reject applicants. The current plan assumes access to an Aadhaar reference photo; do not assume that this data or API is available to the project. UIDAI describes face authentication as consent-based; any real integration needs an authorized route, explicit governance review, and a non-biometric fallback. For the SIH demo, use synthetic/sample images only and clearly label the result as experimental. See [UIDAI face authentication](https://uidai.gov.in/en/303-faqs/authentication.html).
+
+Biometric checks are an optional research track and are not required to submit, remain eligible, or receive an award. The following sketch is not an approved Aadhaar integration and must never auto-reject a person.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -692,22 +684,24 @@ To eliminate proxy applicants and identity theft (e.g., cyber cafe operators app
 │  - Converts facial landmarks into normalized vector $\vec{V}_{\text{live}}$│
 │                  │                                                     │
 │                  ▼                                                     │
-│  [Step 3: Aadhaar Photo Reference Comparison]                          │
-│  - Extracts official reference photo from Aadhaar QR / DigiLocker      │
+│  [Step 3: Optional Reference Comparison]                               │
+│  - Use only a consented reference available through an approved route  │
 │  - Computes reference vector $\vec{V}_{\text{aadhaar}}$                │
 │                  │                                                     │
 │                  ▼                                                     │
 │  [Step 4: Cosine Similarity Matching]                                  │
 │  $$\text{Sim}(\vec{V}_{\text{live}}, \vec{V}_{\text{aadhaar}}) = \frac{\vec{V}_{\text{live}} \cdot \vec{V}_{\text{aadhaar}}}{\|\vec{V}_{\text{live}}\| \|\vec{V}_{\text{aadhaar}}\|}$$
-│  - Match Score $\ge 0.82 \implies$ **VERIFIED BENEFICIARY IDENTITY**   │
-│  - Match Score $&lt; 0.65 \implies$ **IMPERSONATION FRAUD FLAGGED**       │
+│  - Similarity is a research signal only; validate accuracy and bias    │
+│  - Low confidence routes to human review, never automatic rejection   │
 │                                                                        │
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 10. RELATIONAL DATABASE SCHEMA (POSTGRESQL DDL &amp; ERD)
+## 10. PROPOSED RELATIONAL DATABASE SCHEMA (NOT YET CONNECTED)
+
+This SQL is a starting point for implementation, not a live database schema. Keep scheme eligibility, human selection outcome, document-review signals, and payment readiness in separate fields. Never persist raw Aadhaar in application records. Any deduplication token needs an approved threat model and protected key management.
 
 ```sql
 -- ====================================================================
@@ -725,7 +719,7 @@ CREATE TABLE users (
     phone VARCHAR(15) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role user_role NOT NULL,
-    aadhaar_hash CHAR(64) UNIQUE NOT NULL, -- SHA-256 Salted Hash (Zero Knowledge)
+    aadhaar_hash CHAR(64) UNIQUE NOT NULL, -- Pseudonymous keyed token only if approved; key is never stored here
     full_name VARCHAR(255) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -746,8 +740,8 @@ CREATE TABLE schemes (
 );
 
 -- 3. APPLICATIONS TABLE
-CREATE TYPE triage_decision AS ENUM (&#x27;GREEN&#x27;, &#x27;YELLOW&#x27;, &#x27;RED&#x27;);
-CREATE TYPE application_status AS ENUM (&#x27;DRAFT&#x27;, &#x27;SUBMITTED&#x27;, &#x27;AUTO_APPROVED&#x27;, &#x27;UNDER_DWO_REVIEW&#x27;, &#x27;APPROVED&#x27;, &#x27;REJECTED&#x27;, &#x27;DISBURSED&#x27;);
+CREATE TYPE review_priority AS ENUM (&#x27;ROUTINE&#x27;, &#x27;PRIORITY_REVIEW&#x27;, &#x27;URGENT_REVIEW&#x27;, &#x27;UNASSESSED&#x27;);
+CREATE TYPE application_status AS ENUM (&#x27;DRAFT&#x27;, &#x27;SUBMITTED&#x27;, &#x27;PENDING_VERIFICATION&#x27;, &#x27;UNDER_REVIEW&#x27;, &#x27;DEFICIENCY_ISSUED&#x27;, &#x27;RESUBMITTED&#x27;, &#x27;SELECTED&#x27;, &#x27;NOT_SELECTED&#x27;, &#x27;AWARD_ACTIVE&#x27;, &#x27;PAYMENT_PENDING&#x27;, &#x27;PAID&#x27;, &#x27;APPEAL_PENDING&#x27;, &#x27;CLOSED&#x27;);
 
 CREATE TABLE applications (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -761,17 +755,18 @@ CREATE TABLE applications (
     state VARCHAR(100) NOT NULL,
     district VARCHAR(100) NOT NULL,
     
-    -- AI Forensic Metrics
-    trust_score NUMERIC(5, 2) NOT NULL, -- 0.00 to 100.00
-    triage_band triage_decision NOT NULL,
-    status application_status DEFAULT &#x27;SUBMITTED&#x27;,
+    -- Eligibility, human selection outcome, and workflow status are separate
+    eligibility_status VARCHAR(32) NOT NULL DEFAULT &#x27;PENDING_VERIFICATION&#x27;,
+    selection_status VARCHAR(32) NOT NULL DEFAULT &#x27;NOT_EVALUATED&#x27;,
+    review_priority review_priority NOT NULL DEFAULT &#x27;UNASSESSED&#x27;,
+    status application_status NOT NULL DEFAULT &#x27;DRAFT&#x27;,
     
-    -- Sub-Scores
-    qr_integrity_score NUMERIC(5, 2),
-    ela_tamper_score NUMERIC(5, 2),
-    identity_match_score NUMERIC(5, 2),
-    gazette_compliance_score NUMERIC(5, 2),
-    dbt_readiness_score NUMERIC(5, 2),
+    -- Separate evidence; never a single auto-approval score
+    qr_signature_status VARCHAR(32),
+    ela_anomaly_score NUMERIC(5, 2),
+    ocr_confidence NUMERIC(5, 2),
+    identity_match_similarity NUMERIC(5, 2),
+    dbt_readiness_status VARCHAR(32),
     
     -- Verification Artifacts
     audit_trail JSONB NOT NULL DEFAULT &#x27;[]&#x27;::jsonb,
@@ -809,14 +804,16 @@ CREATE TABLE disbursement_ledger (
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_apps_status_triage ON applications(status, triage_band);
+CREATE INDEX idx_apps_status_review_priority ON applications(status, review_priority);
 CREATE INDEX idx_apps_student ON applications(student_id);
 CREATE INDEX idx_users_aadhaar ON users(aadhaar_hash);
 ```
 
 ---
 
-## 11. RESTFUL API GATEWAY &amp; MICROSERVICES SPECIFICATION
+## 11. PROPOSED API CONTRACT (NOT CURRENTLY IMPLEMENTED)
+
+The endpoints below are a target contract. The repository currently exposes different `/api/...` routes and does not implement the authentication API, role checks, or Redis queue described here. Keep API documentation synchronized with working routes and enforce authorization server-side before exposing applicant or officer data.
 
 ### 11.1 Key Endpoints
 
@@ -825,7 +822,7 @@ CREATE INDEX idx_users_aadhaar ON users(aadhaar_hash);
 | `POST` | `/api/v1/auth/login` | None | Authenticates applicant or officer. Returns JWT bearer token + permissions. |
 | `POST` | `/api/v1/verify/trial` | None | Instant 4-in-1 verification for uploaded certificates (used in demo). |
 | `POST` | `/api/v1/applications/submit` | Student | Submits complete application payload into asynchronous Redis task queue. |
-| `GET` | `/api/v1/applications/status/{id}` | Student | Polls live status, Trust Score breakdown, and deficiency notices. |
+| `GET` | `/api/v1/applications/status/{id}` | Student | Polls application state, eligibility status, review evidence, and deficiency notices. |
 | `GET` | `/api/v1/officer/queues` | INO/DWO | Retrieves paginated Green, Yellow, and Red triage lists. |
 | `POST` | `/api/v1/officer/action/{id}` | DWO/SNO | Approves, rejects, or requests document re-upload with officer notes. |
 | `POST` | `/api/v1/disbursement/pfms-batch` | MoTA Admin | Executes atomic DBT disbursement trigger for all approved applications. |
@@ -833,83 +830,88 @@ CREATE INDEX idx_users_aadhaar ON users(aadhaar_hash);
 
 ---
 
-## 12. CURRENT CODEBASE MAP &amp; IMPLEMENTATION INVENTORY
+## 12. CURRENT CODEBASE STATUS: IMPLEMENTED, SIMULATED &amp; MISSING
 
-### Current Working Implementation (`tribalsetu_app/`):
+This inventory describes the repository reviewed for this plan update. A source file or demo endpoint is not evidence of a production integration.
 
-```
-tribalsetu_app/
-├── server.py               # Active FastAPI backend with static mounting, auth &amp; verification
-├── requirements.txt        # Python dependency manifest (FastAPI, OpenCV, zxing-cpp, etc.)
-├── test_pipeline.py        # Automated test suite (Verifies ELA, QR, and Trust Scorer)
-│
-├── ai_engine/              # Python AI Verification Engine
-│   ├── pipeline.py         # Master orchestrator chaining all 8 stages
-│   ├── preprocessor.py     # Vision preprocessor (Perspective transform, Sauvola deskew)
-│   ├── ela_tamper.py       # Error Level Analysis JPEG grid variance forensic detector
-│   ├── qr_engine.py        # Dual-engine QR scanner (zxing-cpp + OpenCV fallback)
-│   ├── ocr_engine.py       # Multilingual regex key-value extraction module
-│   ├── st_gazette.py       # Constitution Article 342 statutory tribe validation database
-│   ├── identity_matcher.py # Levenshtein fuzzy string distance identity matcher
-│   ├── dbt_checker.py      # NPCI Aadhaar Payment Bridge seeding simulator
-│   └── trust_scorer.py     # Weighted ensemble scoring &amp; Green/Yellow/Red triage engine
-│
-├── static/                 # Production-Ready Frontend Interfaces
-│   ├── index.html          # Unified Student &amp; Officer Portal with live WebSocket charts
-│   ├── trial.html          # Interactive 4-in-1 Document Verification Demo interface
-│   ├── app.js              # State management &amp; dynamic DOM rendering
-│   └── styles.css          # Dark glassmorphism enterprise stylesheet
-│
-└── data/                   # System Static Data
-    └── schemes_directory.json # Master MoTA scholarship rules, checklists &amp; boundaries
-```
+### Present as prototype code
+- FastAPI application and student/officer web pages.
+- Document processing modules for image preprocessing, ELA, QR decoding, OCR, tribe lookup, identity matching, and trust triage.
+- Prototype modules for scheme rules, merit allocation, deficiency notices, fellowship records, biometrics, and an in-memory hash ledger.
+- Sample applications and sample documents for demonstrations.
+
+### Simulated or unsafe for real applicants
+- Application records and several module records are held in process memory; they are lost on restart and are not a durable system of record.
+- DBT/NPCI, PFMS, SMS/WhatsApp, and fellowship actions are simulated; no live government or communications gateway is connected.
+- The current application endpoint accepts decision/score fields from the client, stores raw Aadhaar in memory, and can mark a client-submitted GREEN result as approved/paid. Application queues are not protected by implemented login and role authorization.
+- CORS is permissive. The fixed salt and public hash endpoint must not be used as a secure Aadhaar deduplication design.
+- The current dependency list does not provide the Redis/Celery/PostgreSQL architecture shown earlier in this document. The SQL schema is a proposal and is not wired into the running backend.
+
+### Required before calling the system fully functional
+- Server-side eligibility and workflow decisions; protected APIs with real authentication and role checks.
+- Durable database and controlled document storage, backups, migrations, and data-retention behavior.
+- Scheme rules sourced from current official guidelines, versioned by academic year, reviewed, and published through an authorized approval process.
+- Applicant correction, deficiency, status tracking, grievance, and officer decision history.
+- External integrations implemented and authorized, or visibly marked as simulated in the SIH demo.
+
+The rule, merit, deficiency, fellowship, and biometric modules exist as prototypes. Their policy assumptions, persistence, access control, and edge cases still require review before they can be called complete.
 
 ---
 
-## 13. UNIMPLEMENTED MODULES &amp; PRODUCTION ROADMAP
+## 13. PHASED PRODUCTION ROADMAP
 
-For developers or AI agents extending this repository into full national-scale production, the following four modules represent the next engineering milestones:
+### Phase 0 - Confirm policy and scope
+Create a source-backed rule and workflow catalogue for PMS-ST, NFST, and NOS. For every academic year, record required documents, eligibility conditions, reviewer roles, selection method, communication events, and post-selection steps from the applicable official guideline. Keep NESTS/EMRS outside the core unless the team confirms it is in scope for this problem statement.
 
-```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                              REMAINING PRODUCTION MODULES                              │
-├────────────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                        │
-│  1. Dynamic Scheme Configurator (rule_engine.py)                                       │
-│     - AST-based rule evaluator: allows ministry admins to modify eligibility criteria   │
-│       (e.g., raise income limit from ₹2.5L to ₹3.0L) via UI without altering code.     │
-│                                                                                        │
-│  2. Merit &amp; Slot Allocation Engine (merit_allocator.py)                                │
-│     - Knapsack optimization algorithm for competitive schemes (NOS/NFST).              │
-│     - Sorts by normalized academic percentile + vulnerability weightings.              │
-│                                                                                        │
-│  3. Deficiency &amp; Re-Upload Workflow (deficiency_flow.py)                               │
-│     - Automated SMS/WhatsApp trigger (via CDAC gateway) when document is in Yellow/Red.│
-│     - Generates 72-hour single-use token link for instant re-upload.                   │
-│                                                                                        │
-│  4. Research Supervisor Portal (fellowship_portal.py)                                  │
-│     - Bi-annual progress review portal for NFST research fellows.                     │
-│     - Milestone-based stipend release authorization.                                   │
-│                                                                                        │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-```
+### Phase 1 - Secure and persistent core
+Implement authentication and least-privilege authorization; move decisions to the backend; add durable persistence, migrations, document storage controls, backup/restore, and a versioned application state machine. Stop collecting or returning raw Aadhaar in normal application responses. Use synthetic test data until privacy and security controls have been reviewed.
+
+### Phase 2 - Three scheme-specific workflows
+Keep shared registration, application tracking, document upload, deficiency/resubmission, officer queues, audit history, and dashboards. Configure separate forms, checklists, eligibility rules, reviewer paths, selection methods, and post-selection handling for PMS-ST, NFST, and NOS. Do not apply a generic merit formula across schemes.
+
+### Phase 3 - AI-assisted verification with human review
+Use OCR to suggest extracted fields and highlight low-confidence values. Use QR verification only where issuer trust keys and signature validation are available. Use ELA and identity matching as review signals. Missing data goes to pending verification; uncertain or adverse signals go to an officer with evidence and an applicant correction route. Measure false positives and false negatives on representative data before publishing thresholds.
+
+### Phase 4 - Communication and integration adapters
+Build notification status, retries, delivery history, and applicant-facing messages. Keep DBT/PFMS, SMS, DigiLocker, or other external services behind adapters. In the demo, use clearly labelled simulators; use live services only after access, authorization, and operational requirements are satisfied.
+
+### Phase 5 - Operational readiness
+Add file validation, rate limits, secure configuration and key management, monitoring, audit review, accessibility and low-bandwidth support, disaster recovery, and repeatable security and load testing. Publish only measured performance results. A production launch also requires stakeholder approval and operational ownership.
 
 ---
 
-## 14. SIH JURY DEFENSE &amp; TRAP-QUESTION MATRIX
+## 14. HONEST SIH DEMONSTRATION CLAIMS
 
-| # | Jury Trap Question | Strategic Engineering Response |
-|---|---|---|
-| **1** | *&quot;If an applicant creates a completely fake certificate from scratch with matching name and caste, how will your ELA catch it?&quot;* | *&quot;ELA detects digital Photoshop splicing on existing documents. However, our system does not rely on a single signal. If a certificate is forged from scratch, it will fail **Stage 3 (QR Cryptography)** because state government certificates contain an asymmetric digital signature from the revenue authority. An attacker cannot forge the government&#x27;s private key. If they omit the QR, our composite scorer penalizes the document by 35 points, pushing it directly into the Yellow/Red triage queue.&quot;* |
-| **2** | *&quot;How does this comply with the DPDP Act 2023 regarding Aadhaar storage?&quot;* | *&quot;We implement a Zero-Knowledge architectural model. The raw 12-digit Aadhaar number is never written to persistent disk storage or application databases. In-memory workers immediately redact the first 8 digits, storing only the compliant format `XXXX-XXXX-1234`. For cross-application deduplication, we compute an irreversible salted SHA-256 hash using a secret ministry master key.&quot;* |
-| **3** | *&quot;What happens when 20 Lakh students apply on the last day? Your server will crash.&quot;* | *&quot;Traditional synchronous portals crash because file uploads block server worker threads. TribalSetu implements an asynchronous decoupled architecture using FastAPI, NGINX, and Redis/RabbitMQ buffers. Ingestion takes only 80ms to store the file and return a tracking token. Background verification is handled by Celery workers horizontally autoscaled via Kubernetes HPA. 46 worker pods of 16 cores each digest 20 Lakh applications in under 5 hours without server degradation.&quot;* |
-| **4** | *&quot;Rural tribal students often possess handwritten, stamp-based certificates from the 1990s without QR codes. Will your system reject them?&quot;* | *&quot;No. TribalSetu is designed for tribal inclusivity. When Stage 3 detects no digital QR, it does not mark the document as fraud; instead, it assigns the designated non-digital fallback score (70/100) and routes the document to the **YELLOW Queue**. The District Welfare Officer is presented with an optimized 10-second inspection interface with the stamp and signature pre-zoomed, cutting review time by 90% without rejecting genuine tribal beneficiaries.&quot;* |
-| **5** | *&quot;Why not use large multimodal LLMs (like GPT-4 Vision) for everything?&quot;* | *&quot;Large multimodal LLMs introduce three fatal architectural flaws for sovereign governance: First, cost—processing 90 Lakh documents via commercial LLM APIs would cost crores in recurring API billing. Second, data sovereignty—sending citizen identity documents to third-party cloud servers violates DPDP Act mandates. Third, hallucination—LLMs cannot provide court-admissible pixel-level mathematical variance proofs. TribalSetu uses sovereign, explainable algorithms (OpenCV, ELA, zxing-cpp) running locally at zero cost per scan.&quot;* |
+| Jury question | Accurate response |
+|---|---|
+| Can ELA prove a certificate is forged? | No. ELA can highlight compression anomalies. It is one review signal; scans and ordinary edits can create artifacts, and some manipulations may evade it. An officer reviews the evidence. |
+| Does a missing QR mean fraud? | No. QR absence or an unsupported issuer goes to manual review. Signature verification is claimed only when a trusted issuer key and a valid verification path are implemented. |
+| Is TribalSetu DPDP compliant today? | Do not claim that. The prototype needs privacy, security, retention, access, notice, and consent/legal-basis review before any real personal data is used. |
+| Can it process 20 lakh applications or finish in 3.2 seconds? | Those are unverified design targets. State measured results only after repeatable end-to-end benchmarks on the deployed build. |
+| Does AI approve or reject applications? | No. AI assists extraction and review prioritization. Eligibility and selection follow approved, scheme-specific rules; authorized officials record final decisions and reasons. |
+| Are payments and notifications live? | Not in this prototype. DBT/PFMS and messaging responses are simulated until an authorized integration is connected. |
 
 ---
 
-*Specification Approved for Smart India Hackathon 2026 Grand Finale Deployment.*  
-*Ministry of Tribal Affairs (MoTA) Automated Verification &amp; Triaging Engine (SIH26239).*
+## 15. FULLY FUNCTIONAL SIH PROTOTYPE ACCEPTANCE PLAN
+
+The SIH prototype is ready to demonstrate when all of the following are true:
+
+1. One running platform offers PMS-ST, NFST, and NOS as separate scheme profiles with their own forms, document checklists, eligibility rules, reviewer paths, and selection/post-selection steps.
+2. An applicant can create and resume a draft, submit documents, see a clear status, receive a deficiency with a reason, upload a correction, and track the next decision.
+3. An authorized officer can review the relevant queue, see source documents and AI evidence, request correction or record a decision with a reason, and leave an auditable history.
+4. Missing or uncertain evidence is never silently treated as a pass or fraud finding. AI scores cannot set final approval, rejection, or payment status.
+5. Scheme rules are linked to an official source, academic year, version, and approver. NOS/NFST selection logic is not substituted with an unapproved generic weighting formula.
+6. Data survives application restarts; applicant and officer endpoints enforce role-based access; demo data is synthetic; external integrations are visibly marked as simulated.
+7. Dashboards report applications by scheme, state, workflow status, deficiency, and outcome, without exposing unnecessary personal data.
+8. Before describing a capability as tested, secure, compliant, or scalable, the team has a repeatable test or review result supporting that exact claim.
+
+This acceptance plan covers a credible SIH prototype. National deployment remains a separate milestone requiring approved scheme policies, authorized integrations, security/privacy review, operational support, and measured capacity.
+
+---
+
+*Status: SIH prototype plan and production direction. Not a statement of MoTA approval, legal certification, live integration, or national-scale deployment.*  
+*Ministry of Tribal Affairs (MoTA) Problem Statement 26239 - Smart Education.*
 </pre>
     </div>
 </div>
@@ -918,7 +920,7 @@ For developers or AI agents extending this repository into full national-scale p
 function copyFullDocument() {
     const text = document.querySelector('.content-card').innerText;
     navigator.clipboard.writeText(text).then(() => {
-        alert('✅ Complete Master Project Specification copied to clipboard!\n\nYou can now paste it into WhatsApp, ChatGPT, Claude, or any text editor.');
+        alert('✅ TribalSetu SIH plan copied to clipboard!\n\nYou can now paste it into a document or notes.');
     }).catch(err => {
         alert('Failed to copy automatically. Please select all (Ctrl+A) and copy.');
     });

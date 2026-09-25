@@ -8,3 +8,6 @@ numpy>=1.26.0
 python-multipart>=0.0.9
 qrcode>=7.4.2
 pydantic>=2.6.0
+pypdfium2>=4.30.0
+rapidocr>=3.5.0,<4.0.0
+onnxruntime>=1.17.0

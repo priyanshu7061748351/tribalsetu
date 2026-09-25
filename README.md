@@ -5,20 +5,17 @@
 ---
 
 ## 📌 Overview
-**TribalSetu** is an automated AI verification, anti-fraud forensic, and triaging engine designed for national tribal scholarship schemes (**PMS-ST, NFST, NOS, NESTS**). It cuts verification latency from **45-90 days to under 3.2 seconds** while eliminating fraud and human bias.
+**TribalSetu** is a prototype for scholarship application intake, document review signals, and officer workflow for tribal scholarship schemes. AI output is advisory; eligibility, selection, and payment remain separate human or authorized-system steps. Performance and fraud-reduction outcomes have not yet been measured.
 
 ---
 
 ## 🚀 Key Features
-- **🔬 Error Level Analysis (ELA) Forensics:** Mathematical JPEG compression variance analysis that detects localized Photoshop/Canva number splicing with visual heatmaps.
-- **📱 Industrial QR Verification (`zxing-cpp`):** Decodes RSA-2048 cryptographic government tokens from State ServicePlus / e-District certificates (Bihar, Jharkhand, UP).
-- **📜 Article 342 Constitutional Gazette Validation:** Instant in-memory validation against statutory Scheduled Tribes schedules from `tribal.nic.in`.
-- **🛡️ DPDP Act 2023 Compliant:** In-memory zero-knowledge Aadhaar masking (`XXXX-XXXX-1234`) and salted SHA-256 deduplication hashing.
-- **⚡ High-Concurrency Scalability:** Asynchronous decoupled architecture (FastAPI + Redis task buffer) capable of digesting 20+ Lakh submissions on deadline day.
-- **🚦 Automated Green/Yellow/Red Triaging:**
-  - 🟢 **GREEN (85+):** Auto-approve and trigger instant PFMS DBT bank transfer.
-  - 🟡 **YELLOW (60-84):** 10-second inspection queue for district officers (handwritten/offline certs).
-  - 🔴 **RED (<60):** Fraud flagged with court-admissible forensic evidence.
+- **🔬 ELA image check:** Highlights image-compression differences for officer review; it cannot by itself prove document tampering.
+- **📱 QR parsing:** Decodes available QR content. A certificate signature is not treated as valid until a trusted issuer key is configured.
+- **📜 Article 342 directory:** Prototype reference data supports a preliminary community lookup; it does not replace official certificate verification.
+- **🛡️ Aadhaar display masking:** The submission record stores a masked value. This prototype does not integrate with UIDAI or certify DPDP compliance.
+- **💾 Local persistence:** SQLite stores application metadata, officer accounts, and review events for local demonstration.
+- **🚦 Human-led workflow:** Applications enter officer review; AI signals do not auto-approve, auto-reject, or initiate a payment.
 
 ---
 
@@ -49,14 +46,35 @@ pip install -r requirements.txt
 ```
 
 ### 3. Start Local Server
-```bash
-python server.py
+On Windows, you can double-click **`Start TribalSetu.bat`** in the project folder. It starts the local API in a visible console and opens the browser at `http://127.0.0.1:8000/`. Keep the server console open while using the app; close it or press Ctrl+C there to stop the server. If the app is already running, the launcher opens it without starting a second copy.
+
+**Do not open `index.html` directly.** A `file:///.../index.html` page cannot call this app's local API, so document screening, application saving, and officer queue requests will not work. Use the `http://127.0.0.1:8000/` address.
+
+Alternatively, after installing dependencies, start it in PowerShell with:
+
+```powershell
+.venv\Scripts\python.exe -m uvicorn server:app --host 127.0.0.1 --port 8000
 ```
 
 ### 4. Open in Browser
 - **🚀 4-in-1 Document Verification Trial Demo:** [http://127.0.0.1:8000/trial](http://127.0.0.1:8000/trial)
 - **🏠 Main Student & Officer Portal:** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 - **📖 API Documentation (Swagger):** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+<!-- Legacy manual setup notes retained below for officer credential configuration. -->
+In Windows PowerShell, set a private first-officer setup token and a separate signing key, then start the server:
+
+```powershell
+function New-Secret { $bytes = New-Object byte[] 48; $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create(); $rng.GetBytes($bytes); [Convert]::ToBase64String($bytes) }
+$env:TRIBALSETU_BOOTSTRAP_TOKEN = New-Secret
+$env:TRIBALSETU_SESSION_SECRET = New-Secret
+Write-Host "One-time officer setup token: $env:TRIBALSETU_BOOTSTRAP_TOKEN"
+python server.py
+```
+
+The local server stores submitted applications, officer accounts, and officer review events in `data/tribalsetu.sqlite3`. Open the Officer Queue and create the first officer with the setup token configured above. Officer passwords are stored as salted PBKDF2 hashes; sessions use an HTTP-only cookie. Keep both secrets private. If the process starts without `TRIBALSETU_SESSION_SECRET`, it uses a temporary key and all officer sessions end when the server restarts.
+
+Uploaded source documents are analyzed and then discarded in this milestone; the officer queue retains only application metadata and review signals. The dashboard warns against using its actions as official decisions until a safeguarded document store and reviewer viewer are implemented. An officer's **Approve for next stage** action records a prototype review decision only. It does not select a scholarship recipient or initiate a DBT payment. SQLite on a local filesystem is not a production deployment store. Before hosting, migrate to managed PostgreSQL and protected document storage, configure persistent storage and secrets, and add account provisioning, rate limits, and recovery controls. The static GitHub Pages site cannot submit applications or use the local officer queue.
 
 ---
 

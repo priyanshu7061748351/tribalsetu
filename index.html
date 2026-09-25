@@ -1307,6 +1307,11 @@
       border-color: var(--status-success-border);
       background: var(--status-success-bg);
     }
+    .stage-item.info {
+      opacity: 1;
+      border-color: #BFDBFE;
+      background: #EFF6FF;
+    }
     .stage-item.warn {
       opacity: 1;
       border-color: var(--status-warning-border);
@@ -1341,6 +1346,10 @@
       background: var(--status-success);
       color: #FFFFFF;
       box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+    }
+    .stage-item.info .stage-num-badge {
+      background: #2563EB;
+      color: #FFFFFF;
     }
     .stage-item.warn .stage-num-badge {
       background: var(--status-warning);
@@ -1391,6 +1400,7 @@
       border-radius: var(--radius-pill);
     }
     .badge-pass { background: #DCFCE7; color: #15803D; }
+    .badge-info { background: #DBEAFE; color: #1D4ED8; }
     .badge-warn { background: #FEF3C7; color: #B45309; }
     .badge-fail { background: #FEE2E2; color: #B91C1C; }
     .badge-running { background: #DBEAFE; color: #1D4ED8; }
@@ -1525,7 +1535,7 @@
             TribalSetu (जनजातीय सेतु)
             <span class="cyan-pill">AI Platform</span>
           </h1>
-          <p id="txtPortalSubtitle">National Scholarship Forensic Verification & Automated Direct Benefit Transfer (DBT) Portal</p>
+        <p id="txtPortalSubtitle">National scholarship application and officer-review portal</p>
         </div>
       </a>
       <div class="header-actions">
@@ -1559,14 +1569,22 @@
     </div>
   </nav>
 
+  <div id="localFileModeNotice" role="alert" style="display:none; max-width:1200px; margin:12px auto 0; padding:14px 18px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; color:#78350f; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+    <div>
+      <strong>This page was opened directly from a file.</strong>
+      <div style="font-size:0.88rem; margin-top:4px;">Server-backed features cannot run this way. No certificate has been screened. Start the local server, then open the app at <code>http://127.0.0.1:8000/</code>.</div>
+    </div>
+    <a href="http://127.0.0.1:8000/" style="display:inline-block; padding:9px 13px; border-radius:8px; background:#1d4ed8; color:#fff; font-weight:700; text-decoration:none;">Open local app</a>
+  </div>
+
   <!-- Page Body -->
   <main class="main-container">
 
     <!-- Welcoming Banner -->
     <div class="student-welcome-banner">
       <div class="banner-text">
-        <h2 id="txtBannerHeading">Automated AI Verification & Direct Benefit Transfer</h2>
-        <p id="txtBannerSubtitle">Empowering Scheduled Tribe students nationwide with real-time digital forensic verification, Zero paperwork latency, and direct Aadhaar-seeded bank payout.</p>
+        <h2 id="txtBannerHeading">Scholarship Applications & Officer Review</h2>
+        <p id="txtBannerSubtitle">OCR and document signals can assist review. They do not establish authenticity, eligibility, or payment status; authorized officers review applications.</p>
       </div>
       <div class="banner-stats">
         <span class="badge-count">
@@ -1579,6 +1597,16 @@
 
     <!-- 1. STUDENT SCHOLARSHIP VIEW -->
     <div id="view-student" class="view-panel active">
+      <div class="content-card" style="margin-bottom:18px;">
+        <div class="card-head"><h3>Track an application</h3></div>
+        <div class="card-body">
+          <div style="display:flex; gap:10px; flex-wrap:wrap; max-width:700px;">
+            <input id="applicationTrackingId" class="form-input" style="flex:1; min-width:240px;" placeholder="Enter your application tracking ID" autocomplete="off">
+            <button type="button" class="btn-primary" onclick="checkApplicationStatus()">Check status</button>
+          </div>
+          <p id="applicationStatusResult" role="status" style="margin:12px 0 0;"></p>
+        </div>
+      </div>
       <div class="portal-grid">
         
         <!-- Left Column: Step 1 Details Form -->
@@ -1598,7 +1626,7 @@
                 <svg class="svg-icon ai-sparkle-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 <div>
                   <strong style="font-size:0.86rem; color:var(--deep-indigo);" id="txtAutoFillTitle">AI Document Auto-Fill (स्मार्ट फॉर्म भराव)</strong>
-                  <div style="font-size:0.76rem; color:var(--text-secondary);" id="txtAutoFillDesc">Upload your certificate & AI will auto-extract Name, Father, Tribe & Aadhaar into the form!</div>
+                  <div style="font-size:0.76rem; color:var(--text-secondary);" id="txtAutoFillDesc">Local OCR suggests visible text fields. Check every suggestion against the document; it does not verify identity or authenticity.</div>
                 </div>
               </div>
               <button type="button" class="btn-ai-autofill" onclick="triggerAiAutoFill()">
@@ -1606,6 +1634,7 @@
                 <span id="txtBtnScanAutoFill">Auto-Fill from Doc</span>
               </button>
             </div>
+            <p id="portalAutoFillStatus" role="status" style="display:none; margin:-8px 0 14px; color:var(--text-secondary); font-size:0.78rem;"></p>
 
             <!-- Scheme Selection -->
             <div class="input-field">
@@ -1644,26 +1673,26 @@
             <div class="quick-scenarios-panel">
               <div class="scenarios-title" id="lblTestScenarios">1-Click Verification Demo Scenarios:</div>
               <div class="scenario-btn-list">
-                <button class="chip-btn green-accent" onclick="fillStudentForm('Rahul Munda', 'Birsa Munda', 'Munda', '987654321012', 'Jharkhand', 'sample_genuine_st.jpg')">
+                <button class="chip-btn green-accent" onclick="fillStudentForm('Demo Applicant', 'Demo Parent', 'Munda', '000000000000', 'Jharkhand', 'sample_genuine_st.jpg')">
                   <div>
-                    <strong>Rahul Munda:</strong> Genuine ST (Munda Tribe, Jharkhand)
-                    <div style="font-size:0.75rem; color:var(--text-secondary);">Valid 12-digit Aadhaar &bull; Article 342 Verified</div>
+                    <strong>Synthetic scenario:</strong> ST-name list match
+                    <div style="font-size:0.75rem; color:var(--text-secondary);">A name-list match does not authenticate a certificate or establish eligibility.</div>
                   </div>
-                  <span style="color:var(--status-success); font-weight:700; font-size:0.8rem;">100% Eligible &rarr;</span>
+                  <span style="color:var(--royal-blue); font-weight:700; font-size:0.8rem;">Officer review &rarr;</span>
                 </button>
-                <button class="chip-btn red-accent" onclick="fillStudentForm('Rahul Munda', 'Birsa Munda', 'Munda', '987654321012', 'Jharkhand', 'sample_tampered_fake.jpg')">
+                <button class="chip-btn red-accent" onclick="fillStudentForm('Demo Applicant', 'Demo Parent', 'Munda', '000000000000', 'Jharkhand', 'sample_tampered_fake.jpg')">
                   <div>
-                    <strong>Photoshop Altered:</strong> Spliced fake income figure
-                    <div style="font-size:0.75rem; color:var(--text-secondary);">Pixel variance detected via Error Level Analysis</div>
+                    <strong>Synthetic scenario:</strong> Image-compression signal
+                    <div style="font-size:0.75rem; color:var(--text-secondary);">A compression signal is not proof of editing or fraud.</div>
                   </div>
-                  <span style="color:var(--status-error); font-weight:700; font-size:0.8rem;">Tamper Alert &rarr;</span>
+                  <span style="color:var(--status-warning); font-weight:700; font-size:0.8rem;">Officer review &rarr;</span>
                 </button>
-                <button class="chip-btn amber-accent" onclick="fillStudentForm('Rahul Kushwaha', 'Sohan Kushwaha', 'Kushwaha', '987654321012', 'Jharkhand', 'sample_non_st.jpg')">
+                <button class="chip-btn amber-accent" onclick="fillStudentForm('Demo Applicant', 'Demo Parent', 'Kushwaha', '000000000000', 'Jharkhand', 'sample_non_st.jpg')">
                   <div>
-                    <strong>Rahul Kushwaha:</strong> OBC Category (Non-ST)
-                    <div style="font-size:0.75rem; color:var(--text-secondary);">Kushwaha not in MoTA ST Gazette</div>
+                    <strong>Synthetic scenario:</strong> BC/OBC text on an ST-scheme application
+                    <div style="font-size:0.75rem; color:var(--text-secondary);">May need scheme-eligibility review; the certificate is not labelled fake.</div>
                   </div>
-                  <span style="color:var(--status-warning); font-weight:700; font-size:0.8rem;">Ineligible Caste &rarr;</span>
+                  <span style="color:var(--status-warning); font-weight:700; font-size:0.8rem;">Review category &rarr;</span>
                 </button>
               </div>
             </div>
@@ -1671,17 +1700,17 @@
             <!-- Form Inputs -->
             <div class="input-field">
               <label id="lblFullName">Applicant Full Name (छात्र का पूरा नाम - Aadhaar के अनुसार)</label>
-              <input type="text" id="portalApplicantName" class="form-input" placeholder="e.g. Rahul Munda" value="Rahul Munda">
+                <input type="text" id="portalApplicantName" class="form-input" placeholder="Enter the applicant name">
             </div>
 
             <div class="input-grid-2">
               <div class="input-field">
                 <label id="lblFatherName">Father's Name (पिता का नाम)</label>
-                <input type="text" id="portalFatherName" class="form-input" placeholder="e.g. Birsa Munda" value="Birsa Munda">
+                <input type="text" id="portalFatherName" class="form-input" placeholder="Enter the father's name">
               </div>
               <div class="input-field">
                 <label id="lblClaimedTribe">Claimed Tribe / Community (जनजाति / जाति)</label>
-                <input type="text" id="portalCasteName" class="form-input" placeholder="e.g. Munda, Santhal, Gond" value="Munda">
+                <input type="text" id="portalCasteName" class="form-input" placeholder="Enter the claimed tribe / community">
               </div>
             </div>
 
@@ -1689,7 +1718,7 @@
               <div class="input-field">
                 <label id="lblAadhaar">Aadhaar Number (12 Digit आधार नंबर)</label>
                 <!-- Strictly 12 digits numeric restriction -->
-                <input type="text" id="portalAadhaar" class="form-input" placeholder="12-digit Aadhaar number" maxlength="12" pattern="\d{12}" oninput="validateAadhaarInput(this)" value="987654321012">
+                <input type="text" id="portalAadhaar" class="form-input" placeholder="Enter 12-digit Aadhaar number" maxlength="12" pattern="\d{12}" oninput="validateAadhaarInput(this)" autocomplete="off">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
                   <small id="aadhaarMaskHint">Masked automatically as per DPDP Act (XXXX-XXXX-1012)</small>
                   <small id="aadhaarDigitCounter" style="font-weight:700; color:var(--status-success);">12 / 12 Digits</small>
@@ -1708,13 +1737,13 @@
 
             <div class="input-field">
               <label id="lblUploadCert">Upload Caste / Income Document (प्रमाणपत्र अपलोड करें)</label>
-              <input type="file" id="portalDocFile" class="form-input" style="padding-top:8px;" onchange="handleDirectDocUpload(this)">
-              <small id="lblDocHint">Accepts JPG, PNG, PDF. Automated ELA tamper check & QR extraction will run instantly.</small>
+              <input type="file" id="portalDocFile" class="form-input" style="padding-top:8px;" accept="image/*,.pdf" onchange="handleDirectDocUpload(this)">
+              <small id="lblDocHint">Accepts JPG, PNG, PDF. OCR and limited image signals may be shown for officer review.</small>
             </div>
 
             <button type="button" class="btn-primary" id="btnRunVerification" onclick="runPortalVerification()">
               <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              <span id="txtBtnVerify">VERIFY APPLICATION WITH AI FORENSICS</span>
+        <span id="txtBtnVerify">RUN SCREENING FOR OFFICER REVIEW</span>
             </button>
 
           </div>
@@ -1725,7 +1754,7 @@
           <div class="card-head">
             <h3>
               <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              <span id="txtStep2Title">Step 2: Instant AI Forensic Result</span>
+              <span id="txtStep2Title">Step 2: Document Screening &amp; Officer Review</span>
             </h3>
             <span id="portalResultBadge" class="tag-badge tag-indigo">Ready</span>
           </div>
@@ -1734,32 +1763,32 @@
             <div id="portalEmptyPrompt" class="empty-state">
               <svg class="empty-icon svg-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
               <h4 id="txtEmptyPromptHeading">No Verification Executed</h4>
-              <p style="font-size:0.84rem; margin-top:4px;" id="txtEmptyPromptDesc">Fill in your application details or select a 1-click test scenario on the left to trigger the AI verification pipeline.</p>
+              <p style="font-size:0.84rem; margin-top:4px;" id="txtEmptyPromptDesc">Fill in the applicant details and request officer review. Screening signals do not decide authenticity or eligibility.</p>
             </div>
 
             <div id="portalVerificationResults" style="display:none;">
               
               <div id="portalAlertBanner" class="result-alert success">
-                <strong id="portalSummaryTitle">Verified Successfully</strong>
+                <strong id="portalSummaryTitle">Officer review required</strong>
                 <p id="portalSummaryText" style="font-size:0.86rem; margin-top:4px;"></p>
               </div>
 
               <div class="score-badge-box">
-                <div class="score-title" id="lblIntegrityScore">Composite Integrity & Eligibility Score</div>
-                <div class="score-number" id="portalScoreDisplay">88.4 / 100</div>
+                <div class="score-title" id="lblIntegrityScore">Review state (no authenticity score)</div>
+                <div class="score-number" id="portalScoreDisplay">Not calculated</div>
                 <div id="portalDbtNotice" style="font-size:0.8rem; color:var(--royal-blue); font-weight:700; margin-top:6px;">
-                  NPCI DBT Bank Account: Active & Seeded (Punjab National Bank ****4484)
+                  DBT/bank status has not been checked with a government or bank system.
                 </div>
               </div>
 
-              <h4 style="font-size:0.82rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:12px; letter-spacing:0.04em;" id="lblCheckpointsTitle">Forensic Verification Checkpoints:</h4>
+              <h4 style="font-size:0.82rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:12px; letter-spacing:0.04em;" id="lblCheckpointsTitle">Document screening signals (not a decision):</h4>
               <div class="audit-trail" id="portalAuditTrail">
                 <!-- Checkpoints injected dynamically -->
               </div>
 
-              <button class="btn-primary" id="btnPortalSubmit" onclick="submitPortalApplication()" style="margin-top:16px;">
+              <button class="btn-primary" id="btnPortalSubmit" onclick="submitPortalApplication()" style="margin-top:16px;" disabled>
                 <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                <span id="txtBtnSubmitDbt">SUBMIT APPLICATION FOR IMMEDIATE DBT CREDIT</span>
+                <span id="txtBtnSubmitDbt">SUBMIT APPLICATION FOR OFFICER REVIEW</span>
               </button>
 
             </div>
@@ -1778,13 +1807,13 @@
           <div class="card-head">
             <h3>
               <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>4-in-1 Document Forensic Scanner</span>
+              <span>Document Screening &amp; Review</span>
             </h3>
-            <span class="tag-badge tag-cyan">8-Stage AI Core</span>
+            <span class="tag-badge tag-cyan">8-Stage Screening</span>
           </div>
           <div class="card-body">
             <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:16px;">
-              Autonomous sovereign edge forensic engine: Real-time Error Level Analysis (ELA), industrial QR cryptographic extraction, DPDP Act Aadhaar masking, and Article 342 Gazette validation.
+              Local document screening demo: OCR fields are provisional, QR presence is not signature verification, and image-compression signals cannot prove a document genuine or fake. Eligibility requires scheme rules and an officer review.
             </p>
 
             <div class="input-field">
@@ -1798,33 +1827,42 @@
             </div>
 
             <div class="input-field">
+              <label>Certificate Issuing State</label>
+              <select class="form-select" id="trialIssuerStateSelect">
+                <option value="bihar" selected>Bihar (बिहार)</option>
+                <option value="other">Other state / portal not configured</option>
+              </select>
+              <small style="color:var(--text-secondary); font-size:0.75rem; margin-top:4px; display:block;">The Bihar Government portal can be opened for manual verification; this app does not submit certificate details to it.</small>
+            </div>
+
+            <div class="input-field">
               <label>Upload Certificate File (JPG, PNG, WEBP, or PDF)</label>
               <input type="file" id="trialFileInput" class="form-input" style="padding-top:8px;" accept="image/*,.pdf" onchange="handleTrialFile(this)">
-              <small id="trialFileHint" style="color:var(--text-secondary); font-size:0.75rem; margin-top:4px; display:block;">Supports high-resolution camera scans, mobile photos, and digital e-District PDFs.</small>
+              <small id="trialFileHint" style="color:var(--text-secondary); font-size:0.75rem; margin-top:4px; display:block;">Supports high-resolution camera scans, mobile photos, and digital e-District PDFs. PDF screening reads up to five pages.</small>
             </div>
 
             <!-- Quick Load Test Scenarios -->
             <label style="font-size:0.76rem; font-weight:700; text-transform:uppercase; color:var(--text-secondary); margin-bottom:8px; display:block;">
-              1-Click Live Forensic Test Scenarios (त्वरित परीक्षण):
+              Synthetic UI Samples (not valid certificates):
             </label>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:18px;">
               <button type="button" class="chip-btn green-accent" style="padding:10px 8px; font-size:0.78rem; text-align:center;" onclick="loadSampleDocForTrial('sample_genuine_st.jpg', 'caste')">
-                <span>🟢 Genuine ST (Rahul Munda)</span>
+                <span>Sample image: ST text</span>
               </button>
               <button type="button" class="chip-btn red-accent" style="padding:10px 8px; font-size:0.78rem; text-align:center;" onclick="loadSampleDocForTrial('sample_tampered_fake.jpg', 'caste')">
-                <span>🔴 Tampered ELA (Spliced)</span>
+                <span>Sample image: edited area</span>
               </button>
               <button type="button" class="chip-btn amber-accent" style="padding:10px 8px; font-size:0.78rem; text-align:center;" onclick="loadSampleDocForTrial('sample_non_st.jpg', 'caste')">
-                <span>🟡 Non-ST (Rajput/General)</span>
+                <span>Sample image: category text</span>
               </button>
               <button type="button" class="chip-btn cyan-accent" style="padding:10px 8px; font-size:0.78rem; text-align:center;" onclick="loadSampleDocForTrial('sample_genuine_st.jpg', 'aadhaar')">
-                <span>🔵 Aadhaar (DPDP Masking)</span>
+                <span>Sample image: Aadhaar layout</span>
               </button>
             </div>
 
-            <button class="btn-primary" id="btnTrialVerify" onclick="executeTrialVerification()" style="width:100%; padding:14px; font-weight:800; letter-spacing:0.02em;">
-              <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              <span>⚡ EXECUTE 8-STAGE FORENSIC PIPELINE</span>
+              <button class="btn-primary" id="btnTrialVerify" onclick="executeTrialVerification()" style="width:100%; padding:14px; font-weight:800; letter-spacing:0.02em;">
+                <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Run Local Document Screening</span>
             </button>
           </div>
         </div>
@@ -1834,7 +1872,7 @@
           <div class="card-head">
             <h3>
               <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span>Forensic Audit & Pipeline Stepper</span>
+              <span>Document Signals & Review Workflow</span>
             </h3>
             <span id="trialOverallBadge" class="tag-badge tag-indigo">Ready</span>
           </div>
@@ -1845,7 +1883,7 @@
               <svg class="empty-icon svg-icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
               <h4>No Document Analyzed Yet</h4>
               <p style="font-size:0.84rem; margin-top:4px; max-width:400px; margin-left:auto; margin-right:auto;">
-                Upload a certificate or click one of the 1-click test scenarios to watch the 8-stage AI verification pipeline execute and tick off step-by-step in real-time.
+                Upload a certificate or click a synthetic test scenario to view the screening steps. These signals are provisional and do not verify authenticity or scheme eligibility.
               </p>
             </div>
 
@@ -1854,66 +1892,79 @@
               
               <!-- Verdict Alert Banner -->
               <div id="trialAlertBanner" class="result-alert success" style="margin-bottom:14px;">
-                <strong id="trialVerdictTitle">VERIFIED GENUINE DOCUMENT</strong>
-                <p id="trialVerdictDesc" style="font-size:0.84rem; margin-top:4px;">Certificate passes all cryptographic QR, Error Level Analysis (ELA), and Constitutional Gazette checks.</p>
+                <strong id="trialVerdictTitle">OFFICER REVIEW REQUIRED</strong>
+                <p id="trialVerdictDesc" style="font-size:0.84rem; margin-top:4px;">This screen reports limited signals only. It does not decide authenticity or eligibility.</p>
               </div>
 
               <!-- Score Badge Header -->
               <div class="score-badge-box" style="margin-bottom:14px;">
-                <div class="score-title">Composite Forensic & Eligibility Score</div>
-                <div class="score-number" id="trialVerdictScore">92.4 / 100</div>
+                <div class="score-title">Review State (no authenticity score)</div>
+                <div class="score-number" id="trialVerdictScore">Not evaluated</div>
                 <div id="trialTriageRoute" style="font-size:0.82rem; font-weight:700; color:var(--royal-blue); margin-top:4px;">
-                  Triage Decision: GREEN (Auto-Approved for Direct Benefit Transfer)
+                  No automated authenticity or eligibility decision is made.
                 </div>
               </div>
 
               <!-- Heatmap & Document Visualizer -->
               <div class="view-mode-tabs">
-                <button type="button" class="view-mode-btn active" id="btnTabHeatmap" onclick="switchHeatmapTab('heatmap')">Forensic ELA Heatmap (एक्स-रे दृश्य)</button>
+                <button type="button" class="view-mode-btn active" id="btnTabHeatmap" onclick="switchHeatmapTab('heatmap')">JPEG ELA diagnostic (not proof)</button>
                 <button type="button" class="view-mode-btn" id="btnTabOriginal" onclick="switchHeatmapTab('original')">Original Document (मूल दस्तावेज़)</button>
               </div>
 
               <div class="scanner-active-box" style="margin-bottom:16px;">
                 <div id="trialScannerLaser" class="scanner-laser-bar" style="display:none;"></div>
-                <img id="trialHeatmapImg" style="width:100%; display:block; max-height:220px; object-fit:contain; background:#0B0F19;" alt="Forensic Heatmap">
-                <img id="trialOriginalImg" style="width:100%; display:none; max-height:220px; object-fit:contain; background:#0B0F19;" alt="Original Document">
+                <div id="trialHeatmapNote" style="display:block; padding:30px 18px; color:#CBD5E1; text-align:center; background:#0B0F19;">
+                  No JPEG ELA image is available. ELA is a limited compression signal and cannot prove authenticity.
+                </div>
+                <img id="trialHeatmapImg" style="width:100%; display:none; max-height:220px; object-fit:contain; background:#0B0F19;" alt="JPEG ELA diagnostic image">
+                <div id="trialOriginalNote" style="display:none; padding:30px 18px; color:#CBD5E1; text-align:center; background:#0B0F19;">
+                  Original preview is unavailable for this file type.
+                </div>
+                <img id="trialOriginalImg" style="width:100%; display:none; max-height:360px; object-fit:contain; background:#0B0F19;" alt="Original Document">
+                <iframe id="trialOriginalPdf" title="Local preview of the selected PDF" style="width:100%; height:420px; display:none; border:0; background:#0B0F19;"></iframe>
               </div>
 
               <!-- Extracted Intelligence Grid -->
               <h4 style="font-size:0.78rem; text-transform:uppercase; color:var(--text-secondary); margin-bottom:6px; letter-spacing:0.04em;">
-                Extracted Document Intelligence (ओसीआर व पहचान डेटा):
+                OCR Candidate Fields (verify against the original):
               </h4>
               <div class="entity-grid" id="trialEntityGrid">
                 <div class="entity-card">
-                  <div class="entity-card-label">Masked Aadhaar (DPDP)</div>
-                  <div class="entity-card-value" id="fieldAadhaar">XXXX-XXXX-1012</div>
+                  <div class="entity-card-label">Aadhaar candidate (masked)</div>
+                  <div class="entity-card-value" id="fieldAadhaar">Not extracted</div>
                 </div>
                 <div class="entity-card">
                   <div class="entity-card-label">Applicant Name</div>
-                  <div class="entity-card-value" id="fieldName">Rahul Munda</div>
+                  <div class="entity-card-value" id="fieldName">Not extracted</div>
                 </div>
                 <div class="entity-card">
                   <div class="entity-card-label">Father's Name</div>
-                  <div class="entity-card-value" id="fieldFather">Birsa Munda</div>
+                  <div class="entity-card-value" id="fieldFather">Not extracted</div>
                 </div>
                 <div class="entity-card">
-                  <div class="entity-card-label">Recognized Tribe</div>
-                  <div class="entity-card-value" id="fieldTribe">Munda (ST)</div>
+                  <div class="entity-card-label">Tribe text candidate</div>
+                  <div class="entity-card-value" id="fieldTribe">Not extracted</div>
                 </div>
                 <div class="entity-card">
                   <div class="entity-card-label">Certificate Number</div>
-                  <div class="entity-card-value" id="fieldCertNo">JH/2026/ST/9981</div>
+                  <div class="entity-card-value" id="fieldCertNo">Not extracted</div>
                 </div>
                 <div class="entity-card">
                   <div class="entity-card-label">Annual Income</div>
-                  <div class="entity-card-value" id="fieldIncome">₹1,20,000</div>
+                  <div class="entity-card-value" id="fieldIncome">Not extracted</div>
                 </div>
+              </div>
+
+              <div id="issuerVerificationCard" style="display:none; margin-top:12px; padding:12px 14px; border:1px solid #dbe4f0; border-radius:12px; background:#f8fafc;">
+                <strong id="issuerVerificationTitle" style="display:block; color:#1e293b; font-size:0.84rem;">Official issuer verification</strong>
+                <p id="issuerVerificationMessage" style="margin:5px 0 8px; color:#475569; font-size:0.78rem;"></p>
+                <a id="issuerVerificationLink" href="https://rtps.bihar.gov.in/dscertificateview/webcopy/verifyCertificates.aspx" target="_blank" rel="noopener noreferrer" style="display:none; color:#1d4ed8; font-size:0.8rem; font-weight:700;">Open Bihar Government certificate verifier ↗</a>
               </div>
 
               <!-- Live 8-Stage Interactive Pipeline Stepper -->
               <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; margin-bottom:8px;">
                 <h4 style="font-size:0.82rem; text-transform:uppercase; color:var(--text-secondary); letter-spacing:0.04em; margin-bottom:0;">
-                  Live 8-Stage Forensic Pipeline Execution:
+                  Local Document Screening Stages:
                 </h4>
                 <span style="font-size:0.74rem; font-family:var(--font-mono); color:var(--royal-blue); font-weight:700;" id="trialExecutionLatency">Latency: 418ms</span>
               </div>
@@ -1942,22 +1993,54 @@
 
     <!-- 3. DTO OFFICER QUEUE & DBT VIEW -->
     <div id="view-officer" class="view-panel">
+      <div class="content-card" id="officerAuthCard">
+        <div class="card-head">
+          <h3>Officer access</h3>
+          <span class="tag-badge tag-indigo">Protected review</span>
+        </div>
+        <div class="card-body">
+          <p id="officerAuthMessage" role="status" style="margin:0 0 16px;">Checking officer access…</p>
+          <form id="officerLoginForm" style="display:none; max-width:520px;">
+            <div class="input-field"><label for="officerLoginEmail">Officer email</label><input id="officerLoginEmail" class="form-input" type="email" autocomplete="username" required></div>
+            <div class="input-field"><label for="officerLoginPassword">Password</label><input id="officerLoginPassword" class="form-input" type="password" autocomplete="current-password" required></div>
+            <button class="btn-primary" type="submit">Sign in to review queue</button>
+          </form>
+          <form id="officerBootstrapForm" style="display:none; max-width:520px;">
+            <h4 style="margin:18px 0 8px;">First-time officer setup</h4>
+            <p style="font-size:0.86rem;">The server operator must configure a private setup token before the first officer can be created.</p>
+            <div class="input-field"><label for="officerBootstrapName">Officer name</label><input id="officerBootstrapName" class="form-input" autocomplete="name" required></div>
+            <div class="input-field"><label for="officerBootstrapEmail">Officer email</label><input id="officerBootstrapEmail" class="form-input" type="email" autocomplete="username" required></div>
+            <div class="input-field"><label for="officerBootstrapPassword">Password (12 characters minimum)</label><input id="officerBootstrapPassword" class="form-input" type="password" minlength="12" autocomplete="new-password" required></div>
+            <div class="input-field"><label for="officerBootstrapToken">One-time server setup token</label><input id="officerBootstrapToken" class="form-input" type="password" autocomplete="off" required></div>
+            <button class="btn-primary" type="submit">Create first officer account</button>
+          </form>
+          <div id="officerSessionPanel" style="display:none; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <span id="officerSessionText"></span>
+            <button id="officerLogoutButton" class="chip-btn" type="button">Sign out</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="officerQueueContent" style="display:none;">
+      <p role="note" style="padding:12px 16px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-subtle);">
+        Prototype limitation: source documents are analyzed and then discarded; this queue shows applicant metadata and AI review signals only. Do not use these prototype actions as official eligibility, selection, or funding decisions.
+      </p>
       <div class="kpi-row">
         <div class="kpi-tile">
           <p>Total Submitted</p>
-          <h4 id="kpiTotal">3</h4>
+          <h4 id="kpiTotal">0</h4>
         </div>
         <div class="kpi-tile green">
-          <p>Green (Auto-Approved / DBT Ready)</p>
-          <h4 id="kpiGreen">1</h4>
+          <p>Awaiting Officer Review</p>
+          <h4 id="kpiGreen">0</h4>
         </div>
         <div class="kpi-tile amber">
-          <p>Yellow (Manual Officer Inspection)</p>
-          <h4 id="kpiYellow">1</h4>
+          <p>Approved for Next Stage</p>
+          <h4 id="kpiYellow">0</h4>
         </div>
         <div class="kpi-tile red">
-          <p>Red (Fraud / Tampered Flagged)</p>
-          <h4 id="kpiRed">1</h4>
+          <p>Correction / Rejection</p>
+          <h4 id="kpiRed">0</h4>
         </div>
       </div>
 
@@ -1965,9 +2048,9 @@
         <div class="card-head">
           <h3>
             <svg class="svg-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-            <span>District Tribal Officer (DTO) Triaging & DBT Queue</span>
+            <span>Officer Application Review Queue</span>
           </h3>
-          <span class="tag-badge tag-indigo">Live Triage</span>
+          <span class="tag-badge tag-indigo">Awaiting officer review</span>
         </div>
         <div class="card-body" style="padding:0;">
           <div class="table-container">
@@ -1977,9 +2060,9 @@
                   <th>Application ID</th>
                   <th>Student Name</th>
                   <th>Tribe & State</th>
-                  <th>Trust Score</th>
-                  <th>Decision Flag</th>
-                  <th>DBT Status</th>
+                  <th>AI review signal</th>
+                  <th>Application status</th>
+                  <th>Payment status</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -1989,6 +2072,7 @@
             </table>
           </div>
         </div>
+      </div>
       </div>
     </div>
 
@@ -2084,25 +2168,25 @@
       <div class="modal-head">
         <h3>
           <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <span id="txtModalTitle">Student DigiLocker & Scheme Profile</span>
+          <span id="txtModalTitle">Student Profile (Prototype)</span>
         </h3>
         <button class="modal-close" onclick="closeStudentModal()">&times;</button>
       </div>
       <div class="modal-body">
         <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:18px;">
-          Log in once via DigiLocker / Aadhaar OTP to permanently store your verified certificates and receive <strong>instant WhatsApp & SMS notifications</strong> whenever a scholarship for your community opens!
+          This prototype does not connect to DigiLocker or Aadhaar OTP, store a verified profile, or send SMS/WhatsApp alerts. You can copy details into the application form on this page.
         </p>
 
         <div style="background:var(--cyan-light); border:1px solid var(--cyan-border); border-radius:var(--radius-sm); padding:16px; margin-bottom:20px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-weight:700; color:var(--deep-indigo); font-size:0.9rem;">1-Click DigiLocker Verified Profile</div>
-            <span class="tag-badge tag-cyan">Govt of India</span>
+            <div style="font-weight:700; color:var(--deep-indigo); font-size:0.9rem;">Synthetic sample data</div>
+            <span class="tag-badge tag-cyan">Demo only</span>
           </div>
           <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:4px;">
-            Auto-fetches digital caste certificate, matric marksheet, and domicile without paper scanning.
+            These sample values are not fetched from any government account or record.
           </p>
-          <button class="btn-primary" style="height:40px; font-size:0.84rem; margin-top:12px;" onclick="simulateDigiLockerLogin()">
-            Connect DigiLocker Account (डिजीलॉकर से जोड़ें)
+          <button class="btn-primary" style="height:40px; font-size:0.84rem; margin-top:12px;" onclick="fillDemoProfile()">
+            Fill synthetic demo data
           </button>
         </div>
 
@@ -2111,18 +2195,18 @@
         </div>
 
         <div class="input-field">
-          <label>Full Name (as per Aadhaar)</label>
-          <input type="text" id="regName" class="form-input" value="Rahul Munda">
+          <label>Full Name</label>
+          <input type="text" id="regName" class="form-input" placeholder="Enter applicant name" autocomplete="off">
         </div>
 
         <div class="input-grid-2">
           <div class="input-field">
-            <label>Mobile Number (for WhatsApp/SMS Alerts)</label>
-            <input type="text" id="regMobile" class="form-input" placeholder="10-digit mobile" maxlength="10" value="9876543210">
+            <label>Mobile Number (optional; no alerts are sent)</label>
+            <input type="text" id="regMobile" class="form-input" placeholder="10-digit mobile" maxlength="10" autocomplete="off">
           </div>
           <div class="input-field">
             <label>Tribe / Caste Community</label>
-            <input type="text" id="regTribe" class="form-input" value="Munda">
+            <input type="text" id="regTribe" class="form-input" placeholder="Enter community" autocomplete="off">
           </div>
         </div>
 
@@ -2130,6 +2214,8 @@
           <div class="input-field">
             <label>Domicile State</label>
             <select id="regState" class="form-select">
+              <option value="" selected>Select a state</option>
+              <option value="Bihar">Bihar</option>
               <option value="Jharkhand">Jharkhand</option>
               <option value="Odisha">Odisha</option>
               <option value="Madhya Pradesh">Madhya Pradesh</option>
@@ -2142,7 +2228,7 @@
           </div>
           <div class="input-field">
             <label>Annual Family Income (₹)</label>
-            <input type="number" id="regIncome" class="form-input" value="120000">
+            <input type="number" id="regIncome" class="form-input" placeholder="Enter annual income" min="0">
           </div>
         </div>
 
@@ -2158,14 +2244,14 @@
         </div>
 
         <div id="matchedSchemesAlert" style="display:none; background:var(--status-success-bg); border:1px solid var(--status-success-border); border-radius:var(--radius-sm); padding:14px; margin-bottom:18px;">
-          <strong style="color:var(--status-success); font-size:0.88rem;" id="matchedSchemesText">3 Scholarships Matched Your Profile!</strong>
+          <strong style="color:var(--status-success); font-size:0.88rem;" id="matchedSchemesText">Values copied into the application form.</strong>
           <p style="font-size:0.8rem; color:var(--text-primary); margin-top:4px;">
-            Automated SMS & WhatsApp alerts activated. Whenever a new quota or deadline opens, you will be notified directly.
+            No scheme eligibility decision, profile storage, or notification was performed.
           </p>
         </div>
 
         <button class="btn-primary" onclick="saveStudentProfile()">
-          SAVE PROFILE & ACTIVATE SCHOLARSHIP ALERTS
+          COPY INTO APPLICATION FORM
         </button>
 
       </div>
@@ -2177,10 +2263,10 @@
     <div class="footer-container">
       <div>
         <strong style="color:var(--deep-indigo); font-size:0.95rem;">TribalSetu (जनजातीय सेतु) &bull; National AI Scholarship Engine</strong><br>
-        <span style="font-size:0.78rem;">Ministry of Tribal Affairs (MoTA), Government of India. Real-Time Forensic Verification, Anti-Tamper ELA & Direct Benefit Transfer.</span>
+        <span style="font-size:0.78rem;">Ministry of Tribal Affairs (MoTA), Government of India. Local screening prototype; no automated authenticity decision or payment.</span>
       </div>
       <div>
-        <span style="font-size:0.76rem; color:var(--text-secondary);">DPDP Act 2023 Compliant &bull; NPCI APB Seeding &bull; Article 342 Gazette</span>
+        <span style="font-size:0.76rem; color:var(--text-secondary);">Aadhaar candidates are masked on display &bull; No external DBT or government verification is connected</span>
       </div>
     </div>
   </footer>
@@ -2314,7 +2400,7 @@
         award: "Course Tuition Reimbursement + Up to ₹19,000/yr",
         deadline: "20 Nov 2026",
         income: "Family Income < ₹2.5 Lakh/yr",
-        state: "Jharkhand",
+        state: "Not provided",
         required_documents: [
           "Jharkhand ST Caste Certificate (CO/SDO Signed)",
           "Jharkhand Residential / Domicile Certificate",
@@ -2378,11 +2464,7 @@
       }
     ];
 
-    let officerApps = [
-      { id: "APP-2026-001", name: "Rahul Munda", tribe: "Munda", state: "Jharkhand", score: 87.6, decision: "GREEN", label: "AUTO_APPROVE", status: "APPROVED", dbt: "Paid via DBT" },
-      { id: "APP-2026-002", name: "Suresh Oraon", tribe: "Oraon", state: "Jharkhand", score: 67.0, decision: "YELLOW", label: "MANUAL_REVIEW", status: "PENDING", dbt: "Pending Review" },
-      { id: "APP-2026-003", name: "Vikas Singh", tribe: "Rajput", state: "Jharkhand", score: 38.5, decision: "RED", label: "FRAUD_FLAGGED", status: "REJECTED_FRAUD", dbt: "Blocked" }
-    ];
+    let officerApps = [];
 
     let currentPortalResult = null;
     let currentLanguage = 'en';
@@ -2392,13 +2474,13 @@
       en: {
         govAuth: "Ministry of Tribal Affairs (MoTA) | जनजातीय कार्य मंत्रालय, भारत सरकार",
         systemOnline: "Core Active • 2026 Engine",
-        portalSubtitle: "National Scholarship Forensic Verification & Automated Direct Benefit Transfer (DBT) Portal",
+        portalSubtitle: "National scholarship application and officer-review portal",
         tabStudent: "Scholarship Intake (छात्र आवेदन)",
         tabTrial: "AI Certificate Verifier (दस्तावेज़ जांच)",
         tabOfficer: "DTO Officer Queue & DBT (स्वीकृति डैशबोर्ड)",
         tabGazette: "Article 342 ST Directory (जनजाति सूची)",
-        bannerHead: "Automated AI Verification & Direct Benefit Transfer",
-        bannerSub: "Empowering Scheduled Tribe students nationwide with real-time digital forensic verification, Zero paperwork latency, and direct Aadhaar-seeded bank payout.",
+        bannerHead: "Scholarship Applications & Officer Review",
+        bannerSub: "OCR and document signals can assist review. They do not establish authenticity, eligibility, or payment status; authorized officers review applications.",
         activeSchemes: "10 Schemes Active",
         allStates: "All 36 States & UTs",
         step1: "Step 1: Application Intake & Document Upload",
@@ -2407,34 +2489,34 @@
         deadline: "Application Deadline:",
         incomeLimit: "Eligibility Criteria:",
         requiredDocs: "Required Documents Checklist (आवश्यक दस्तावेज़)",
-        testScenarios: "1-Click Verification Demo Scenarios:",
+        testScenarios: "Synthetic demonstration scenarios (not valid certificates):",
         fullName: "Applicant Full Name (छात्र का पूरा नाम - Aadhaar के अनुसार)",
         fatherName: "Father's Name (पिता का नाम)",
         claimedTribe: "Claimed Tribe / Community (जनजाति / जाति)",
         aadhaar: "Aadhaar Number (12 Digit आधार नंबर)",
         domicileState: "Domicile State (राज्य / केंद्र शासित प्रदेश)",
         uploadCert: "Upload Caste / Income Document (प्रमाणपत्र अपलोड करें)",
-        btnVerify: "VERIFY APPLICATION WITH AI FORENSICS",
-        step2: "Step 2: Instant AI Forensic Result",
+        btnVerify: "RUN SCREENING FOR OFFICER REVIEW",
+        step2: "Step 2: Document Screening & Officer Review",
         emptyHead: "No Verification Executed",
-        emptyDesc: "Fill in your application details or select a 1-click test scenario on the left to trigger the AI verification pipeline.",
-        integrityScore: "Composite Integrity & Eligibility Score",
-        checkpoints: "Forensic Verification Checkpoints:",
-        btnSubmitDbt: "SUBMIT APPLICATION FOR IMMEDIATE DBT CREDIT",
+        emptyDesc: "Enter applicant details and request officer review. Screening signals do not decide authenticity or eligibility.",
+        integrityScore: "Review state (no authenticity score)",
+        checkpoints: "Document screening signals (not a decision):",
+        btnSubmitDbt: "SUBMIT APPLICATION FOR OFFICER REVIEW",
         autoFillTitle: "AI Document Auto-Fill (स्मार्ट फॉर्म भराव)",
-        autoFillDesc: "Upload your certificate & AI will auto-extract Name, Father, Tribe & Aadhaar into the form!",
+        autoFillDesc: "Local OCR suggests visible text fields. Check every suggestion against the document; it does not verify identity or authenticity.",
         btnScanAutoFill: "Auto-Fill from Doc"
       },
       hi: {
         govAuth: "जनजातीय कार्य मंत्रालय (MoTA) | भारत सरकार",
         systemOnline: "सिस्टम ऑनलाइन • 2026 AI इंजन",
-        portalSubtitle: "राष्ट्रीय जनजातीय छात्रवृत्ति फोरेंसिक सत्यापन एवं स्वचालित प्रत्यक्ष लाभ अंतरण (DBT) पोर्टल",
+        portalSubtitle: "राष्ट्रीय छात्रवृत्ति आवेदन एवं अधिकारी समीक्षा पोर्टल",
         tabStudent: "छात्र आवेदन पोर्टल",
         tabTrial: "AI दस्तावेज़ सत्यापन टूल",
         tabOfficer: "डीटीओ अधिकारी डैशबोर्ड व DBT",
         tabGazette: "अनुच्छेद 342 ST गजट सूची",
-        bannerHead: "स्वचालित AI सत्यापन एवं प्रत्यक्ष लाभ अंतरण (DBT)",
-        bannerSub: "देशभर के जनजातीय छात्रों को त्वरित डिजिटल सत्यापन, कागज़ी देरी से मुक्ति और सीधे बैंक खाते में छात्रवृत्ति का लाभ।",
+        bannerHead: "छात्रवृत्ति आवेदन एवं अधिकारी समीक्षा",
+        bannerSub: "OCR और दस्तावेज़ संकेत समीक्षा में मदद कर सकते हैं; वे प्रमाण-पत्र की प्रामाणिकता, पात्रता या भुगतान की पुष्टि नहीं करते। अंतिम समीक्षा अधिकृत अधिकारी करते हैं।",
         activeSchemes: "10 छात्रवृत्तियां उपलब्ध",
         allStates: "सभी 36 राज्य एवं केंद्र शासित प्रदेश",
         step1: "चरण 1: छात्र विवरण एवं दस्तावेज़ अपलोड",
@@ -2443,22 +2525,22 @@
         deadline: "आवेदन की अंतिम तिथि:",
         incomeLimit: "पात्रता एवं आय सीमा:",
         requiredDocs: "आवश्यक दस्तावेज़ सूची (Checklist)",
-        testScenarios: "1-क्लिक टेस्ट सत्यापन विकल्प:",
+        testScenarios: "सिंथेटिक डेमो विकल्प (वैध प्रमाणपत्र नहीं):",
         fullName: "छात्र का पूरा नाम (आधार कार्ड के अनुसार)",
         fatherName: "पिता का नाम",
         claimedTribe: "दावा की गई जनजाति / जाति",
         aadhaar: "12-अंकीय आधार नंबर",
         domicileState: "मूल निवास राज्य (Domicile State)",
         uploadCert: "जाति / आय प्रमाण पत्र अपलोड करें",
-        btnVerify: "AI फोरेंसिक से आवेदन सत्यापित करें",
-        step2: "चरण 2: त्वरित AI सत्यापन परिणाम",
+        btnVerify: "अधिकारी समीक्षा हेतु स्क्रीनिंग करें",
+        step2: "चरण 2: दस्तावेज़ स्क्रीनिंग एवं अधिकारी समीक्षा",
         emptyHead: "अभी कोई सत्यापन नहीं हुआ है",
-        emptyDesc: "बाईं ओर अपना विवरण भरें या किसी 1-क्लिक टेस्ट विकल्प को चुनकर AI सत्यापन जांच शुरू करें।",
-        integrityScore: "समग्र पात्रता एवं प्रामाणिकता स्कोर",
-        checkpoints: "फोरेंसिक जांच बिंदु (Checkpoints):",
-        btnSubmitDbt: "सीधे DBT खाते में भुगतान हेतु आवेदन जमा करें",
+        emptyDesc: "आवेदक का विवरण भरकर अधिकारी समीक्षा माँगें। स्क्रीनिंग संकेत प्रामाणिकता या पात्रता का निर्णय नहीं करते।",
+        integrityScore: "समीक्षा स्थिति (प्रामाणिकता स्कोर नहीं)",
+        checkpoints: "दस्तावेज़ स्क्रीनिंग संकेत (अंतिम निर्णय नहीं):",
+        btnSubmitDbt: "अधिकारी की जांच हेतु आवेदन जमा करें",
         autoFillTitle: "AI दस्तावेज़ ऑटो-फिल (स्मार्ट भराव)",
-        autoFillDesc: "अपना प्रमाण पत्र अपलोड करें, AI स्वचालित रूप से नाम, पिता का नाम, जाति व आधार फॉर्म में भर देगा!",
+        autoFillDesc: "स्थानीय OCR पाठ के संभावित फ़ील्ड दिखाता है। हर सुझाव मूल दस्तावेज़ से जाँचें; यह पहचान या प्रामाणिकता सत्यापित नहीं करता।",
         btnScanAutoFill: "दस्तावेज़ से स्वतः भरें"
       }
     };
@@ -2528,7 +2610,7 @@
       });
 
       populateSchemeSelect("Jharkhand");
-      renderOfficerTable();
+      initOfficerAuth();
       renderGazetteList();
     }
 
@@ -2584,7 +2666,7 @@
 
     function quickVerifyDoc(docName) {
       switchSection(document.querySelectorAll('.portal-tab')[1], 'view-trial');
-      alert(`Switched to Document Verifier for: ${docName}.\nUpload your file to perform instant ELA and QR tamper detection.`);
+      alert(`Switched to local document screening for: ${docName}.\nOCR and limited QR/JPEG signals may be shown for officer review. They do not verify authenticity or scheme eligibility.`);
     }
 
     function onStateChanged(stateName) {
@@ -2620,34 +2702,51 @@
       fileInput.click();
     }
 
-    function handleDirectDocUpload(input) {
-      if (input.files && input.files[0]) {
-        const file = input.files[0];
-        
-        // Show AI Scanning simulation
-        const btn = document.getElementById('txtBtnScanAutoFill');
-        const origText = btn.textContent;
-        btn.textContent = "AI Scanning...";
+    async function handleDirectDocUpload(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const button = document.querySelector('.btn-ai-autofill');
+      const buttonText = document.getElementById('txtBtnScanAutoFill');
+      const status = document.getElementById('portalAutoFillStatus');
+      const originalButtonText = buttonText ? buttonText.textContent : '';
+      if (button) button.disabled = true;
+      if (buttonText) buttonText.textContent = 'Reading locally...';
+      if (status) {
+        status.style.display = 'block';
+        status.textContent = 'Reading text locally. No application has been submitted.';
+      }
 
-        setTimeout(() => {
-          btn.textContent = origText;
+      try {
+        const formData = new FormData();
+        formData.append('document', file);
+        formData.append('doc_type', 'caste');
+        formData.append('issuer_state', document.getElementById('portalState').value.toLowerCase() === 'bihar' ? 'bihar' : 'other');
+        const response = await fetch('/api/trial-verify', { method: 'POST', body: formData });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.detail || 'Local text extraction could not read this file.');
 
-          // Auto-fill logic
-          document.getElementById('portalApplicantName').value = "Rahul Munda";
-          document.getElementById('portalFatherName').value = "Birsa Munda";
-          document.getElementById('portalCasteName').value = "Munda";
-          
-          const aadhar = document.getElementById('portalAadhaar');
-          aadhar.value = "987654321012";
-          validateAadhaarInput(aadhar);
-          
-          document.getElementById('portalState').value = "Jharkhand";
+        const fields = data.extracted_fields || {};
+        const filled = [];
+        if (fields.name) {
+          document.getElementById('portalApplicantName').value = fields.name;
+          filled.push('name suggestion');
+        }
+        if (fields.father_name) {
+          document.getElementById('portalFatherName').value = fields.father_name;
+          filled.push("father's-name suggestion");
+        }
 
-          alert(`AI Document Scanner Success!\nExtracted from ${file.name}:\n- Name: Rahul Munda\n- Father: Birsa Munda\n- Caste: Munda (Scheduled Tribe)\n- Domicile: Jharkhand\n- Aadhaar: XXXX-XXXX-1012\n\nForm has been auto-filled successfully!`);
-
-          // Auto-trigger verification
-          runPortalVerification();
-        }, 1200);
+        const category = fields.category || fields.detected_tribe;
+        const notes = [];
+        if (category) notes.push('Category/community text candidate: ' + category + '.');
+        if (fields.masked_aadhaar) notes.push('Masked Aadhaar candidate: ' + fields.masked_aadhaar + '; the full number was not filled in.');
+        const resultText = filled.length ? 'OCR filled provisional ' + filled.join(' and ') + '. Check each field against the original.' : 'No name fields were extracted; no sample values were inserted.';
+        if (status) status.textContent = [resultText, ...notes, 'No authenticity or eligibility decision was made, and no application was submitted.'].join(' ');
+      } catch (error) {
+        if (status) status.textContent = (error.message || 'Local text extraction failed.') + ' No authenticity or eligibility decision was made.';
+      } finally {
+        if (button) button.disabled = false;
+        if (buttonText) buttonText.textContent = originalButtonText;
       }
     }
 
@@ -2660,7 +2759,7 @@
       if (activeView) activeView.classList.add('active');
     }
 
-    function fillStudentForm(name, father, tribe, aadhaar, state, sampleFile) {
+    async function fillStudentForm(name, father, tribe, aadhaar, state, sampleFile) {
       document.getElementById('portalApplicantName').value = name;
       document.getElementById('portalFatherName').value = father;
       document.getElementById('portalCasteName').value = tribe;
@@ -2670,14 +2769,28 @@
       validateAadhaarInput(aadhaarInput);
 
       document.getElementById('portalState').value = state;
-
+      if (sampleFile) {
+        const response = await fetch('/api/sample-docs/' + encodeURIComponent(sampleFile));
+        if (!response.ok) {
+          alert('The synthetic demo sample could not be loaded. No certificate finding was made.');
+          return;
+        }
+        const blob = await response.blob();
+        const file = new File([blob], sampleFile, { type: blob.type || 'image/jpeg' });
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        document.getElementById('portalDocFile').files = transfer.files;
+      }
       runPortalVerification();
     }
 
     async function runPortalVerification() {
-      const name = document.getElementById('portalApplicantName').value.trim() || 'Rahul Munda';
-      const father = document.getElementById('portalFatherName').value.trim() || 'Birsa Munda';
-      const caste = document.getElementById('portalCasteName').value.trim() || 'Munda';
+      currentPortalResult = null;
+      const submitButton = document.getElementById('btnPortalSubmit');
+      if (submitButton) submitButton.disabled = true;
+      const name = document.getElementById('portalApplicantName').value.trim();
+      const father = document.getElementById('portalFatherName').value.trim();
+      const caste = document.getElementById('portalCasteName').value.trim();
       const aadhaar = document.getElementById('portalAadhaar').value.trim();
       const state = document.getElementById('portalState').value || 'Jharkhand';
       const docInput = document.getElementById('portalDocFile');
@@ -2687,64 +2800,61 @@
         document.getElementById('portalAadhaar').focus();
         return;
       }
+      if (!name || !caste) {
+        alert('Enter the applicant name and claimed tribe/community before requesting officer review.');
+        return;
+      }
 
       document.getElementById('portalEmptyPrompt').style.display = 'none';
       document.getElementById('portalVerificationResults').style.display = 'block';
 
       const trail = document.getElementById('portalAuditTrail');
-      trail.innerHTML = '<div style="padding:12px; color:var(--royal-blue); font-weight:700; font-size:0.84rem; display:flex; align-items:center; gap:8px;"><div class="spinner-mini" style="border-top-color:var(--royal-blue);"></div> Running 8-Stage AI Forensic Pipeline...</div>';
+      trail.innerHTML = '<div style="padding:12px; color:var(--royal-blue); font-weight:700; font-size:0.84rem; display:flex; align-items:center; gap:8px;"><div class="spinner-mini" style="border-top-color:var(--royal-blue);"></div> Running local document screening...</div>';
 
       let apiData = null;
 
-      if (docInput && docInput.files && docInput.files[0]) {
-        try {
-          const fd = new FormData();
-          fd.append('caste_doc', docInput.files[0]);
-          fd.append('applicant_name', name);
-          fd.append('father_name', father);
-          fd.append('aadhaar_no', aadhaar);
-          fd.append('caste_name', caste);
-          fd.append('state', state.toLowerCase());
-
-          const res = await fetch('/api/verify', { method: 'POST', body: fd });
-          if (res.ok) {
-            apiData = await res.json();
-          }
-        } catch (e) {
-          console.warn("Portal API verify fallback:", e);
-        }
+      if (!docInput || !docInput.files || !docInput.files[0]) {
+        trail.textContent = 'Upload a document before running server verification.';
+        alert('Please upload the applicant document before verification.');
+        return;
       }
 
-      const stTribes = ["munda", "santhal", "oraon", "ho", "kharia", "bhil", "gond", "bodo", "meena", "baiga", "kondh", "kawar", "kisan", "asur", "birhor"];
-      const isST = stTribes.includes(caste.toLowerCase());
-      const isTampered = name.toLowerCase().includes('altered') || caste.toLowerCase().includes('fake') || name.toLowerCase().includes('tampered');
-
-      let score = apiData ? apiData.trust_score : (isST ? 88.4 : 42.0);
-      let decision = apiData ? apiData.decision : (isST ? "GREEN" : "RED");
-      let label = apiData ? apiData.decision_label : (isST ? "AUTO_APPROVE" : "INELIGIBLE_CASTE");
-      let alertClass = decision === "GREEN" ? "success" : (decision === "YELLOW" ? "warning" : "danger");
-      let summary = apiData ? apiData.summary : (isST 
-        ? "Verified Scheduled Tribe Certificate under Article 342. Eligible for Instant Direct Benefit Transfer (DBT)." 
-        : `Caste '${caste}' is not recognized under Article 342 Scheduled Tribe Gazette for ${state}.`);
-
-      if (!apiData && isTampered) {
-        score = 54.0;
-        decision = "YELLOW";
-        label = "MANUAL_REVIEW";
-        alertClass = "warning";
-        summary = "Pixel tampering / Spliced number detected in income figure via Error Level Analysis (ELA). Flagged for Officer Inspection.";
+      try {
+        const fd = new FormData();
+        fd.append('caste_doc', docInput.files[0]);
+        fd.append('applicant_name', name);
+        fd.append('father_name', father);
+        fd.append('aadhaar_no', aadhaar);
+        fd.append('caste_name', caste);
+        fd.append('state', state.toLowerCase());
+        const res = await fetch('/api/verify', { method: 'POST', body: fd });
+        if (res.ok) apiData = await res.json();
+        else throw new Error((await res.json()).detail || 'Document verification failed.');
+      } catch (error) {
+        currentPortalResult = null;
+        trail.textContent = 'Server verification did not complete. No eligibility decision was made.';
+        document.getElementById('portalSummaryTitle').textContent = 'Verification unavailable';
+        document.getElementById('portalSummaryText').textContent = error.message || 'Please retry after the server is available.';
+        alert(error.message || 'Server verification failed. Please retry.');
+        return;
       }
 
-      const checkpoints = [
-        { title: "Stage 1: Vision Preprocessor", status: "pass", text: "OpenCV Canny contour detection & 4-point perspective warp deskewing (0.04s)" },
-        { title: "Stage 2: ELA Tamper Analysis", status: isTampered ? "fail" : "pass", text: isTampered ? "Pixel variance spike detected in numerical area (ELA Tampered)" : "0% Photoshop tampering, uniform pixel compression verified" },
-        { title: "Stage 3: Dual-Engine QR Scan", status: "pass", text: "zxing-cpp validated official e-District digital signature token" },
-        { title: "Stage 4: Multilingual OCR", status: "pass", text: `Entities extracted: ${name} (Father: ${father}) & DPDP Masked XXXX-XXXX-${aadhaar.slice(-4)}` },
-        { title: "Stage 5: Article 342 Gazette", status: isST ? "pass" : "fail", text: isST ? `'${caste.toUpperCase()}' officially recognized in ${state} ST Gazette (15/15 pts)` : `'${caste}' NOT recognized in ${state} ST Schedule` },
-        { title: "Stage 6: Identity Cross-Match", status: isST ? "pass" : "warn", text: "100% Levenshtein ratio matched across Aadhaar & Marksheet records" },
-        { title: "Stage 7: NPCI DBT Seeding", status: "pass", text: "Aadhaar seeded with Punjab National Bank (Active APB Direct Payout)" },
-        { title: "Stage 8: Composite Trust Score", status: decision === "GREEN" ? "pass" : (decision === "YELLOW" ? "warn" : "fail"), text: `Composite Score: ${score}/100 • Routing: ${decision} (${label})` }
-      ];
+      if (!apiData || !apiData.verification_token) {
+        trail.textContent = 'Server response did not include a valid verification ticket. No application can be submitted.';
+        alert('Server verification did not issue a submission ticket. Please retry.');
+        return;
+      }
+
+      const score = null;
+      const decision = 'YELLOW';
+      const label = 'HUMAN_REVIEW_REQUIRED';
+      const alertClass = 'warning';
+      const summary = 'This screening shows limited document and text signals only. An authorized officer must review the original certificate and scheme rules; no authenticity score or eligibility decision was made.';
+      const checkpoints = (apiData.audit_trail || []).map(item => ({
+        title: 'Automated check',
+        status: item.startsWith('✓') ? 'pass' : (item.startsWith('✗') ? 'fail' : 'warn'),
+        text: item
+      }));
 
       currentPortalResult = {
         name: name,
@@ -2755,7 +2865,9 @@
         decision: decision,
         label: label,
         summary: summary,
-        audit: checkpoints
+        audit: checkpoints,
+        aiSignalDecision: apiData.decision,
+        verificationToken: apiData.verification_token
       };
 
       // Sequential animated ticks
@@ -2775,108 +2887,265 @@
           // Finalize UI
           const banner = document.getElementById('portalAlertBanner');
           banner.className = 'result-alert ' + alertClass;
-          document.getElementById('portalSummaryTitle').textContent = decision === 'GREEN' ? 'Verified — Eligible for Scholarship' : (decision === 'YELLOW' ? 'Flagged for Review' : 'Ineligible Category');
+          document.getElementById('portalSummaryTitle').textContent = 'Officer review required';
           document.getElementById('portalSummaryText').textContent = summary;
 
           const badge = document.getElementById('portalResultBadge');
           badge.className = 'tag-badge ' + (decision === 'GREEN' ? 'tag-green' : (decision === 'YELLOW' ? 'tag-amber' : 'tag-red'));
           badge.textContent = `${decision} — ${label}`;
 
-          document.getElementById('portalScoreDisplay').textContent = score + ' / 100';
+          document.getElementById('portalScoreDisplay').textContent = 'Not calculated';
+          if (submitButton) submitButton.disabled = !currentPortalResult.verificationToken;
         }
       }
       tickCheckpoint();
     }
 
-    function submitPortalApplication() {
+    async function submitPortalApplication() {
       if (!currentPortalResult) return;
       const r = currentPortalResult;
-      const newId = `APP-2026-00${officerApps.length + 1}`;
-      const scheme = document.getElementById('portalSchemeSelect').selectedOptions[0].text;
+      if (!r.verificationToken) {
+        alert('Server document verification is required before submission. The local preview cannot submit an application.');
+        return;
+      }
 
-      const newApp = {
-        id: newId,
-        name: r.name,
-        tribe: r.caste,
-        state: r.state,
-        score: r.score,
-        decision: r.decision,
-        label: r.label,
-        status: r.decision === 'GREEN' ? 'APPROVED' : (r.decision === 'YELLOW' ? 'PENDING' : 'REJECTED_FRAUD'),
-        dbt: r.decision === 'GREEN' ? 'Paid via DBT' : 'Pending Review'
-      };
+      const schemeSelect = document.getElementById('portalSchemeSelect');
+      const scheme = schemeSelect.selectedOptions[0].text;
+      const formData = new FormData();
+      formData.append('verification_token', r.verificationToken);
+      formData.append('scheme_name', scheme);
 
-      officerApps.unshift(newApp);
-      alert(`Application Successfully Submitted!\nTracking ID: ${newId}\nScheme: ${scheme}\nStatus: ${newApp.status}`);
+      let payload;
+      try {
+        const response = await fetch('/api/apply', { method: 'POST', body: formData });
+        payload = await response.json();
+        if (!response.ok) throw new Error(payload.detail || 'Application submission failed.');
+      } catch (error) {
+        alert(error.message || 'Could not submit the application. Please verify the document again.');
+        return;
+      }
+
+      const application = payload.application;
+      document.getElementById('applicationTrackingId').value = application.id;
+      await checkApplicationStatus();
+      alert(`Application saved for officer review.\nTracking ID: ${application.id}\nScheme: ${scheme}\nStatus: ${application.status}\nNo payment has been initiated. The tracking ID is ready in the status checker.`);
       document.getElementById('btnPortalSubmit').style.display = 'none';
-      renderOfficerTable();
     }
 
-    function renderOfficerTable() {
+    async function checkApplicationStatus() {
+      const trackingId = document.getElementById('applicationTrackingId').value.trim();
+      const result = document.getElementById('applicationStatusResult');
+      if (!trackingId) {
+        result.textContent = 'Enter the tracking ID shown after submission.';
+        return;
+      }
+      result.textContent = 'Looking up application…';
+      try {
+        const response = await fetch(`/api/applications/${encodeURIComponent(trackingId)}/status`);
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.detail || 'Could not find this application.');
+        const note = payload.officer_note ? ` Officer note: ${payload.officer_note}` : '';
+        result.textContent = `${payload.application_id} · ${payload.scheme_name} · ${payload.status} · Payment: ${payload.dbt_status}.${note}`;
+      } catch (error) {
+        result.textContent = error.message || 'Status lookup failed.';
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[character]);
+    }
+
+    async function initOfficerAuth() {
+      const message = document.getElementById('officerAuthMessage');
+      const loginForm = document.getElementById('officerLoginForm');
+      const bootstrapForm = document.getElementById('officerBootstrapForm');
+      const sessionPanel = document.getElementById('officerSessionPanel');
+      const queue = document.getElementById('officerQueueContent');
+      const showSignedOut = (status) => {
+        officerApps = [];
+        queue.style.display = 'none';
+        sessionPanel.style.display = 'none';
+        loginForm.style.display = status.setup_required ? 'none' : 'block';
+        bootstrapForm.style.display = status.setup_required && status.bootstrap_enabled ? 'block' : 'none';
+        if (status.setup_required && !status.bootstrap_enabled) {
+          message.textContent = 'No officer account exists. The server operator must set TRIBALSETU_BOOTSTRAP_TOKEN (at least 32 characters) before first-time setup.';
+        } else if (status.setup_required) {
+          message.textContent = 'No officer account exists yet. Create the first account using the one-time server setup token.';
+        } else {
+          message.textContent = 'Sign in with an authorized officer account to view applicant records.';
+        }
+        if (status.session_secret_ephemeral) {
+          message.textContent += ' For stable sessions across server restarts, configure TRIBALSETU_SESSION_SECRET.';
+        }
+      };
+
+      const showSignedIn = async (officer) => {
+        message.textContent = 'Officer session is active. All decisions are recorded with the reviewer name and reason.';
+        loginForm.style.display = 'none';
+        bootstrapForm.style.display = 'none';
+        sessionPanel.style.display = 'flex';
+        document.getElementById('officerSessionText').textContent = `${officer.full_name} · ${officer.role}`;
+        queue.style.display = 'block';
+        await renderOfficerTable();
+      };
+
+      try {
+        const response = await fetch('/api/auth/status', { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('Officer sign-in service is unavailable.');
+        const status = await response.json();
+        if (status.authenticated && status.officer) await showSignedIn(status.officer);
+        else showSignedOut(status);
+      } catch (error) {
+        message.textContent = error.message || 'Could not check officer login status.';
+        loginForm.style.display = 'none';
+        bootstrapForm.style.display = 'none';
+        queue.style.display = 'none';
+      }
+
+      loginForm.onsubmit = async (event) => {
+        event.preventDefault();
+        message.textContent = 'Signing in…';
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: document.getElementById('officerLoginEmail').value,
+              password: document.getElementById('officerLoginPassword').value
+            })
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.detail || 'Sign in failed.');
+          loginForm.reset();
+          await showSignedIn(result.officer);
+        } catch (error) {
+          message.textContent = error.message || 'Sign in failed.';
+        }
+      };
+
+      bootstrapForm.onsubmit = async (event) => {
+        event.preventDefault();
+        message.textContent = 'Creating first officer account…';
+        try {
+          const response = await fetch('/api/auth/bootstrap', {
+            method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              full_name: document.getElementById('officerBootstrapName').value,
+              email: document.getElementById('officerBootstrapEmail').value,
+              password: document.getElementById('officerBootstrapPassword').value,
+              setup_token: document.getElementById('officerBootstrapToken').value
+            })
+          });
+          const result = await response.json();
+          if (!response.ok) throw new Error(result.detail || 'First account setup failed.');
+          bootstrapForm.reset();
+          await showSignedIn(result.officer);
+        } catch (error) {
+          message.textContent = error.message || 'First account setup failed.';
+        }
+      };
+
+      document.getElementById('officerLogoutButton').onclick = async () => {
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+        const response = await fetch('/api/auth/status', { credentials: 'same-origin' });
+        showSignedOut(await response.json());
+      };
+    }
+
+    async function renderOfficerTable() {
       const tbody = document.getElementById('officerTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
-
+      let response;
+      try {
+        response = await fetch('/api/applications', { credentials: 'same-origin' });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.detail || 'Could not load officer queue.');
+        officerApps = payload.applications || [];
+      } catch (error) {
+        document.getElementById('officerAuthMessage').textContent = error.message || 'Could not load officer queue.';
+        return;
+      }
       const total = officerApps.length;
-      const green = officerApps.filter(a => a.decision === 'GREEN').length;
-      const yellow = officerApps.filter(a => a.decision === 'YELLOW').length;
-      const red = officerApps.filter(a => a.decision === 'RED').length;
+      const pending = officerApps.filter(a => a.status === 'PENDING_OFFICER_REVIEW').length;
+      const approved = officerApps.filter(a => a.status === 'APPROVED_PENDING_POST_SELECTION').length;
+      const needsAction = officerApps.filter(a => ['DEFICIENCY_NOTICE_ISSUED', 'REJECTED_BY_OFFICER'].includes(a.status)).length;
 
       document.getElementById('kpiTotal').textContent = total;
-      document.getElementById('kpiGreen').textContent = green;
-      document.getElementById('kpiYellow').textContent = yellow;
-      document.getElementById('kpiRed').textContent = red;
+      document.getElementById('kpiGreen').textContent = pending;
+      document.getElementById('kpiYellow').textContent = approved;
+      document.getElementById('kpiRed').textContent = needsAction;
+
+      if (officerApps.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:24px;">No applications have been submitted yet.</td></tr>';
+        return;
+      }
 
       officerApps.forEach(app => {
         const tr = document.createElement('tr');
-        const badgeClass = app.decision === 'GREEN' ? 'tag-green' : (app.decision === 'YELLOW' ? 'tag-amber' : 'tag-red');
+        const pendingReview = app.status === 'PENDING_OFFICER_REVIEW';
+        const signal = app.ai_signal_decision || 'NOT_AVAILABLE';
+        const signalClass = signal === 'GREEN' ? 'tag-green' : (signal === 'RED' ? 'tag-red' : 'tag-amber');
+        const evidenceItems = (Array.isArray(app.audit_trail) ? app.audit_trail : []).map(item => `<li>${escapeHtml(item)}</li>`).join('');
+        const evidence = `<details><summary>AI review evidence</summary><p>${escapeHtml(app.ela_tampering || 'No document signal available')}</p><ul>${evidenceItems}</ul></details>`;
+        const actionButtons = pendingReview ? `
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn-approve-dbt" onclick="recordOfficerDecision('${escapeHtml(app.id)}','APPROVE')">Approve for next stage</button>
+            <button type="button" class="chip-btn" onclick="recordOfficerDecision('${escapeHtml(app.id)}','REQUEST_CORRECTION')">Request correction</button>
+            <button type="button" class="chip-btn" onclick="recordOfficerDecision('${escapeHtml(app.id)}','REJECT')">Reject</button>
+          </div>` : `<span>${escapeHtml(app.officer_decision || app.status)}</span><br><small>${escapeHtml(app.officer_decision_reason || '')}</small>`;
         tr.innerHTML = `
-          <td><strong style="font-family:var(--font-mono); color:var(--deep-indigo);">${app.id}</strong></td>
-          <td>${app.name}</td>
-          <td>${app.tribe} (${app.state})</td>
-          <td><span class="tag-badge ${badgeClass}">${app.score}%</span></td>
-          <td><span class="tag-badge ${badgeClass}">${app.label}</span></td>
+          <td><strong style="font-family:var(--font-mono); color:var(--deep-indigo);">${escapeHtml(app.id)}</strong></td>
+          <td>${escapeHtml(app.applicant_name)}${evidence}</td>
+          <td>${escapeHtml(app.caste)} (${escapeHtml(app.state)})</td>
+          <td><span class="tag-badge ${signalClass}">${escapeHtml(signal)}${app.ai_signal_score == null ? '' : ` · ${escapeHtml(Number(app.ai_signal_score).toFixed(1))}`}</span></td>
+          <td><span class="tag-badge ${pendingReview ? 'tag-amber' : 'tag-indigo'}">${escapeHtml(app.status)}</span></td>
           <td>
-            <span style="font-weight:600; color:${app.decision==='GREEN'?'var(--status-success)':(app.decision==='RED'?'var(--status-error)':'var(--status-warning)')};">
-              ${app.dbt}
-            </span>
+            <span style="font-weight:600;">${escapeHtml(app.dbt_status || 'NOT_INITIATED')}</span>
           </td>
-          <td>
-            ${app.status !== 'APPROVED' && app.decision !== 'RED' 
-              ? `<button class="btn-approve-dbt" onclick="approveOfficerApp('${app.id}')">
-                   <svg class="svg-icon" style="width:14px; height:14px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                   Approve & DBT
-                 </button>` 
-              : `<span style="font-size:0.78rem; color:var(--text-secondary);">Processed</span>`}
-          </td>
+          <td>${actionButtons}</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    function approveOfficerApp(appId) {
-      const found = officerApps.find(a => a.id === appId);
-      if (found) {
-        found.status = 'APPROVED';
-        found.dbt = 'Paid via DBT';
+    async function recordOfficerDecision(appId, action) {
+      const actionLabel = action === 'APPROVE' ? 'approve this application for the next stage' : action === 'REJECT' ? 'reject this application' : 'request a correction';
+      const reason = prompt(`Please enter the reason to ${actionLabel} (minimum 5 characters):`);
+      if (reason === null) return;
+      if (reason.trim().length < 5) {
+        alert('Enter a review reason of at least 5 characters.');
+        return;
       }
-      alert(`Application ${appId} Approved!\nSimulated PFMS Direct Benefit Transfer of ₹13,500 credited to student bank account.`);
-      renderOfficerTable();
+      try {
+        const response = await fetch(`/api/applications/${encodeURIComponent(appId)}/decision`, {
+          method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action, reason: reason.trim() })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.detail || 'Could not record officer decision.');
+        alert(`Decision recorded: ${action}. No payment was initiated.`);
+        await renderOfficerTable();
+      } catch (error) {
+        alert(error.message || 'Could not record officer decision.');
+      }
     }
 
     // State tracking for Trial Verifier
     let currentTrialResult = null;
     let currentTrialFile = null;
+    let currentTrialPreviewUrl = null;
     let trialExecutionInterval = null;
 
     function onTrialDocTypeChanged() {
       const dt = document.getElementById('trialDocTypeSelect').value;
       const hint = document.getElementById('trialFileHint');
       if (hint) {
-        if (dt === 'aadhaar') hint.textContent = 'DPDP Act 2023: First 8 digits masked automatically (XXXX-XXXX-1234). Verhoeff checksum applied.';
-        else if (dt === 'caste') hint.textContent = 'Article 342: MoTA Scheduled Tribe official directory lookup & cryptographic e-District QR validation.';
-        else if (dt === 'income') hint.textContent = 'Statutory limits: ₹2.5 Lakh limit for PMS-ST, ₹8 Lakh limit for NOS scholarship.';
-        else hint.textContent = 'State Domicile verification and identity cross-matching against UIDAI records.';
+        if (dt === 'aadhaar') hint.textContent = 'Any Aadhaar digits detected by OCR are masked in the displayed candidate fields; checksum and identity are not verified.';
+        else if (dt === 'caste') hint.textContent = 'OCR and QR presence are screening signals only. The issuing authority and scheme eligibility are not verified here.';
+        else if (dt === 'income') hint.textContent = 'Income eligibility depends on the selected scheme and current official rules; this screen does not decide it.';
+        else hint.textContent = 'Domicile and identity records are not checked by this local screening demo.';
       }
     }
 
@@ -2888,6 +3157,7 @@
     }
 
     async function loadSampleDocForTrial(sampleName, docType) {
+      currentTrialFile = null;
       document.getElementById('trialDocTypeSelect').value = docType;
       onTrialDocTypeChanged();
       
@@ -2911,29 +3181,40 @@
       const btnOrig = document.getElementById('btnTabOriginal');
       const imgHeat = document.getElementById('trialHeatmapImg');
       const imgOrig = document.getElementById('trialOriginalImg');
+      const pdfOrig = document.getElementById('trialOriginalPdf');
+      const heatNote = document.getElementById('trialHeatmapNote');
+      const origNote = document.getElementById('trialOriginalNote');
+      const hasHeatmap = Boolean(imgHeat && imgHeat.dataset.available === 'true');
+      const hasOriginal = Boolean(imgOrig && imgOrig.dataset.available === 'true');
+      const hasPdf = Boolean(pdfOrig && pdfOrig.dataset.available === 'true');
 
       if (tab === 'heatmap') {
         btnHeat.classList.add('active');
         btnOrig.classList.remove('active');
-        imgHeat.style.display = 'block';
+        imgHeat.style.display = hasHeatmap ? 'block' : 'none';
+        heatNote.style.display = hasHeatmap ? 'none' : 'block';
         imgOrig.style.display = 'none';
+        if (pdfOrig) pdfOrig.style.display = 'none';
+        origNote.style.display = 'none';
       } else {
         btnOrig.classList.add('active');
         btnHeat.classList.remove('active');
-        imgOrig.style.display = 'block';
+        imgOrig.style.display = hasOriginal ? 'block' : 'none';
+        if (pdfOrig) pdfOrig.style.display = hasPdf ? 'block' : 'none';
+        origNote.style.display = (hasOriginal || hasPdf) ? 'none' : 'block';
         imgHeat.style.display = 'none';
+        heatNote.style.display = 'none';
       }
     }
-
     const PIPELINE_STAGE_TEMPLATES = [
-      { id: "stage-1", num: 1, title: "1. Vision Preprocessor (दृष्टि पूर्व-प्रसंस्करण)", desc: "OpenCV Canny edge contour detection, 4-point perspective warp deskewing & shadow removal." },
-      { id: "stage-2", num: 2, title: "2. Error Level Analysis (ELA फोटोशॉप जांच)", desc: "Re-compresses JPEG baseline 90, evaluates 12x12 grid variance for spliced text/numbers." },
-      { id: "stage-3", num: 3, title: "3. Dual-Engine QR Scanner (डिजिटल क्यूआर जांच)", desc: "zxing-cpp industrial engine extracts e-District RSA-2048 cryptographic token & gov domain." },
-      { id: "stage-4", num: 4, title: "4. Multilingual OCR & DPDP Masking (ओसीआर व मास्किंग)", desc: "Dual-language entity parsing (Hindi+English) & DPDP Act Aadhaar masking (XXXX-XXXX-1012)." },
-      { id: "stage-5", num: 5, title: "5. Article 342 Constitutional Gazette (संविधान अनुच्छेद 342)", desc: "O(1) in-memory gazette lookup against MoTA recognized Scheduled Tribes Presidential Orders." },
-      { id: "stage-6", num: 6, title: "6. Fuzzy Identity Cross-Matcher (पहचान समानता जांच)", desc: "Token-Sort Levenshtein distance ratio cross-matching applicant name across certificates." },
-      { id: "stage-7", num: 7, title: "7. NPCI APB DBT Seeding Checker (डीबीटी बैंक सीडिंग)", desc: "Aadhaar Payment Bridge (APB) active bank account verification for direct fund payout." },
-      { id: "stage-8", num: 8, title: "8. Composite Multi-Criteria Trust Scorer (समग्र विश्वास स्कोर)", desc: "Weighted formula triage: (0.30*QR) + (0.25*ELA) + (0.20*ID) + (0.15*Gazette) + (0.10*DBT)." }
+      { id: "stage-1", num: 1, title: "1. Vision Preprocessor (दृष्टि पूर्व-प्रसंस्करण)", desc: "File decoding only; source and authenticity are not verified." },
+      { id: "stage-2", num: 2, title: "2. JPEG Image Signal (ELA)", desc: "JPEG compression signal only; it cannot establish whether a document is genuine or altered." },
+      { id: "stage-3", num: 3, title: "3. QR Presence (not signature verification)", desc: "Detects QR presence only; issuing-authority signature validation is not connected." },
+      { id: "stage-4", num: 4, title: "4. OCR Candidate Fields", desc: "OCR candidate fields; detected Aadhaar digits are masked before display." },
+      { id: "stage-5", num: 5, title: "5. Scheme Eligibility Review", desc: "Eligibility depends on the scheme, state, certificate authority, and officer review." },
+      { id: "stage-6", num: 6, title: "6. Identity Cross-Check", desc: "Cross-document identity matching is not performed in this screening." },
+      { id: "stage-7", num: 7, title: "7. DBT / Bank Status", desc: "No bank, APB, or government DBT system is accessed." },
+      { id: "stage-8", num: 8, title: "8. Human Review Routing", desc: "No composite trust score or automated genuine/fake decision is produced." }
     ];
 
     function renderInitialPipelineStepper() {
@@ -2959,7 +3240,41 @@
       });
     }
 
+    function createInconclusiveTrialResult(message, docType) {
+      return {
+        overall_verdict: 'INCONCLUSIVE',
+        review_status: 'INCONCLUSIVE',
+        analysis_message: message || 'The screening service could not complete. No authenticity or eligibility finding was made.',
+        integrity_score: null,
+        is_genuine: null,
+        decision: 'YELLOW',
+        decision_label: 'INCONCLUSIVE',
+        doc_type: docType,
+        extracted_fields: {},
+        checks: {},
+        stages: [
+          { stage: 1, id: 'file_read', name: 'File Read', status: 'WARN', badge: 'Not confirmed', detail: 'The screening service did not confirm that this file could be read.' },
+          { stage: 2, id: 'ela_signal', name: 'ELA Image Signal', status: 'WARN', badge: 'Not run', detail: 'No ELA result is available.' },
+          { stage: 3, id: 'qr_presence', name: 'QR Presence', status: 'WARN', badge: 'Not checked', detail: 'No QR result is available.' },
+          { stage: 4, id: 'ocr_candidates', name: 'OCR Candidate Fields', status: 'WARN', badge: 'Not checked', detail: 'No OCR result is available.' },
+          { stage: 5, id: 'eligibility', name: 'Scheme Eligibility', status: 'WARN', badge: 'Not assessed', detail: 'No eligibility finding was made.' },
+          { stage: 6, id: 'identity', name: 'Identity Cross-Check', status: 'WARN', badge: 'Not checked', detail: 'No identity comparison was made.' },
+          { stage: 7, id: 'dbt', name: 'DBT / Bank Status', status: 'WARN', badge: 'Not checked', detail: 'No DBT or bank system was accessed.' },
+          { stage: 8, id: 'review', name: 'Review Routing', status: 'WARN', badge: 'No decision', detail: 'No score or genuine/fake decision was produced.' }
+        ]
+      };
+    }
+
     async function executeTrialVerification(fileOrSample = null, forcedDocType = null) {
+      if (window.location.protocol === 'file:') {
+        const notice = document.getElementById('localFileModeNotice');
+        if (notice) {
+          notice.style.display = 'flex';
+          notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
       const docType = forcedDocType || document.getElementById('trialDocTypeSelect').value;
       const verifyBtn = document.getElementById('btnTrialVerify');
       const emptyPrompt = document.getElementById('trialEmptyPrompt');
@@ -2970,157 +3285,134 @@
       if (emptyPrompt) emptyPrompt.style.display = 'none';
       if (resultsBox) resultsBox.style.display = 'block';
       if (laser) laser.style.display = 'block';
-
       renderInitialPipelineStepper();
 
-      // Resolve the actual file (passed argument or stored from upload zone)
       const targetFile = (fileOrSample instanceof File) ? fileOrSample : currentTrialFile;
-
-      // Show preview if file object available
-      if (targetFile instanceof File) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const orig = document.getElementById('trialOriginalImg');
-          if (orig) orig.src = e.target.result;
-        };
-        reader.readAsDataURL(targetFile);
+      const originalImg = document.getElementById('trialOriginalImg');
+      const originalPdf = document.getElementById('trialOriginalPdf');
+      const originalNote = document.getElementById('trialOriginalNote');
+      if (targetFile instanceof File && targetFile.type.startsWith('image/')) {
+        if (currentTrialPreviewUrl) URL.revokeObjectURL(currentTrialPreviewUrl);
+        currentTrialPreviewUrl = URL.createObjectURL(targetFile);
+        if (originalImg) {
+          originalImg.src = currentTrialPreviewUrl;
+          originalImg.dataset.available = 'true';
+        }
+        if (originalPdf) {
+          originalPdf.removeAttribute('src');
+          originalPdf.dataset.available = 'false';
+        }
+        if (originalNote) originalNote.style.display = 'none';
+      } else if (targetFile instanceof File && (targetFile.type === 'application/pdf' || targetFile.name.toLowerCase().endsWith('.pdf'))) {
+        if (currentTrialPreviewUrl) URL.revokeObjectURL(currentTrialPreviewUrl);
+        currentTrialPreviewUrl = URL.createObjectURL(targetFile);
+        if (originalImg) {
+          originalImg.removeAttribute('src');
+          originalImg.dataset.available = 'false';
+        }
+        if (originalPdf) {
+          originalPdf.src = currentTrialPreviewUrl;
+          originalPdf.dataset.available = 'true';
+        }
+        if (originalNote) originalNote.style.display = 'none';
+      } else {
+        if (currentTrialPreviewUrl) URL.revokeObjectURL(currentTrialPreviewUrl);
+        currentTrialPreviewUrl = null;
+        if (originalImg) {
+          originalImg.removeAttribute('src');
+          originalImg.dataset.available = 'false';
+        }
+        if (originalPdf) {
+          originalPdf.removeAttribute('src');
+          originalPdf.dataset.available = 'false';
+        }
+        if (originalNote) originalNote.textContent = targetFile instanceof File && targetFile.type === 'application/pdf'
+          ? 'PDF preview is unavailable in this browser. The screening service reads up to the first 5 pages.'
+          : 'Original preview is unavailable for this file type.';
+        if (originalNote) originalNote.style.display = 'block';
       }
 
+      const startedAt = performance.now();
       let backendData = null;
-      const startTime = performance.now();
-
-      // 1. Send to server backend if real File or sample
-      try {
-        let formData = new FormData();
-        if (targetFile instanceof File) {
-          formData.append('document', targetFile);
-        } else {
-          // Create a mock canvas file if string sample
-          const c = document.createElement('canvas');
-          c.width = 400; c.height = 250;
-          const ctx = c.getContext('2d');
-          ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0,0,400,250);
-          ctx.fillStyle = '#111827'; ctx.font = '16px sans-serif';
-          ctx.fillText(`Sample Certificate - ${docType.toUpperCase()}`, 20, 50);
-          const blob = await new Promise(r => c.toBlob(r, 'image/jpeg'));
-          formData.append('document', blob, 'sample_doc.jpg');
-        }
-        formData.append('doc_type', docType);
-
-        const resp = await fetch('/api/trial-verify', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (resp.ok) {
-          backendData = await resp.json();
-        }
-      } catch (err) {
-        console.warn("Backend API verification call error (running resilient local fallback):", err);
+      const formData = new FormData();
+      if (targetFile instanceof File) {
+        formData.append('document', targetFile);
+      } else {
+        const canvas = document.createElement('canvas');
+        canvas.width = 400;
+        canvas.height = 250;
+        const context = canvas.getContext('2d');
+        context.fillStyle = '#FFFFFF';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = '#334155';
+        context.font = '16px sans-serif';
+        context.fillText('Synthetic UI sample — not a certificate', 18, 55);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg'));
+        formData.append('document', blob, 'synthetic-ui-sample.jpg');
       }
+      formData.append('doc_type', docType);
+      formData.append('issuer_state', document.getElementById('trialIssuerStateSelect').value);
 
-      // 2. Fallback generator if backend not reachable
-      const checkFileName = targetFile ? (targetFile.name || '') : (typeof fileOrSample === 'string' ? fileOrSample : '');
-      const isTampered = /tamper|fake|fack|splic|fraud|alter/i.test(checkFileName);
-      const isNonSt = /non_st|kushwaha|rajput|general/i.test(checkFileName);
-
-      if (!backendData) {
-        const score = isTampered ? (docType === 'aadhaar' ? 32.0 : 38.4) : (isNonSt ? 46.5 : 92.4);
-        const dec = isTampered ? "RED" : (isNonSt ? "YELLOW" : "GREEN");
-        const decLabel = isTampered ? "FRAUD_FLAGGED" : (isNonSt ? "INELIGIBLE_NON_ST" : "AUTO_APPROVE");
-        
-        backendData = {
-          overall_verdict: isTampered ? (docType === 'aadhaar' ? "FAKE_AADHAAR_DETECTED" : "TAMPERED_OR_FAKE_DOCUMENT") : (isNonSt ? "NON_ST_CASTE_REJECTED" : "VERIFIED_GENUINE"),
-          integrity_score: score,
-          decision: dec,
-          decision_label: decLabel,
-          badge_color: dec === "GREEN" ? "#10B981" : (dec === "YELLOW" ? "#F59E0B" : "#EF4444"),
-          is_genuine: dec === "GREEN",
-          doc_type: docType,
-          extracted_fields: {
-            name: isNonSt ? "Vikas Singh" : (isTampered ? "Altered / Fake Beneficiary" : "Rahul Munda"),
-            father_name: isNonSt ? "Rajesh Singh" : (isTampered ? "Unknown / Fake" : "Birsa Munda"),
-            certificate_no: isTampered ? "JH/2026/TAMPERED/001" : "JH/2026/ST/9981",
-            annual_income: isTampered ? "₹45,000 (Spliced Amount)" : "₹1,20,000",
-            category: isNonSt ? "General / Rajput" : (isTampered ? "Tampered Fake" : "Scheduled Tribe (ST)"),
-            detected_tribe: isNonSt ? "RAJPUT (NON-ST)" : (isTampered ? "UNVERIFIED" : "MUNDA"),
-            issue_date: "14/02/2026",
-            masked_aadhaar: isTampered ? "INVALID_AADHAAR" : "XXXX-XXXX-1012"
-          }
-        };
+      try {
+        const response = await fetch('/api/trial-verify', { method: 'POST', body: formData });
+        const body = await response.json().catch(() => ({}));
+        if (response.ok && body && Array.isArray(body.stages)) {
+          backendData = body;
+        } else {
+          backendData = createInconclusiveTrialResult(
+            body.detail || body.analysis_message || 'The screening service returned an incomplete result. No fraud finding was made.',
+            docType
+          );
+        }
+      } catch (error) {
+        backendData = createInconclusiveTrialResult(
+          'No response was received from the local screening API. This run has no usable result. Start the local server, reload http://127.0.0.1:8000/, and upload the document again.',
+          docType
+        );
       }
 
       currentTrialResult = backendData;
-
-      // 3. Sequential Step-by-Step Live Animation with real Dynamic Pass/Fail Stages
-      const isGenuineDoc = backendData.is_genuine === true || backendData.overall_verdict === "VERIFIED_GENUINE";
-      const checks = backendData.checks || {};
-      const elaIsClean = checks.ela_forensics ? checks.ela_forensics.status === "PASS" : isGenuineDoc;
-      const qrIsFound = checks.qr_code ? checks.qr_code.status === "FOUND" : isGenuineDoc;
-      const tribeVal = String(backendData.extracted_fields?.detected_tribe || backendData.extracted_fields?.category || "").toUpperCase();
-      const isCasteNonSt = tribeVal.includes("NON-ST") || tribeVal.includes("RAJPUT") || tribeVal.includes("GENERAL") || tribeVal.includes("UNVERIFIED");
-
-      const stages = (backendData.stages && Array.isArray(backendData.stages) && backendData.stages.length > 0) ? backendData.stages : [
-        { stage: 1, id: "stage-1", status: "PASS", badge: "Deskewed & De-glared", detail: "OpenCV Canny contour detection & perspective warp applied.", latency_ms: 38 },
-        { stage: 2, id: "stage-2", status: elaIsClean ? "PASS" : "FAIL", badge: elaIsClean ? "Clean Compression" : "Tampering / Splicing Detected", detail: checks.ela_forensics?.explanation || (elaIsClean ? "Uniform pixel compression verified." : "High pixel variance anomaly in critical area."), latency_ms: 112 },
-        { stage: 3, id: "stage-3", status: qrIsFound ? "PASS" : "FAIL", badge: qrIsFound ? "e-District Token Verified" : "Missing / Fake QR", detail: qrIsFound ? "Industrial zxing-cpp decoded valid e-District RSA-2048 token." : "Missing cryptographic e-District RSA-2048 token signature.", latency_ms: 45 },
-        { stage: 4, id: "stage-4", status: isGenuineDoc ? "PASS" : "WARN", badge: isGenuineDoc ? "Aadhaar: XXXX-XXXX-1012" : "Low Entity Confidence", detail: "Multilingual OCR extracted entity fields. DPDP Act masking applied.", latency_ms: 165 },
-        { stage: 5, id: "stage-5", status: isCasteNonSt ? "FAIL" : "PASS", badge: isCasteNonSt ? "Non-ST Caste Rejected" : "Recognized ST Tribe", detail: isCasteNonSt ? "Caste is NOT recognized under MoTA Article 342 ST Schedule." : "Recognized as an official Scheduled Tribe under Article 342 in Jharkhand.", latency_ms: 14 },
-        { stage: 6, id: "stage-6", status: isGenuineDoc ? "PASS" : "WARN", badge: isGenuineDoc ? "100% Levenshtein Match" : "Identity Review Flagged", detail: "Cross-matched identity across Aadhaar, Caste Certificate & Marksheet records.", latency_ms: 22 },
-        { stage: 7, id: "stage-7", status: isGenuineDoc ? "PASS" : "FAIL", badge: isGenuineDoc ? "Active APB Account" : "DBT Payout Blocked", detail: isGenuineDoc ? "Aadhaar seeded on APB mapper. Direct DBT ready." : "Direct Benefit Transfer payout blocked due to forensic ineligibility/fraud.", latency_ms: 28 },
-        { stage: 8, id: "stage-8", status: isGenuineDoc ? "PASS" : "FAIL", badge: `${backendData.integrity_score || 40} / 100 • ${isGenuineDoc ? 'GREEN' : 'RED'}`, detail: `Multi-criteria score computed: ${backendData.overall_verdict || 'EVALUATED'}.`, latency_ms: 6 }
-      ];
-
-      let currentStepIdx = 0;
+      const stages = Array.isArray(backendData.stages) ? backendData.stages : [];
+      let stepIndex = 0;
 
       function stepNext() {
-        if (currentStepIdx < stages.length) {
-          const st = stages[currentStepIdx];
-          const itemEl = document.getElementById(`pipeline-stage-${st.stage}`);
-          const badgeEl = document.getElementById(`badge-stage-${st.stage}`);
-          const metricEl = document.getElementById(`metric-stage-${st.stage}`);
-          const descEl = document.getElementById(`desc-stage-${st.stage}`);
-
-          if (itemEl) {
-            // First set to running
-            itemEl.className = 'stage-item running';
-            if (badgeEl) badgeEl.innerHTML = `<div class="spinner-mini"></div>`;
-            if (metricEl) {
-              metricEl.className = 'stage-metric-badge badge-running';
-              metricEl.textContent = 'Processing...';
-            }
-
-            setTimeout(() => {
-              // Now finish and tick off
-              const isPass = st.status === 'PASS';
-              const isWarn = st.status === 'WARN';
-              const isFail = st.status === 'FAIL';
-
-              itemEl.className = `stage-item ${isPass ? 'pass' : (isWarn ? 'warn' : 'fail')}`;
-              if (badgeEl) {
-                badgeEl.textContent = isPass ? '✓' : (isWarn ? '⚠' : '✗');
-              }
-              if (metricEl) {
-                metricEl.className = `stage-metric-badge ${isPass ? 'badge-pass' : (isWarn ? 'badge-warn' : 'badge-fail')}`;
-                metricEl.textContent = `${st.badge || (isPass ? 'Pass' : 'Flagged')} (${st.latency_ms || 40}ms)`;
-              }
-              if (descEl && st.detail) {
-                descEl.textContent = st.detail;
-              }
-
-              currentStepIdx++;
-              stepNext();
-            }, 120); // 120ms per stage for super responsive & visual sequential tick progression
-          } else {
-            currentStepIdx++;
-            stepNext();
-          }
-        } else {
-          // All 8 stages finished!
-          finalizeTrialUI(backendData, startTime);
+        if (stepIndex >= stages.length) {
+          finalizeTrialUI(backendData, startedAt);
+          return;
         }
-      }
+        const stage = stages[stepIndex];
+        const item = document.getElementById('pipeline-stage-' + stage.stage);
+        const badge = document.getElementById('badge-stage-' + stage.stage);
+        const metric = document.getElementById('metric-stage-' + stage.stage);
+        const description = document.getElementById('desc-stage-' + stage.stage);
 
+        if (!item) {
+          stepIndex++;
+          stepNext();
+          return;
+        }
+        item.className = 'stage-item running';
+        if (badge) badge.innerHTML = '<div class="spinner-mini"></div>';
+        if (metric) {
+          metric.className = 'stage-metric-badge badge-running';
+          metric.textContent = 'Processing...';
+        }
+
+        setTimeout(function() {
+          const isPass = stage.status === 'PASS';
+          const isInfo = stage.status === 'INFO';
+          const statusClass = isPass ? 'pass' : (isInfo ? 'info' : 'warn');
+          item.className = 'stage-item ' + statusClass;
+          if (badge) badge.textContent = isPass ? '✓' : (isInfo ? 'i' : '⚠');
+          if (metric) {
+            metric.className = 'stage-metric-badge badge-' + statusClass;
+            metric.textContent = stage.badge || (isPass ? 'Completed' : 'Review');
+          }
+          if (description && stage.detail) description.textContent = stage.detail;
+          stepIndex++;
+          stepNext();
+        }, 120);
+      }
       stepNext();
     }
 
@@ -3131,93 +3423,81 @@
       if (verifyBtn) verifyBtn.disabled = false;
 
       const elapsed = Math.round(performance.now() - startTime);
-      const latEl = document.getElementById('trialExecutionLatency');
-      if (latEl) latEl.textContent = `Total Pipeline Latency: ${elapsed}ms`;
+      const latency = document.getElementById('trialExecutionLatency');
+      if (latency) latency.textContent = 'Local screening response: ' + elapsed + 'ms';
 
-      // Update Verdict Banner
-      const isGreen = data.decision === 'GREEN';
-      const isYellow = data.decision === 'YELLOW';
+      const inconclusive = data.review_status === 'INCONCLUSIVE';
       const banner = document.getElementById('trialAlertBanner');
-      if (banner) {
-        banner.className = `result-alert ${isGreen ? 'success' : (isYellow ? 'warning' : 'danger')}`;
-      }
+      if (banner) banner.className = 'result-alert warning';
 
-      document.getElementById('trialVerdictScore').textContent = `${data.integrity_score} / 100`;
-      
-      const titleEl = document.getElementById('trialVerdictTitle');
-      const descEl = document.getElementById('trialVerdictDesc');
-      const routeEl = document.getElementById('trialTriageRoute');
+      const score = document.getElementById('trialVerdictScore');
+      if (score) score.textContent = inconclusive ? 'Not analyzed' : 'Not calculated';
+      const title = document.getElementById('trialVerdictTitle');
+      const description = document.getElementById('trialVerdictDesc');
+      const route = document.getElementById('trialTriageRoute');
       const overallBadge = document.getElementById('trialOverallBadge');
 
-      if (isGreen) {
-        titleEl.textContent = 'VERIFIED GENUINE DOCUMENT (सत्यापित वास्तविक दस्तावेज़)';
-        descEl.textContent = 'Document passes all 8 forensic stages: 0% pixel tampering, Article 342 ST gazette recognition, valid cryptographic token, and active DBT bank account.';
-        routeEl.textContent = 'Triage Routing: GREEN — Auto-Approved for Instant Direct Benefit Transfer (DBT)';
-        routeEl.style.color = 'var(--status-success)';
-        overallBadge.className = 'tag-badge tag-green';
-        overallBadge.textContent = 'GREEN • AUTO-APPROVE';
-      } else if (isYellow) {
-        titleEl.textContent = 'MANUAL OFFICER REVIEW REQUIRED (अधिकारी जांच आवश्यक)';
-        descEl.textContent = 'Document routed to District Welfare Officer queue for 10-second inspection (Handwritten doc or category review).';
-        routeEl.textContent = 'Triage Routing: YELLOW — Queued for District Tribal Officer (DTO) Verification';
-        routeEl.style.color = 'var(--status-warning)';
+      if (inconclusive) {
+        title.textContent = 'SCREENING NOT COMPLETED';
+        description.textContent = data.analysis_message || 'No authenticity or eligibility finding was made.';
+        route.textContent = 'No certificate finding is available. Resolve the local service or file-read issue, then retry.';
         overallBadge.className = 'tag-badge tag-amber';
-        overallBadge.textContent = 'YELLOW • MANUAL REVIEW';
+        overallBadge.textContent = 'NO RESULT';
       } else {
-        titleEl.textContent = 'TAMPERING / INELIGIBILITY DETECTED (छेड़छाड़ / अपात्रता पहचानी गई)';
-        descEl.textContent = 'Forensic audit detected high pixel variance splicing or non-ST caste community. Application flagged with forensic evidence.';
-        routeEl.textContent = 'Triage Routing: RED — Blocked / Flagged Fraud';
-        routeEl.style.color = 'var(--status-error)';
-        overallBadge.className = 'tag-badge tag-red';
-        overallBadge.textContent = 'RED • FRAUD FLAGGED';
+        title.textContent = 'OFFICER REVIEW REQUIRED';
+        description.textContent = 'This screening shows limited document signals only. It does not determine whether the certificate is genuine, fake, or eligible.';
+        route.textContent = 'No automated authenticity or eligibility decision — review the original document and scheme rules.';
+        overallBadge.className = 'tag-badge tag-amber';
+        overallBadge.textContent = 'YELLOW • HUMAN REVIEW';
       }
+      route.style.color = 'var(--status-warning)';
 
-      // Update Heatmap Image
+      const checks = data.checks || {};
+      const heatmap = checks.ela_forensics && checks.ela_forensics.heatmap;
       const heatmapImg = document.getElementById('trialHeatmapImg');
-      if (heatmapImg) {
-        if (data.checks && data.checks.ela_forensics && data.checks.ela_forensics.heatmap) {
-          heatmapImg.src = data.checks.ela_forensics.heatmap;
-        } else {
-          // Generate realistic canvas ELA heatmap
-          const c = document.createElement('canvas');
-          c.width = 400; c.height = 200;
-          const ctx = c.getContext('2d');
-          ctx.fillStyle = '#070B14'; ctx.fillRect(0,0,400,200);
+      const heatmapNote = document.getElementById('trialHeatmapNote');
+      if (heatmapImg && heatmap) {
+        heatmapImg.src = heatmap;
+        heatmapImg.dataset.available = 'true';
+      } else if (heatmapImg) {
+        heatmapImg.removeAttribute('src');
+        heatmapImg.dataset.available = 'false';
+      }
+      if (heatmapNote) heatmapNote.textContent = heatmap
+        ? 'JPEG ELA diagnostic only. Compression patterns are a heuristic and do not prove authenticity or tampering.'
+        : 'No JPEG ELA image is available. ELA is a limited compression signal and cannot prove authenticity.';
+      switchHeatmapTab('heatmap');
 
-          if (isGreen) {
-            for (let i = 0; i < 400; i++) {
-              ctx.fillStyle = `rgba(37, 99, 235, ${Math.random() * 0.22})`;
-              ctx.fillRect(Math.random() * 380 + 10, Math.random() * 180 + 10, 2, 2);
-            }
-            ctx.fillStyle = '#10B981'; ctx.font = 'bold 12px monospace';
-            ctx.fillText('✓ AUTHENTIC ELA MATRIX — UNIFORM COMPRESSION GRID (σ: 4.2)', 15, 105);
-          } else {
-            for (let i = 0; i < 300; i++) {
-              ctx.fillStyle = `rgba(100, 116, 139, ${Math.random() * 0.15})`;
-              ctx.fillRect(Math.random() * 380 + 10, Math.random() * 180 + 10, 2, 2);
-            }
-            // Draw red spliced region
-            ctx.fillStyle = 'rgba(239, 68, 68, 0.85)';
-            ctx.fillRect(130, 70, 140, 50);
-            ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 12px monospace';
-            ctx.fillText('✗ SPLICED NUMBER AREA', 135, 95);
-            ctx.fillText('Δ Variance: 94.2%', 145, 110);
-          }
-          heatmapImg.src = c.toDataURL('image/png');
+      const fields = data.extracted_fields || {};
+      const setField = function(id, value) {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value || 'Not extracted';
+      };
+      setField('fieldAadhaar', fields.masked_aadhaar);
+      setField('fieldName', fields.name);
+      setField('fieldFather', fields.father_name);
+      setField('fieldTribe', fields.detected_tribe || fields.category);
+      setField('fieldCertNo', fields.certificate_no);
+      setField('fieldIncome', fields.annual_income);
+
+      const issuer = data.issuer_verification || {};
+      const issuerCard = document.getElementById('issuerVerificationCard');
+      const issuerTitle = document.getElementById('issuerVerificationTitle');
+      const issuerMessage = document.getElementById('issuerVerificationMessage');
+      const issuerLink = document.getElementById('issuerVerificationLink');
+      const showIssuerCard = document.getElementById('trialDocTypeSelect').value !== 'aadhaar';
+      if (issuerCard) issuerCard.style.display = showIssuerCard ? 'block' : 'none';
+      if (issuerTitle) issuerTitle.textContent = issuer.authority || 'Official issuer verification';
+      if (issuerMessage) issuerMessage.textContent = issuer.message || 'No official issuer verification was performed by this app.';
+      if (issuerLink) {
+        if (issuer.verification_url) {
+          issuerLink.href = issuer.verification_url;
+          issuerLink.style.display = 'inline-block';
+        } else {
+          issuerLink.style.display = 'none';
         }
       }
-
-      // Update Extracted Intelligence Fields
-      const ef = data.extracted_fields || {};
-      const setF = (id, val) => { const el = document.getElementById(id); if (el && val) el.textContent = val; };
-      setF('fieldAadhaar', ef.masked_aadhaar || 'XXXX-XXXX-1012');
-      setF('fieldName', ef.name || 'Rahul Munda');
-      setF('fieldFather', ef.father_name || 'Birsa Munda');
-      setF('fieldTribe', ef.detected_tribe || (isGreen ? 'Munda (ST)' : 'Non-ST Community'));
-      setF('fieldCertNo', ef.certificate_no || 'JH/2026/ST/9981');
-      setF('fieldIncome', ef.annual_income || '₹1,20,000');
     }
-
     function pushTrialToOfficerQueue() {
       if (!currentTrialResult) return;
       const r = currentTrialResult;
@@ -3226,18 +3506,19 @@
 
       const newApp = {
         id: newId,
-        name: ef.name || "Rahul Munda",
-        tribe: ef.detected_tribe || "Munda",
-        state: "Jharkhand",
-        score: r.integrity_score,
-        decision: r.decision,
-        label: r.decision_label,
-        status: r.decision === 'GREEN' ? 'APPROVED' : (r.decision === 'YELLOW' ? 'PENDING' : 'REJECTED_FRAUD'),
-        dbt: r.decision === 'GREEN' ? 'Paid via DBT' : 'Pending Review'
+        name: ef.name || "Name not extracted",
+        tribe: ef.detected_tribe || "Not established",
+        state: "Not provided",
+        score: r.integrity_score ?? "Not calculated",
+        decision: 'YELLOW',
+        aiSignal: "HUMAN_REVIEW_REQUIRED",
+        label: 'HUMAN_REVIEW_REQUIRED',
+        status: 'PENDING_OFFICER_REVIEW',
+        dbt: 'Not checked'
       };
 
       officerApps.unshift(newApp);
-      alert(`Application ${newId} for ${newApp.name} successfully submitted to District Tribal Officer (DTO) Queue!\nStatus: ${newApp.status}`);
+      alert(`Demo record ${newId} for ${newApp.name} added to this browser's sample queue. It is not a submitted application and no payment was made.`);
       renderOfficerTable();
       
       // Auto-switch to Officer Tab
@@ -3251,10 +3532,10 @@
         return;
       }
       if (currentTrialResult.decision === 'RED') {
-        alert("Direct Benefit Transfer (DBT) BLOCKED: Application is flagged as fraudulent / tampered!");
+        alert("Automated screening raised a possible issue. An officer must review it; this is not a fraud finding and no payment was attempted.");
         return;
       }
-      alert(`Direct Benefit Transfer (DBT) Triggered via NPCI Aadhaar Payment Bridge (APB)!\nAmount: ₹13,500\nBeneficiary: ${currentTrialResult.extracted_fields?.name || 'Rahul Munda'}\nBank: Punjab National Bank (Acc: ****4484)\nPFMS Transaction ID: PFMS-DBT-2026-98124\nStatus: FUNDS CREDITED INSTANTLY`);
+      alert('Demo only: no DBT payment was sent. Real disbursement requires an authorized human decision and an official PFMS integration.');
     }
 
     // Article 342 Gazette Directory
@@ -3385,20 +3666,20 @@
 
         if (lower.includes('income') || lower.includes('आय') || lower.includes('2 lakh')) {
           answer = currentLanguage === 'hi'
-            ? "हाँ! PMS-ST (पोस्ट-मैट्रिक) योजना में वार्षिक पारिवारिक आय ₹2.5 लाख तक के सभी मान्यता प्राप्त ST छात्र 100% पात्र हैं। उच्च शिक्षा फेलोशिप (NFST) में आय सीमा ₹6 लाख तक है।"
-            : "Yes! Under Post-Matric Scholarship (PMS-ST), students with annual family income up to ₹2.5 Lakh/yr are 100% eligible. For National Fellowship (NFST), income ceiling is ₹6.0 Lakh/yr.";
+            ? "यह प्रोटोटाइप आपकी पात्रता का अंतिम निर्णय नहीं करता। आय सीमा योजना और आवेदन वर्ष के आधिकारिक दिशा-निर्देश में जाँचें; अधिकारी को मूल दस्तावेज़ और बाकी शर्तें भी देखनी होंगी।"
+            : "This prototype does not make a final eligibility decision. Check the official scheme rules for the application year; an officer must review the original documents and all other conditions.";
         } else if (lower.includes('caste') || lower.includes('जाति') || lower.includes('certificate')) {
           answer = currentLanguage === 'hi'
-            ? "जाति प्रमाण पत्र में AI दो मुख्य जांच करता है: (1) क्या आपकी जाति संविधान के अनुच्छेद 342 ST गजट में है? (2) Error Level Analysis (ELA) से यह देखा जाता है कि प्रमाण पत्र फोटोशॉप से बदला तो नहीं गया है।"
-            : "Our AI performs two crucial checks: (1) Validates that your community is recognized in your state under Constitution Article 342 ST Schedule, and (2) Runs Error Level Analysis (ELA) to detect Photoshop tampering.";
+            ? "स्थानीय स्क्रीनिंग OCR से कुछ लिखावट पढ़ने की कोशिश करती है। यह प्रमाण पत्र की असलियत, हस्ताक्षर या ST/BC पात्रता सत्यापित नहीं करती; ELA/QR संकेत भी प्रमाण नहीं हैं। बिहार प्रमाण पत्र का अंतिम सत्यापन संबंधित सरकारी पोर्टल/अधिकारी से करें।"
+            : "Local screening tries to read some text using OCR. It does not verify certificate authenticity, signatures, or ST/BC eligibility; ELA and QR signals are not proof. Use the relevant government portal or officer for final verification.";
         } else if (lower.includes('dbt') || lower.includes('bank') || lower.includes('खाता')) {
           answer = currentLanguage === 'hi'
-            ? "DBT (Direct Benefit Transfer) के लिए आपका बैंक खाता आधार से और NPCI APB मैपर से जुड़ा होना चाहिए। हमारे पोर्टल में राहुल मुंडा का पंजाब नेशनल बैंक खाता (****4484) एक्टिव है और तुरंत पैसा ट्रांसफर होता है।"
-            : "For DBT, your bank account must be Aadhaar-seeded on the NPCI APB mapper. Verified accounts receive scholarship funds instantly via PFMS without intermediary delays.";
+            ? "इस प्रोटोटाइप में बैंक, NPCI, PFMS या सरकारी DBT कनेक्शन नहीं है। यह खाता स्थिति नहीं जाँचता और कोई भुगतान नहीं भेजता।"
+            : "This prototype has no bank, NPCI, PFMS, or government DBT connection. It does not check account status or send payments.";
         } else {
           answer = currentLanguage === 'hi'
-            ? `आपके सवाल "${text}" के अनुसार: जनजातीय सेतु पोर्टल में आपके सभी दस्तावेज़ ऑटो-स्कैन होकर DTO अधिकारी को भेजे जाते हैं। आप 'Verify' बटन दबाकर तुरंत जांच कर सकते हैं!`
-            : `Regarding your query "${text}": TribalSetu automatically scans and validates your certificates against MoTA Article 342 and NPCI. Click 'Verify' to run the live pipeline!`;
+            ? "यह TribalSetu का स्थानीय प्रोटोटाइप है। इसमें कुछ फॉर्म, स्थानीय OCR स्क्रीनिंग और डेमो अधिकारी वर्कफ़्लो हैं; MoTA/DigiLocker/NPCI से लाइव सत्यापन नहीं जुड़ा है।"
+            : "This is the local TribalSetu prototype. It has forms, local OCR screening, and demo officer workflow; it is not live-connected to MoTA, DigiLocker, or NPCI.";
         }
 
         appendChatMessage(answer, 'ai');
@@ -3416,7 +3697,7 @@
       const container = document.getElementById('chatMessages');
       const div = document.createElement('div');
       div.className = `msg-bubble msg-${sender}`;
-      div.innerHTML = text;
+      div.textContent = text;
       container.appendChild(div);
       container.scrollTop = container.scrollHeight;
     }
@@ -3431,19 +3712,28 @@
     }
 
     function simulateDigiLockerLogin() {
-      document.getElementById('regName').value = "Rahul Munda";
-      document.getElementById('regMobile').value = "9876543210";
-      document.getElementById('regTribe').value = "Munda";
-      document.getElementById('regState').value = "Jharkhand";
-      document.getElementById('regIncome').value = "120000";
+      document.getElementById('regName').value = "Demo Applicant";
+      document.getElementById('regMobile').value = "";
+      document.getElementById('regTribe').value = "Sample Community";
+      document.getElementById('regState').value = "";
+      document.getElementById('regIncome').value = "";
       document.getElementById('matchedSchemesAlert').style.display = 'block';
-      document.getElementById('matchedSchemesText').textContent = "DigiLocker Verified! 4 Scholarships Matched for Munda (Jharkhand).";
+      document.getElementById('matchedSchemesText').textContent = "Synthetic example values loaded; no government account was checked.";
+    }
+
+    function fillDemoProfile() {
+      simulateDigiLockerLogin();
     }
 
     function saveStudentProfile() {
-      const name = document.getElementById('regName').value.trim() || 'Rahul Munda';
-      const tribe = document.getElementById('regTribe').value.trim() || 'Munda';
+      const name = document.getElementById('regName').value.trim();
+      const tribe = document.getElementById('regTribe').value.trim();
       const state = document.getElementById('regState').value;
+
+      if (!name || !tribe || !state) {
+        alert('Enter the applicant name, community, and domicile state before copying these values into the form.');
+        return;
+      }
 
       document.getElementById('headerStudentText').textContent = `${name} (${tribe}, ${state})`;
       document.getElementById('portalApplicantName').value = name;
@@ -3451,15 +3741,33 @@
       document.getElementById('portalState').value = state;
 
       document.getElementById('matchedSchemesAlert').style.display = 'block';
+      document.getElementById('matchedSchemesText').textContent = "Values copied into the intake form. No eligibility decision was made.";
       
       setTimeout(() => {
         closeStudentModal();
-        alert(`Profile Saved Successfully!\nWelcome ${name}.\nYour details have been pre-filled into Step 1, and WhatsApp alerts for ST scholarships have been activated.`);
+        alert(`The values were copied into the application form for ${name}. This prototype did not verify an identity, store a profile, or send notifications.`);
       }, 800);
+    }
+
+    function configureLocalFileMode() {
+      if (window.location.protocol !== 'file:') return;
+      const notice = document.getElementById('localFileModeNotice');
+      const upload = document.getElementById('trialFileInput');
+      const runButton = document.getElementById('btnTrialVerify');
+      if (notice) notice.style.display = 'flex';
+      if (upload) {
+        upload.disabled = true;
+        upload.title = 'Open TribalSetu from http://127.0.0.1:8000/ to use local screening.';
+      }
+      if (runButton) {
+        runButton.disabled = true;
+        runButton.title = 'Open TribalSetu from http://127.0.0.1:8000/ to use local screening.';
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       initPortal();
+      configureLocalFileMode();
     });
   </script>
 </body>

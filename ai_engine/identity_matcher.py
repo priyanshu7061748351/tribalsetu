@@ -1,8 +1,8 @@
 """
 Identity Cross-Matching Module
 Function 6: cross_match_identity()
-Validates consistency of Applicant Name and Father Name across multiple documents
-(Aadhaar Card vs Caste Certificate vs Academic Marksheet) using fuzzy string algorithms.
+Compares applicant name strings using fuzzy matching. This does not authenticate
+identity against UIDAI or another government record.
 """
 
 from thefuzz import fuzz
@@ -15,9 +15,9 @@ def cross_match_identity(
     caste_father: str = ""
 ) -> dict:
     """
-    Computes cross-document similarity score using Levenshtein Token Sort Ratio.
+    Computes a cross-document string-similarity signal using Levenshtein Token Sort Ratio.
     Returns:
-      - is_match (bool): True if identity is verified consistent
+      - is_match (bool): True if the configured string-similarity threshold is met
       - average_score (float): Composite match score (0 to 100%)
       - breakdown (dict): Detailed pairwise scores
       - explanation (str): Audit feedback
@@ -57,11 +57,11 @@ def cross_match_identity(
 
     if is_match:
         if final_identity_score >= 95.0:
-            expl = f"Identity 100% verified. Full string consistency across all uploaded records."
+            expl = f"High name-string similarity ({final_identity_score:.1f}%). No UIDAI or government identity record was queried."
         else:
-            expl = f"Identity verified with minor phonetic/spelling variation tolerance (Confidence: {final_identity_score:.1f}%)."
+            expl = f"Name-string similarity signal with spelling variation (score: {final_identity_score:.1f}%). No UIDAI or government identity record was queried."
     else:
-        expl = f"Identity mismatch detected! Name on Caste Certificate ('{caste_doc_name}') differs significantly from Aadhaar ('{aadhaar_name}') (Confidence: {final_identity_score:.1f}%)."
+        expl = f"Name-string similarity is low ({final_identity_score:.1f}%). Check the documents manually; this is not an identity verification result."
 
     return {
         "is_match": is_match,
