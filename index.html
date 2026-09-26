@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>TribalSetu (जनजातीय सेतु) — National Tribal Scholarship Platform</title>
-  <meta name="description" content="Next-Gen 2026 AI-Powered National Tribal Scholarship Forensic Verification & Direct Benefit Transfer (DBT) Platform, Ministry of Tribal Affairs (MoTA), Government of India.">
+  <title>TribalSetu (जनजातीय सेतु) — Scholarship Screening Prototype</title>
+  <meta name="description" content="TribalSetu local scholarship application and document-screening prototype. OCR and document signals are advisory and do not decide authenticity or eligibility.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
@@ -1514,7 +1514,7 @@
         </div>
         <div class="active-pill">
           <span class="dot-pulse"></span>
-          <span id="txtSystemOnline">Core Active &bull; 2026 Engine</span>
+          <span id="txtSystemOnline">Local Prototype</span>
         </div>
       </div>
     </div>
@@ -1533,7 +1533,7 @@
         <div class="brand-info">
           <h1>
             TribalSetu (जनजातीय सेतु)
-            <span class="cyan-pill">AI Platform</span>
+            <span class="cyan-pill">Prototype</span>
           </h1>
         <p id="txtPortalSubtitle">National scholarship application and officer-review portal</p>
         </div>
@@ -1556,7 +1556,7 @@
       </button>
       <button class="portal-tab" onclick="switchSection(this, 'view-trial')">
         <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span id="navTabTrial">AI Certificate Verifier (दस्तावेज़ जांच)</span>
+        <span id="navTabTrial">Document Screening (दस्तावेज़ जांच)</span>
       </button>
       <button class="portal-tab" onclick="switchSection(this, 'view-officer')">
         <svg class="svg-icon" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg>
@@ -1572,9 +1572,8 @@
   <div id="localFileModeNotice" role="alert" style="display:none; max-width:1200px; margin:12px auto 0; padding:14px 18px; border:1px solid #f59e0b; border-radius:12px; background:#fffbeb; color:#78350f; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
     <div>
       <strong>This page was opened directly from a file.</strong>
-      <div style="font-size:0.88rem; margin-top:4px;">Server-backed features cannot run this way. No certificate has been screened. Start the local server, then open the app at <code>http://127.0.0.1:8000/</code>.</div>
+      <div style="font-size:0.88rem; margin-top:4px;">Server-backed features cannot run this way. No certificate has been screened. Double-click <strong>Start TribalSetu.bat</strong> and use the browser tab it opens; it chooses an available local port.</div>
     </div>
-    <a href="http://127.0.0.1:8000/" style="display:inline-block; padding:9px 13px; border-radius:8px; background:#1d4ed8; color:#fff; font-weight:700; text-decoration:none;">Open local app</a>
   </div>
 
   <!-- Page Body -->
@@ -1720,8 +1719,8 @@
                 <!-- Strictly 12 digits numeric restriction -->
                 <input type="text" id="portalAadhaar" class="form-input" placeholder="Enter 12-digit Aadhaar number" maxlength="12" pattern="\d{12}" oninput="validateAadhaarInput(this)" autocomplete="off">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-                  <small id="aadhaarMaskHint">Masked automatically as per DPDP Act (XXXX-XXXX-1012)</small>
-                  <small id="aadhaarDigitCounter" style="font-weight:700; color:var(--status-success);">12 / 12 Digits</small>
+                  <small id="aadhaarMaskHint">Demo only: do not enter a real Aadhaar. No UIDAI/NPCI connection.</small>
+                  <small id="aadhaarDigitCounter" style="font-weight:700; color:var(--text-secondary);">0 / 12 Digits</small>
                 </div>
               </div>
 
@@ -1749,7 +1748,7 @@
           </div>
         </div>
 
-        <!-- Right Column: Step 2 Instant Verification Result -->
+        <!-- Right Column: Step 2 Screening Result -->
         <div class="content-card">
           <div class="card-head">
             <h3>
@@ -1977,7 +1976,7 @@
               <div style="display:flex; gap:10px; margin-top:16px;">
                 <button type="button" class="btn-primary" style="flex:1;" onclick="pushTrialToOfficerQueue()">
                   <svg class="svg-icon svg-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                  <span>Submit to DTO Queue</span>
+                  <span>Add to Browser Demo Queue</span>
                 </button>
                 <button type="button" class="chip-btn green-accent" style="padding:10px 14px;" onclick="simulateDbtTrialPayout()">
                   <svg class="svg-icon svg-sm" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -2115,7 +2114,7 @@
 
   </main>
 
-  <!-- Voice & Chat AI Assistant Widget (User Requested Feature: "Setu Mitra") -->
+  <!-- Local help widget: browser speech input/output with built-in replies -->
   <div class="voice-ai-fab">
     <div class="ai-chat-window" id="aiChatWindow">
       <div class="chat-head">
@@ -2124,8 +2123,8 @@
             <svg class="svg-icon svg-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </div>
           <div>
-            <strong style="font-size:0.9rem;" id="txtChatBotName">Setu Mitra (सेतु मित्र AI)</strong>
-            <div style="font-size:0.72rem; color:var(--cyan-light);" id="txtChatBotStatus">Voice & Bilingual Assistant Online</div>
+            <strong style="font-size:0.9rem;" id="txtChatBotName">Setu Mitra Help (Prototype)</strong>
+            <div style="font-size:0.72rem; color:var(--cyan-light);" id="txtChatBotStatus">Browser voice input; built-in replies</div>
           </div>
         </div>
         <button class="modal-close" onclick="toggleAiChat()" style="font-size:1.2rem;">&times;</button>
@@ -2133,7 +2132,7 @@
 
       <div class="chat-messages" id="chatMessages">
         <div class="msg-bubble msg-ai" id="chatInitialMsg">
-          नमस्ते! मैं <strong>सेतु मित्र (Setu Mitra)</strong> हूँ। आप मुझसे बोलकर (Voice) या लिखकर छात्रवृत्ति, पात्रता, आवश्यक दस्तावेज़ या डीबीटी बैंक खाते के बारे में कुछ भी पूछ सकते हैं!
+          नमस्ते! यह स्थानीय हेल्प डेमो है। इसमें कुछ पहले से लिखे जवाब हैं; यह सरकारी सिस्टम से जुड़ा नहीं है और पात्रता का फैसला नहीं करता।
         </div>
       </div>
 
@@ -2156,13 +2155,13 @@
 
     <div style="position:relative;">
       <div class="fab-pulse-ring"></div>
-      <button class="fab-btn" onclick="toggleAiChat()" title="AI Voice Assistant (बोलकर पूछें)">
+      <button class="fab-btn" onclick="toggleAiChat()" title="Prototype Help Assistant (voice input; canned answers)">
         <svg class="svg-icon svg-lg" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       </button>
     </div>
   </div>
 
-  <!-- Student Profile & DigiLocker Login Modal -->
+  <!-- Student Profile Prototype Modal -->
   <div class="modal-overlay" id="studentLoginModal">
     <div class="modal-card">
       <div class="modal-head">
@@ -2262,7 +2261,7 @@
   <footer class="portal-footer">
     <div class="footer-container">
       <div>
-        <strong style="color:var(--deep-indigo); font-size:0.95rem;">TribalSetu (जनजातीय सेतु) &bull; National AI Scholarship Engine</strong><br>
+        <strong style="color:var(--deep-indigo); font-size:0.95rem;">TribalSetu (जनजातीय सेतु) &bull; Scholarship Application &amp; Screening Prototype</strong><br>
         <span style="font-size:0.78rem;">Ministry of Tribal Affairs (MoTA), Government of India. Local screening prototype; no automated authenticity decision or payment.</span>
       </div>
       <div>
@@ -2473,10 +2472,10 @@
     const I18N = {
       en: {
         govAuth: "Ministry of Tribal Affairs (MoTA) | जनजातीय कार्य मंत्रालय, भारत सरकार",
-        systemOnline: "Core Active • 2026 Engine",
+        systemOnline: "Local Prototype",
         portalSubtitle: "National scholarship application and officer-review portal",
         tabStudent: "Scholarship Intake (छात्र आवेदन)",
-        tabTrial: "AI Certificate Verifier (दस्तावेज़ जांच)",
+        tabTrial: "Document Screening (दस्तावेज़ जांच)",
         tabOfficer: "DTO Officer Queue & DBT (स्वीकृति डैशबोर्ड)",
         tabGazette: "Article 342 ST Directory (जनजाति सूची)",
         bannerHead: "Scholarship Applications & Officer Review",
@@ -2509,10 +2508,10 @@
       },
       hi: {
         govAuth: "जनजातीय कार्य मंत्रालय (MoTA) | भारत सरकार",
-        systemOnline: "सिस्टम ऑनलाइन • 2026 AI इंजन",
+        systemOnline: "स्थानीय प्रोटोटाइप",
         portalSubtitle: "राष्ट्रीय छात्रवृत्ति आवेदन एवं अधिकारी समीक्षा पोर्टल",
         tabStudent: "छात्र आवेदन पोर्टल",
-        tabTrial: "AI दस्तावेज़ सत्यापन टूल",
+        tabTrial: "दस्तावेज़ स्क्रीनिंग",
         tabOfficer: "डीटीओ अधिकारी डैशबोर्ड व DBT",
         tabGazette: "अनुच्छेद 342 ST गजट सूची",
         bannerHead: "छात्रवृत्ति आवेदन एवं अधिकारी समीक्षा",
@@ -2687,12 +2686,12 @@
         input.classList.remove('invalid-red');
         input.classList.add('valid-green');
         counter.style.color = 'var(--status-success)';
-        hint.textContent = `Masked automatically as per DPDP Act (XXXX-XXXX-${input.value.slice(-4)})`;
+        hint.textContent = `Screen display preview only: XXXX-XXXX-${input.value.slice(-4)}. No UIDAI/NPCI check was made.`;
       } else {
         input.classList.remove('valid-green');
         input.classList.add('invalid-red');
         counter.style.color = 'var(--status-error)';
-        hint.textContent = `Please enter exactly 12 digits (${12 - count} remaining)`;
+        hint.textContent = `Demo only—do not enter a real Aadhaar. ${12 - count} digits remaining.`;
       }
     }
 
@@ -3711,7 +3710,7 @@
       document.getElementById('studentLoginModal').classList.remove('active');
     }
 
-    function simulateDigiLockerLogin() {
+    function fillDemoProfile() {
       document.getElementById('regName').value = "Demo Applicant";
       document.getElementById('regMobile').value = "";
       document.getElementById('regTribe').value = "Sample Community";
@@ -3719,10 +3718,6 @@
       document.getElementById('regIncome').value = "";
       document.getElementById('matchedSchemesAlert').style.display = 'block';
       document.getElementById('matchedSchemesText').textContent = "Synthetic example values loaded; no government account was checked.";
-    }
-
-    function fillDemoProfile() {
-      simulateDigiLockerLogin();
     }
 
     function saveStudentProfile() {

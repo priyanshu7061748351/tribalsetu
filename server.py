@@ -713,6 +713,11 @@ async def read_root():
             return f.read()
     return "<h1>TribalSetu Server is running! Place index.html in project folder.</h1>"
 
+@app.get("/api/health")
+async def local_health():
+    """Identify this local API build for the Windows launcher."""
+    return {"service": "tribalsetu-local", "build": "screening-v1", "status": "ok"}
+
 @app.get("/api/schemes")
 async def get_schemes():
     """Returns official MoTA scholarship schemes & document checklists"""

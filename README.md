@@ -23,14 +23,25 @@
 
 | Service | Link | Description |
 | :--- | :--- | :--- |
-| 🚀 **Live Web App (GitHub Pages)** | **[https://priyanshu7061748351.github.io/tribalsetu/](https://priyanshu7061748351.github.io/tribalsetu/)** | Instant live interactive portal with 4-in-1 AI verification, Student Portal, Officer Queue, and SIH Specs. |
-| 📜 **4-in-1 Trial Demo** | [https://priyanshu7061748351.github.io/tribalsetu/static/trial.html](https://priyanshu7061748351.github.io/tribalsetu/static/trial.html) | Direct document verification trial (Aadhaar, Caste, Income, Residence). |
+| **GitHub Pages UI preview** | **[https://priyanshu7061748351.github.io/tribalsetu/](https://priyanshu7061748351.github.io/tribalsetu/)** | Static interface preview; backend screening and officer actions require the local FastAPI server. |
+| **Static screening UI preview** | [https://priyanshu7061748351.github.io/tribalsetu/static/trial.html](https://priyanshu7061748351.github.io/tribalsetu/static/trial.html) | Shows the interface only; it does not verify documents with a government authority. |
 | 📑 **SIH Master Plan** | [https://priyanshu7061748351.github.io/tribalsetu/static/TribalSetu_SIH2026_Master_Plan.html](https://priyanshu7061748351.github.io/tribalsetu/static/TribalSetu_SIH2026_Master_Plan.html) | Complete SIH 2026 Problem Statement and Execution Dossier. |
 | 📊 **System Flowchart** | [https://priyanshu7061748351.github.io/tribalsetu/static/TribalSetu_Master_Flowchart_and_Deep_Dive.html](https://priyanshu7061748351.github.io/tribalsetu/static/TribalSetu_Master_Flowchart_and_Deep_Dive.html) | End-to-end interactive architecture flowchart. |
 
 ---
 
 ## 🛠️ Quick Start Guide
+
+## What the Local Prototype Can and Cannot Do
+
+| It can do locally | It cannot do in this prototype |
+| --- | --- |
+| Read an uploaded PDF (up to the first five pages) or supported image and show best-effort OCR text candidates. | Prove a certificate genuine/fake, validate its issuing authority or digital signature, or decide ST/BC scheme eligibility. |
+| Report QR presence and, for JPEG images, a limited compression/ELA signal. Both are review clues only. | Verify a QR signature, query Bihar RTPS automatically, or connect to MoTA, DigiLocker, UIDAI, NPCI, PFMS, a bank, or DBT. The Bihar link is a manual handoff. |
+| Submit application metadata to the local SQLite demo store after the local review-token flow and show a tracking status. | Make an official selection, approve/reject an applicant automatically, store uploaded source documents, send SMS/WhatsApp alerts, or transfer money. |
+| Use the browser's speech input/output with a small set of built-in help replies. | Act as a live generative-AI assistant or provide an official eligibility decision. |
+
+OCR may miss or misread text. A missing OCR field means the app did not extract it; it is not evidence that a certificate is wrong. Every screening outcome remains for human review.
 
 ### 1. Prerequisites
 - Python 3.10+ installed
@@ -42,13 +53,14 @@ git clone https://github.com/priyanshu7061748351/tribalsetu.git
 cd tribalsetu
 
 # Install dependencies
-pip install -r requirements.txt
+py -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
 ### 3. Start Local Server
-On Windows, you can double-click **`Start TribalSetu.bat`** in the project folder. It starts the local API in a visible console and opens the browser at `http://127.0.0.1:8000/`. Keep the server console open while using the app; close it or press Ctrl+C there to stop the server. If the app is already running, the launcher opens it without starting a second copy.
+On Windows, double-click **`Start TribalSetu.bat`** in the project folder. It starts the local API in a visible console and opens the browser. It uses port 8000 by default, or 8001/8002 if an older process is using a port. Keep the server console open while using the app; close it or press Ctrl+C there to stop the server. If this app is already running, the launcher opens it without starting a second copy.
 
-**Do not open `index.html` directly.** A `file:///.../index.html` page cannot call this app's local API, so document screening, application saving, and officer queue requests will not work. Use the `http://127.0.0.1:8000/` address.
+**Do not open `index.html` directly.** A `file:///.../index.html` page cannot call this app's local API, so document screening, application saving, and officer queue requests will not work. Use the browser tab opened by the launcher.
 
 Alternatively, after installing dependencies, start it in PowerShell with:
 
@@ -61,15 +73,14 @@ Alternatively, after installing dependencies, start it in PowerShell with:
 - **🏠 Main Student & Officer Portal:** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 - **📖 API Documentation (Swagger):** [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
-<!-- Legacy manual setup notes retained below for officer credential configuration. -->
-In Windows PowerShell, set a private first-officer setup token and a separate signing key, then start the server:
+For a separate officer-authentication setup, run these commands in one PowerShell window instead of using the launcher. This keeps the setup token private and gives sessions a persistent key:
 
 ```powershell
 function New-Secret { $bytes = New-Object byte[] 48; $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create(); $rng.GetBytes($bytes); [Convert]::ToBase64String($bytes) }
 $env:TRIBALSETU_BOOTSTRAP_TOKEN = New-Secret
 $env:TRIBALSETU_SESSION_SECRET = New-Secret
 Write-Host "One-time officer setup token: $env:TRIBALSETU_BOOTSTRAP_TOKEN"
-python server.py
+.venv\Scripts\python.exe -m uvicorn server:app --host 127.0.0.1 --port 8000
 ```
 
 The local server stores submitted applications, officer accounts, and officer review events in `data/tribalsetu.sqlite3`. Open the Officer Queue and create the first officer with the setup token configured above. Officer passwords are stored as salted PBKDF2 hashes; sessions use an HTTP-only cookie. Keep both secrets private. If the process starts without `TRIBALSETU_SESSION_SECRET`, it uses a temporary key and all officer sessions end when the server restarts.

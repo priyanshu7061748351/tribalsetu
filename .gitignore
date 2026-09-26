@@ -10,3 +10,4 @@ venv/
 .vscode/
 .idea/
 test_sample.pdf
+cloudflared.exe
